@@ -38,6 +38,6 @@ func (ac *AuthController) SignUp(ctx *gin.Context) {
 
 func (ac *AuthController) SignIn(ctx *gin.Context) {
 
-	var body 
+	//var body
 
 }
