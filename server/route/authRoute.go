@@ -11,5 +11,7 @@ func AuthRoutes(router *gin.Engine) {
 	var authControllerPort controller_port.AuthControllerInterface = &controller.AuthController{}
 
 	router.POST("/signup", authControllerPort.SignUp)
+	router.POST("/signin", authControllerPort.SignIn)
+	router.DELETE("/signout", authControllerPort.SignOut)
 
 }
