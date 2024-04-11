@@ -15,11 +15,10 @@ type AuthService struct {
 	UserRepository repository.UserRepository
 }
 
-func (as *AuthService) SignUp(body model.User) model.User {
+func (as *AuthService) SignUp(body model.User) (model.User, dto.HttpErrorDto) {
 	hash, err := bcrypt.GenerateFromPassword([]byte(body.Password), bcrypt.DefaultCost)
-	// change error handling
 	if err != nil {
-		return model.User{}
+		return model.User{}, dto.HttpErrorDto{Message: "Error while hashing password", Code: 500}
 	}
 
 	user := model.User{
@@ -29,9 +28,12 @@ func (as *AuthService) SignUp(body model.User) model.User {
 		Password:  string(hash),
 	}
 
-	result := as.UserRepository.Create(user)
+	user, error := as.UserRepository.Create(user)
+	if error != (dto.HttpErrorDto{}) {
+		return model.User{}, error
+	}
 
-	return result
+	return user, dto.HttpErrorDto{}
 }
 
 func (as *AuthService) SignIn(body dto.SignInDto) (string, dto.HttpErrorDto) {

@@ -21,6 +21,8 @@ type AuthController struct {
 // @Accept json
 // @Produce json
 // @Success 200 {object} model.User
+// @Failure 400 {string} string "Invalid request"
+// @Failure 500 {string} string "Server error"
 // @Router /signup [post]
 func (ac *AuthController) SignUp(ctx *gin.Context) {
 
@@ -30,7 +32,11 @@ func (ac *AuthController) SignUp(ctx *gin.Context) {
 		return
 	}
 
-	user := ac.AuthService.SignUp(body)
+	user, error := ac.AuthService.SignUp(body)
+	if error != (dto.HttpErrorDto{}) {
+		ctx.JSON(error.Code, gin.H{"error": error.Message})
+		return
+	}
 
 	ctx.JSON(http.StatusOK, user)
 

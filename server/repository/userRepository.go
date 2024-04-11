@@ -23,12 +23,14 @@ func (ur *UserRepository) FindAll() []model.User {
 	return users
 }
 
-func (ur *UserRepository) Create(user model.User) model.User {
+func (ur *UserRepository) Create(user model.User) (model.User, dto.HttpErrorDto) {
 
 	result := config.DB.Create(&user)
-	helper.ErrorPanic(result.Error)
+	if result.Error != nil {
+		return model.User{}, dto.HttpErrorDto{Message: "Error while creating user", Code: 500}
+	}
 
-	return user
+	return user, dto.HttpErrorDto{}
 }
 
 func (ur *UserRepository) FindOneBy(field string, value string) (model.User, dto.HttpErrorDto) {
