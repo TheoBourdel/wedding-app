@@ -21,11 +21,16 @@ func (as *AuthService) SignUp(body model.User) (model.User, dto.HttpErrorDto) {
 		return model.User{}, dto.HttpErrorDto{Message: "Error while hashing password", Code: 500}
 	}
 
+	if body.Role != "provider" && body.Role != "marry" {
+		return model.User{}, dto.HttpErrorDto{Message: "Invalid role", Code: 400}
+	}
+
 	user := model.User{
 		Firstname: body.Firstname,
 		Lastname:  body.Lastname,
 		Email:     body.Email,
 		Password:  string(hash),
+		Role:      body.Role,
 	}
 
 	user, error := as.UserRepository.Create(user)
@@ -51,8 +56,9 @@ func (as *AuthService) SignIn(body dto.SignInDto) (string, dto.HttpErrorDto) {
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"sub": user.ID,
-		"exp": time.Now().Add(time.Hour * 24 * 30).Unix(),
+		"sub":  user.ID,
+		"exp":  time.Now().Add(time.Hour * 24 * 30).Unix(),
+		"role": user.Role,
 	})
 
 	tokenString, err := token.SignedString([]byte(os.Getenv("JWT_SECRET")))

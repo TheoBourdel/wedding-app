@@ -31,6 +31,10 @@ func (ac *AuthController) SignUp(ctx *gin.Context) {
 		ctx.JSON(400, gin.H{"error": "Invalid request"})
 		return
 	}
+	if body.Role == "admin" {
+		ctx.JSON(400, gin.H{"error": "Bien essayé, mais non."})
+		return
+	}
 
 	user, error := ac.AuthService.SignUp(body)
 	if error != (dto.HttpErrorDto{}) {
@@ -67,9 +71,9 @@ func (ac *AuthController) SignIn(ctx *gin.Context) {
 		return
 	}
 
-	ctx.SetSameSite(http.SameSiteLaxMode)
-	ctx.SetCookie("Authorization", token, 3600*24*30, "", "", false, true)
-	ctx.JSON(http.StatusOK, gin.H{})
+	//ctx.SetSameSite(http.SameSiteLaxMode)
+	//ctx.SetCookie("Authorization", token, 3600*24*30, "", "", false, true)
+	ctx.JSON(http.StatusOK, token)
 
 }
 

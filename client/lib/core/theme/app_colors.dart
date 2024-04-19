@@ -9,6 +9,9 @@ class AppColors {
   static const Color textSecondary = Color(0xFF757575);
   static const Color textIcons = Color(0xFFFFFFFF);
   static const Color divider = Color(0xFFBDBDBD);
+
+  // Custom colors
+  static const Color mediumPink = Color(0xFFFFC4D6);
   static const Color lightPink = Color(0xFFfef6f9);
   static const Color pink = Color(0xFFdd4e8a);
 }

@@ -40,6 +40,12 @@ dependencies:
   http: ^1.2.1
   flutter_dotenv: ^5.1.0
   dio: ^4.0.6
+  # JWT
+  jwt_decoder: 
+  # Local storage
+  shared_preferences: ^2.2.3 
+
+
   # State management
   flutter_bloc: ^8.1.2
 
