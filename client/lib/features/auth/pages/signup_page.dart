@@ -1,6 +1,5 @@
 import 'package:client/core/theme/app_colors.dart';
 import 'package:client/dto/signup_user_dto.dart';
-import 'package:client/model/user.dart';
 import 'package:client/features/auth/widgets/auth_field.dart';
 import 'package:client/repository/auth_repository.dart';
 import 'package:flutter/material.dart';
@@ -39,12 +38,13 @@ class _SignUpPageState extends State<SignUpPage> {
       try {
         await authRepository.signUp(user);
         
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const SignInPage()),
-      );
+        Navigator.pushReplacement(context,
+          MaterialPageRoute(
+            builder: (context) => const SignInPage()
+          ),
+        );
       } catch (e) {
-        print(e);
+        // Show error toast
       }
     }
   }

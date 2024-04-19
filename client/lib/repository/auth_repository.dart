@@ -28,7 +28,6 @@ class AuthRepository {
     );
 
     if(res.statusCode == 200) {
-      print(res.body);
       return res.body;
     } else {
       throw Exception(res.body);

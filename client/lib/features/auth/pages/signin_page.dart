@@ -2,12 +2,10 @@ import 'package:client/core/theme/app_colors.dart';
 import 'package:client/dto/signin_user_dto.dart';
 import 'package:client/features/auth/pages/signup_page.dart';
 import 'package:client/features/auth/widgets/auth_field.dart';
-import 'package:client/features/provider/pages/provider_info_page.dart';
-import 'package:client/features/wedding/pages/wedding_info_page.dart';
 import 'package:client/repository/auth_repository.dart';
+import 'package:client/shared/widget/navigation_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:jwt_decoder/jwt_decoder.dart';
 
 class SignInPage extends StatefulWidget {
   const SignInPage({super.key});
@@ -25,12 +23,7 @@ class _SignInPageState extends State<SignInPage> {
   @override
   void initState() {
     super.initState();
-    //initSharedPref();
   }
-
-  // void initSharedPref() async {
-  //   prefs = await SharedPreferences.getInstance();
-  // }
 
   void handleSignIn() async {
     if (formKey.currentState!.validate()) {
@@ -43,24 +36,17 @@ class _SignInPageState extends State<SignInPage> {
       try {
         String token = await authRepository.signIn(user);
 
+        // Save token in shared preferences (local storage)
         final prefs = await SharedPreferences.getInstance();
         prefs.setString('token', token);
-        Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
-        String role = decodedToken['role'];
         
-        if (role == 'provider') {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => const ProviderInfoPage()),
-          );
-        } else if (role == 'marry') {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => const WeddingInfoPage()),
-          );
-        }
+        Navigator.push(context,
+          MaterialPageRoute(
+            builder: (context) => NavigationMenu(token: token)
+          )
+        );
       } catch (e) {
-        print(e);
+        // Show error toast
       }
     }
   }
