@@ -27,11 +27,12 @@ func main() {
 	router := gin.Default()
 	route.UserRoutes(router)
 	route.WeddingRoutes(router)
+	route.ServiceRoutes(router)
 	route.AuthRoutes(router)
 
 	// Swagger
 	router.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	// Run the server
-	router.Run(":8081")
+	router.Run(":8080")
 }
