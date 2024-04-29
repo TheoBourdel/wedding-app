@@ -13,6 +13,8 @@ func init() {
 func main() {
 	config.DB.AutoMigrate(&model.User{})
 	config.DB.AutoMigrate(&model.Wedding{})
+	config.DB.AutoMigrate(&model.Service{})
+	config.DB.AutoMigrate(&model.Category{})
 
 	fmt.Println("Migration has been processed!")
 }
