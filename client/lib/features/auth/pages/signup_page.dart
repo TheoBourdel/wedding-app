@@ -36,6 +36,7 @@ class _SignUpPageState extends State<SignUpPage> {
         role: selectedRole,
       );
       try {
+        print('test');
         await authRepository.signUp(user);
         
         Navigator.pushReplacement(context,
