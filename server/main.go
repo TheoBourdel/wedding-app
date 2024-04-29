@@ -28,6 +28,8 @@ func main() {
 	route.UserRoutes(router)
 	route.WeddingRoutes(router)
 	route.ServiceRoutes(router)
+	route.CategoryRoutes(router)
+	route.ImageRoutes(router)
 	route.AuthRoutes(router)
 
 	// Swagger
