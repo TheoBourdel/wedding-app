@@ -15,4 +15,6 @@ type Service struct {
     Price float64
     UserID      uint
     User        User `gorm:"foreignKey:UserID"`
+    CategoryID      uint
+    Category        Category `gorm:"foreignKey:CategoryID"`
 }
