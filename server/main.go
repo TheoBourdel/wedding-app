@@ -33,5 +33,5 @@ func main() {
 	router.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	// Run the server
-	router.Run(":8081")
+	router.Run(":8080")
 }

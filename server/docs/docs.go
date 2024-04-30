@@ -92,6 +92,18 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/model.User"
                         }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 }
             }
@@ -121,6 +133,174 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/wedding": {
+            "post": {
+                "responses": {}
+            }
+        },
+        "/weddings": {
+            "get": {
+                "description": "Get a list of all weddings",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "weddings"
+                ],
+                "summary": "Get all weddings",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.Wedding"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/weddings/{id}": {
+            "get": {
+                "description": "Get a wedding by its ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "weddings"
+                ],
+                "summary": "Get a wedding by ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Wedding ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.Wedding"
+                        }
+                    },
+                    "404": {
+                        "description": "Wedding not found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Update a wedding by its ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "weddings"
+                ],
+                "summary": "Update a wedding by ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Wedding ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Updated wedding object",
+                        "name": "wedding",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.Wedding"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Invalid wedding ID or request body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Wedding not found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete a wedding by its ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "weddings"
+                ],
+                "summary": "Delete a wedding by ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Wedding ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Invalid wedding ID",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Wedding not found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -135,6 +315,19 @@ const docTemplate = `{
                     "type": "boolean"
                 }
             }
+        },
+        "model.Role": {
+            "type": "string",
+            "enum": [
+                "admin",
+                "provider",
+                "marry"
+            ],
+            "x-enum-varnames": [
+                "Admin",
+                "Provider",
+                "Marry"
+            ]
         },
         "model.User": {
             "type": "object",
@@ -160,8 +353,55 @@ const docTemplate = `{
                 "password": {
                     "type": "string"
                 },
+                "role": {
+                    "$ref": "#/definitions/model.Role"
+                },
                 "updatedAt": {
                     "type": "string"
+                }
+            }
+        },
+        "model.Wedding": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "budget": {
+                    "type": "number"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "deletedAt": {
+                    "$ref": "#/definitions/gorm.DeletedAt"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "phone": {
+                    "type": "string"
+                },
+                "profileImage": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                },
+                "user": {
+                    "$ref": "#/definitions/model.User"
+                },
+                "userID": {
+                    "type": "integer"
                 }
             }
         }

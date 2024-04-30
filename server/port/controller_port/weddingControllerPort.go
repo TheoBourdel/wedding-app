@@ -8,4 +8,5 @@ type WeddingControllerInterface interface {
 	GetWeddingByID(c *gin.Context)
 	DeleteWeddingByID(c *gin.Context)
 	UpdateWedding(c *gin.Context)
+	GetWeddingByUserID(c *gin.Context)
 }
