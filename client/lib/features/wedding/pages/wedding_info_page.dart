@@ -2,9 +2,7 @@ import 'package:client/core/theme/app_colors.dart';
 import 'package:client/features/wedding/pages/wedding_form.dart';
 import 'package:client/model/wedding.dart';
 import 'package:client/repository/wedding_repository.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -54,7 +52,6 @@ class _WeddingInfoPageState extends State<WeddingInfoPage> {
     try {
       final wedding = await weddingRepository.getUserWedding(userId);
       bool isWeddingExists = wedding != null;
-      print(wedding.id);
 
       setState(() {
         _isWeddingExists = isWeddingExists;
@@ -85,10 +82,10 @@ class _WeddingInfoPageState extends State<WeddingInfoPage> {
                           ElevatedButton(
                         onPressed: () {
                           Navigator.push( context, MaterialPageRoute(
-                              builder: (context) => WeddingForm(),
+                              builder: (context) => const WeddingForm(),
                             ),
                           ).then((currentWedding) {
-                            print('je reviens de creer');
+                            //print('je reviens de creer');
                           if (currentWedding != null) {
                               setState(() {
                                 _wedding = currentWedding;
@@ -108,7 +105,7 @@ class _WeddingInfoPageState extends State<WeddingInfoPage> {
                         child: const Text(
                           'Créer un Mariage',
                           style: TextStyle(
-                            color: AppColors.textIcons,
+                            color: Colors.white,
                             fontSize: 20,
                             fontWeight: FontWeight.w600,
                           ),
@@ -121,12 +118,12 @@ class _WeddingInfoPageState extends State<WeddingInfoPage> {
                             height: 200,
                             child: Card(
                               elevation: 9,
-                              margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                              margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
                               child: Padding(
-                                padding: EdgeInsets.all(20),
+                                padding: const EdgeInsets.all(20),
                                 child: Text(
                                   _wedding?.name ?? 'No wedding name available',
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     fontSize: 24,
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -142,13 +139,13 @@ class _WeddingInfoPageState extends State<WeddingInfoPage> {
                             height: 200, // Définit une hauteur spécifique
                             child: Card(
                               elevation: 9,
-                              margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                              margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
                               child: Padding(
-                                padding: EdgeInsets.all(20),
+                                padding: const EdgeInsets.all(20),
 
                                 child: Text(
                                   _wedding?.description ?? 'No wedding name available',
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     fontSize: 24,
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -166,13 +163,13 @@ class _WeddingInfoPageState extends State<WeddingInfoPage> {
                                 height: 200, // Définit une hauteur spécifique
                                 child: Card(
                                   elevation: 9,
-                                  margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                                  margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
                                   child: Padding(
-                                    padding: EdgeInsets.all(20),
+                                    padding: const EdgeInsets.all(20),
 
                                     child: Text(
                                       _wedding?.budget?.toString()  ?? 'No description available',
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                         fontSize: 24,
                                         fontWeight: FontWeight.bold,
                                       ),
@@ -187,13 +184,13 @@ class _WeddingInfoPageState extends State<WeddingInfoPage> {
                                 height: 200, // Définit une hauteur spécifique
                                 child: Card(
                                   elevation: 9,
-                                  margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                                  margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
                                   child: Padding(
-                                    padding: EdgeInsets.all(20),
+                                    padding: const EdgeInsets.all(20),
 
                                     child: Text(
                                       _wedding?.name ?? 'No wedding name available',
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                         fontSize: 24,
                                         fontWeight: FontWeight.bold,
                                       ),
@@ -234,7 +231,7 @@ class _WeddingInfoPageState extends State<WeddingInfoPage> {
                             child: const Text(
                               'Modifier le Mariage',
                               style: TextStyle(
-                                color: AppColors.textIcons,
+                                color: Colors.white,
                                 fontSize: 16,
                                 fontWeight: FontWeight.w600,
                               ),
@@ -249,7 +246,7 @@ class _WeddingInfoPageState extends State<WeddingInfoPage> {
                                     _isWeddingExists = false;
                                   });
                                 } catch (e) {
-                                  print('Erreur lors de la suppression du mariage: $e');
+                                  //print('Erreur lors de la suppression du mariage: $e');
                                 }
                               }
                             },
@@ -264,7 +261,7 @@ class _WeddingInfoPageState extends State<WeddingInfoPage> {
                             child: const Text(
                               'Supprimer ',
                               style: TextStyle(
-                                color: AppColors.textIcons,
+                                color: Colors.white,
                                 fontSize: 16,
                                 fontWeight: FontWeight.w600,
                               ),

@@ -7,7 +7,6 @@ class Wedding {
   final String phone;
   final String email;
   final int budget;
-  final int UserID;
   final String? createdAt;
   final String? updatedAt;
   final String? deletedAt;
@@ -21,7 +20,6 @@ class Wedding {
     required this.phone,
     required this.email,
     required this.budget,
-    required this.UserID,
     this.createdAt,
     this.updatedAt,
     this.deletedAt,
@@ -37,7 +35,6 @@ class Wedding {
       phone: json['Phone'] as String,
       email: json['Email'] as String,
       budget: json['Budget'] as int,
-      UserID: json['UserID'] as int,
       createdAt: json['CreatedAt'] as String?,
       updatedAt: json['UpdatedAt'] as String?,
       deletedAt: json['DeletedAt'] as String?,

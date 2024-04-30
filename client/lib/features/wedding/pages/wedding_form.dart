@@ -1,9 +1,7 @@
 import 'package:client/core/theme/app_colors.dart';
 import 'package:client/model/wedding.dart';
 import 'package:client/repository/auth_repository.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:client/dto/wedding_dto.dart';
 import 'package:client/repository/wedding_repository.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
@@ -64,7 +62,7 @@ class _WeddingFormState extends State<WeddingForm> {
         final createdWedding = await weddingRepository.createWedding(wedding);
         Navigator.pop(context, createdWedding);
       } catch (e) {
-        print('Erreur lors de la creation du mariage: $e');
+        //print('Erreur lors de la creation du mariage: $e');
       }
     } else {
       WeddingDto updatedWeddingDto = WeddingDto(
@@ -81,19 +79,13 @@ class _WeddingFormState extends State<WeddingForm> {
         final updatedWedding = await weddingRepository.updateWedding(updatedWeddingDto);
         Navigator.pop(context, updatedWedding);
       } catch (e) {
-        print('Erreur lors de la modification du mariage: $e');
+        //print('Erreur lors de la modification du mariage: $e');
       }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-
-    @override
-    void initState() {
-      super.initState();
-    }
-
     return Scaffold(
       appBar: AppBar(
         foregroundColor: Colors.black,
@@ -101,7 +93,7 @@ class _WeddingFormState extends State<WeddingForm> {
         elevation: 0,
         centerTitle: true,
 
-        title: Text('Créer Votre Mariage',
+        title: const Text('Créer Votre Mariage',
           style:TextStyle(
             fontSize: 20,
           ) ,),
@@ -112,10 +104,10 @@ class _WeddingFormState extends State<WeddingForm> {
           key: _formKey,
           child: ListView(
             children: [
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               TextFormField(
                 controller: _nameController,
-                decoration: InputDecoration(labelText: 'Nom'),
+                decoration: const InputDecoration(labelText: 'Nom'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Veuillez entrer le nom du mariage';
@@ -123,10 +115,10 @@ class _WeddingFormState extends State<WeddingForm> {
                   return null;
                 },
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               TextFormField(
                 controller: _descriptionController,
-                decoration: InputDecoration(labelText: 'Description'),
+                decoration: const InputDecoration(labelText: 'Description'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Veuillez entrer une description';
@@ -134,10 +126,10 @@ class _WeddingFormState extends State<WeddingForm> {
                   return null;
                 },
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               TextFormField(
                 controller: _addressController,
-                decoration: InputDecoration(labelText: 'Adresse'),
+                decoration: const InputDecoration(labelText: 'Adresse'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Veuillez entrer une Adresse';
@@ -145,15 +137,15 @@ class _WeddingFormState extends State<WeddingForm> {
                   return null;
                 },
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               TextFormField(
                 controller: _phoneController,
-                decoration: InputDecoration(labelText: 'Phone'),
+                decoration: const InputDecoration(labelText: 'Phone'),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               TextFormField(
                 controller: _emailController,
-                decoration: InputDecoration(labelText: 'Email'),
+                decoration: const InputDecoration(labelText: 'Email'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Veuillez entrer une Email';
@@ -161,10 +153,10 @@ class _WeddingFormState extends State<WeddingForm> {
                   return null;
                 },
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               TextFormField(
                 controller: _budgetController,
-                decoration: InputDecoration(labelText: 'Budget'),
+                decoration: const InputDecoration(labelText: 'Budget'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Veuillez entrer une Budget';
@@ -172,7 +164,7 @@ class _WeddingFormState extends State<WeddingForm> {
                   return null;
                 },
               ),
-              SizedBox(height: 100),
+              const SizedBox(height: 100),
               ElevatedButton(
                 onPressed: weddingAction,
                 style: ElevatedButton.styleFrom(
@@ -185,8 +177,8 @@ class _WeddingFormState extends State<WeddingForm> {
                 ),
                 child: Text(
                   widget.currentWedding != null ? 'Modifier' : 'Créer',
-                  style: TextStyle(
-                    color: AppColors.textIcons,
+                  style: const TextStyle(
+                    color: Colors.white,
                     fontSize: 20,
                     fontWeight: FontWeight.w600,
                   ),
