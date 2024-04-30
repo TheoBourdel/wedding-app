@@ -15,8 +15,5 @@ func WeddingRoutes(router *gin.Engine) {
 	router.GET("/wedding/:id", weddingControllerPort.GetWeddingByID)
 	router.DELETE("/wedding/:id", weddingControllerPort.DeleteWeddingByID)
 	router.PATCH("/wedding/:id", weddingControllerPort.UpdateWedding)
-
-
-
-
+	router.POST("/wedding/:id/organizer", weddingControllerPort.AddWeddingOrganizer)
 }

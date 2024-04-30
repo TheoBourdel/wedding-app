@@ -143,7 +143,7 @@ class _SignUpPageState extends State<SignUpPage> {
                         child: const Text(
                           'S\'inscrire',
                           style: TextStyle(
-                            color: AppColors.textIcons,
+                            color: Colors.white,
                             fontSize: 20,
                             fontWeight: FontWeight.w600,
                           ),

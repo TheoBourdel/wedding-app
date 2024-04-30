@@ -8,6 +8,16 @@ definitions:
         description: Valid is true if Time is not NULL
         type: boolean
     type: object
+  model.Role:
+    enum:
+    - admin
+    - provider
+    - marry
+    type: string
+    x-enum-varnames:
+    - Admin
+    - Provider
+    - Marry
   model.User:
     properties:
       createdAt:
@@ -24,8 +34,43 @@ definitions:
         type: string
       password:
         type: string
+      role:
+        $ref: '#/definitions/model.Role'
       updatedAt:
         type: string
+      weddings:
+        items:
+          $ref: '#/definitions/model.Wedding'
+        type: array
+    type: object
+  model.Wedding:
+    properties:
+      address:
+        type: string
+      budget:
+        type: number
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      description:
+        type: string
+      email:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      phone:
+        type: string
+      profileImage:
+        type: string
+      updatedAt:
+        type: string
+      user:
+        $ref: '#/definitions/model.User'
+      userID:
+        type: integer
     type: object
 host: localhost:8080
 info:
@@ -84,6 +129,14 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/model.User'
+        "400":
+          description: Invalid request
+          schema:
+            type: string
+        "500":
+          description: Server error
+          schema:
+            type: string
       summary: Sign up
       tags:
       - auth
@@ -104,4 +157,137 @@ paths:
       summary: Get all users
       tags:
       - users
+  /weddings:
+    get:
+      consumes:
+      - application/json
+      description: Get a list of all weddings
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Wedding'
+            type: array
+      summary: Get all weddings
+      tags:
+      - weddings
+    post:
+      consumes:
+      - application/json
+      description: Create a new wedding
+      parameters:
+      - description: Wedding object to be created
+        in: body
+        name: wedding
+        required: true
+        schema:
+          $ref: '#/definitions/model.Wedding'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/model.Wedding'
+        "400":
+          description: Invalid request
+          schema:
+            type: string
+      summary: Create a new wedding
+      tags:
+      - weddings
+  /weddings/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a wedding by its ID
+      parameters:
+      - description: Wedding ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Invalid wedding ID
+          schema:
+            type: string
+        "404":
+          description: Wedding not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Delete a wedding by ID
+      tags:
+      - weddings
+    get:
+      consumes:
+      - application/json
+      description: Get a wedding by its ID
+      parameters:
+      - description: Wedding ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Wedding'
+        "404":
+          description: Wedding not found
+          schema:
+            type: string
+      summary: Get a wedding by ID
+      tags:
+      - weddings
+    put:
+      consumes:
+      - application/json
+      description: Update a wedding by its ID
+      parameters:
+      - description: Wedding ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Updated wedding object
+        in: body
+        name: wedding
+        required: true
+        schema:
+          $ref: '#/definitions/model.Wedding'
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Invalid wedding ID or request body
+          schema:
+            type: string
+        "404":
+          description: Wedding not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Update a wedding by ID
+      tags:
+      - weddings
 swagger: "2.0"
