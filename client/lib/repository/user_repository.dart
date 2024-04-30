@@ -7,10 +7,11 @@ class UserRepository {
   final String _baseUrl = apiUrl;
 
   Future<User> getUser(int userId) async {
+
     Response res = await get(
       Uri.parse('$_baseUrl/user/$userId'),
     );
-  
+    
     if (res.statusCode == 200) {
       return User.fromJson(jsonDecode(res.body));
     } else {

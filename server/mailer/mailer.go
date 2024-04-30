@@ -2,7 +2,6 @@ package mailer
 
 import (
 	"bytes"
-	"fmt"
 	"html/template"
 	"net/smtp"
 	"os"
@@ -18,11 +17,11 @@ func (m *Mailer) SendMail(
 	subject string,
 	templatePath string,
 	data interface{},
-) {
+) (isSended bool) {
 	// Load the .env file
 	err := godotenv.Load(".env")
 	if err != nil {
-		panic("Error loading .env file: %s")
+		return false
 	}
 	// Get the mail password from the environment
 	password := os.Getenv("MAIL_PASSWORD")
@@ -31,7 +30,7 @@ func (m *Mailer) SendMail(
 	var body bytes.Buffer
 	template, err := template.ParseFiles(templatePath)
 	if err != nil {
-		fmt.Println("Error parsing template: ", err)
+		return false
 	}
 	template.Execute(&body, data)
 
@@ -56,6 +55,8 @@ func (m *Mailer) SendMail(
 		[]byte(message),
 	)
 	if err != nil {
-		fmt.Println("Error sending mail: ", err)
+		return false
 	}
+
+	return true
 }

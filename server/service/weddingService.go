@@ -27,11 +27,11 @@ func (ws *WeddingService) FindAll() []model.Wedding {
 
 func (ws *WeddingService) Create(wedding model.Wedding) (model.Wedding, dto.HttpErrorDto) {
 
-	_, err := ws.UserRepository.FindOneBy("id", strconv.Itoa(int(wedding.UserID)))
+	// _, err := ws.UserRepository.FindOneBy("id", strconv.Itoa(int(wedding.UserID)))
 
-	if err.Code != 0 {
-		return model.Wedding{}, err
-	}
+	// if err.Code != 0 {
+	// 	return model.Wedding{}, err
+	// }
 
 	createdWedding, err := ws.WeddingRepository.Create(wedding)
 	if err.Code != 0 {
@@ -105,7 +105,7 @@ func (ws *WeddingService) AddWeddingOrganizer(weddingID uint64, user model.User)
 	subject := "Invitation à collaborer à un mariage"
 
 	// Send an email to the user
-	ws.Mailer.SendMail(
+	isSended := ws.Mailer.SendMail(
 		organizer.Email,
 		subject,
 		"./mailer/html/addOrganizer.html",
@@ -114,6 +114,9 @@ func (ws *WeddingService) AddWeddingOrganizer(weddingID uint64, user model.User)
 			Email    string
 		}{Password: password, Email: organizer.Email},
 	)
+	if !isSended {
+		return model.User{}, dto.HttpErrorDto{Message: "Error while sending email", Code: 500}
+	}
 
 	return organizer, dto.HttpErrorDto{}
 

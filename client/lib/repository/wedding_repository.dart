@@ -5,12 +5,7 @@ import 'package:client/dto/organizer_dto.dart';
 import 'package:client/model/user.dart';
 import 'package:client/model/wedding.dart';
 import 'package:http/http.dart';
-import 'package:client/core/constant/constant.dart';
 import 'package:client/dto/wedding_dto.dart';
-import 'package:client/model/wedding.dart';
-import 'package:http/http.dart';
-import 'dart:convert';
-
 
 class WeddingRepository {
   final String _baseUrl = apiUrl;
@@ -41,24 +36,19 @@ class WeddingRepository {
       throw Exception(res.body);
     }
   }
-  
-}
 
   Future updateWedding(WeddingDto wedding) async {
-    final id = wedding?.id;
-    try{
-      Response res = await patch(
-        Uri.parse('$_baseUrl/wedding/$id'),
-        body: json.encode(wedding),
-      );
+    final id = wedding.id;
 
-      if (res.statusCode == 201) {
-        return Wedding.fromJson(jsonDecode(res.body));
-      } else {
-        throw Exception(res.body);
-      }
-    }catch(e){
-      print('wedding repo $e ');
+    final res = await patch(
+      Uri.parse('$_baseUrl/wedding/$id'),
+      body: json.encode(wedding),
+    );
+
+    if (res.statusCode == 201) {
+      return Wedding.fromJson(jsonDecode(res.body));
+    } else {
+       throw Exception(res.body);
     }
   }
 
@@ -85,7 +75,6 @@ class WeddingRepository {
     if (res.statusCode == 200) {
       Iterable decodedBody = jsonDecode(res.body);
       List<Wedding> weddings = decodedBody.map((weddingJson) => Wedding.fromJson(weddingJson)).toList();
-      print(weddings);
 
       return weddings;
     } else {
