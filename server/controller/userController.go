@@ -4,6 +4,8 @@ import (
 	"net/http"
 
 	_ "api/docs"
+	"api/dto"
+	"api/model"
 	"api/service"
 
 	"github.com/gin-gonic/gin"
@@ -26,4 +28,27 @@ func (uc *UserController) GetUsers(ctx *gin.Context) {
 
 	ctx.Header("Content-Type", "application/json")
 	ctx.JSON(http.StatusOK, users)
+}
+
+func (uc *UserController) CreateUser(ctx *gin.Context) {
+
+	var body model.User
+	if ctx.Bind(&body) != nil {
+		ctx.JSON(400, gin.H{"error": "Invalid request"})
+		return
+	}
+
+}
+
+func (uc *UserController) GetUser(ctx *gin.Context) {
+	id := ctx.Param("id")
+
+	user, error := uc.UserService.GetUser(id)
+	if error != (dto.HttpErrorDto{}) {
+		ctx.JSON(error.Code, error)
+		return
+	}
+
+	ctx.Header("Content-Type", "application/json")
+	ctx.JSON(http.StatusOK, user)
 }
