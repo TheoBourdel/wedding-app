@@ -134,6 +134,11 @@ const docTemplate = `{
                 }
             }
         },
+        "/wedding": {
+            "post": {
+                "responses": {}
+            }
+        },
         "/weddings": {
             "get": {
                 "description": "Get a list of all weddings",
@@ -155,44 +160,6 @@ const docTemplate = `{
                             "items": {
                                 "$ref": "#/definitions/model.Wedding"
                             }
-                        }
-                    }
-                }
-            },
-            "post": {
-                "description": "Create a new wedding",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "weddings"
-                ],
-                "summary": "Create a new wedding",
-                "parameters": [
-                    {
-                        "description": "Wedding object to be created",
-                        "name": "wedding",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/model.Wedding"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/model.Wedding"
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid request",
-                        "schema": {
-                            "type": "string"
                         }
                     }
                 }
@@ -391,12 +358,6 @@ const docTemplate = `{
                 },
                 "updatedAt": {
                     "type": "string"
-                },
-                "weddings": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/model.Wedding"
-                    }
                 }
             }
         },

@@ -38,10 +38,6 @@ definitions:
         $ref: '#/definitions/model.Role'
       updatedAt:
         type: string
-      weddings:
-        items:
-          $ref: '#/definitions/model.Wedding'
-        type: array
     type: object
   model.Wedding:
     properties:
@@ -157,6 +153,9 @@ paths:
       summary: Get all users
       tags:
       - users
+  /wedding:
+    post:
+      responses: {}
   /weddings:
     get:
       consumes:
@@ -172,31 +171,6 @@ paths:
               $ref: '#/definitions/model.Wedding'
             type: array
       summary: Get all weddings
-      tags:
-      - weddings
-    post:
-      consumes:
-      - application/json
-      description: Create a new wedding
-      parameters:
-      - description: Wedding object to be created
-        in: body
-        name: wedding
-        required: true
-        schema:
-          $ref: '#/definitions/model.Wedding'
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/model.Wedding'
-        "400":
-          description: Invalid request
-          schema:
-            type: string
-      summary: Create a new wedding
       tags:
       - weddings
   /weddings/{id}:
