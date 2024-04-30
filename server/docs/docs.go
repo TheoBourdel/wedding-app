@@ -134,6 +134,11 @@ const docTemplate = `{
                 }
             }
         },
+        "/wedding": {
+            "post": {
+                "responses": {}
+            }
+        },
         "/weddings": {
             "get": {
                 "description": "Get a list of all weddings",
@@ -397,6 +402,50 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/model.Wedding"
                     }
+                }
+            }
+        },
+        "model.Wedding": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "budget": {
+                    "type": "number"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "deletedAt": {
+                    "$ref": "#/definitions/gorm.DeletedAt"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "phone": {
+                    "type": "string"
+                },
+                "profileImage": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                },
+                "user": {
+                    "$ref": "#/definitions/model.User"
+                },
+                "userID": {
+                    "type": "integer"
                 }
             }
         },

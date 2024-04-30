@@ -72,6 +72,35 @@ definitions:
       userID:
         type: integer
     type: object
+  model.Wedding:
+    properties:
+      address:
+        type: string
+      budget:
+        type: number
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      description:
+        type: string
+      email:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      phone:
+        type: string
+      profileImage:
+        type: string
+      updatedAt:
+        type: string
+      user:
+        $ref: '#/definitions/model.User'
+      userID:
+        type: integer
+    type: object
 host: localhost:8080
 info:
   contact: {}

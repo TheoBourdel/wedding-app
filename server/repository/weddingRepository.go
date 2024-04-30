@@ -61,18 +61,35 @@ func (wr *WeddingRepository) Delete(id uint64) error {
 	return nil
 }
 
-func (wr *WeddingRepository) Update(id uint64, updatedWedding model.Wedding) error {
+func (wr *WeddingRepository) Update(id uint64, updatedWedding model.Wedding) (model.Wedding, error) {
 	existingWedding, err := wr.FindOneBy("id", strconv.FormatUint(id, 10))
 	if err.Code == 404 {
-		return fmt.Errorf("wedding not found with ID: %d", id)
+		return model.Wedding{}, fmt.Errorf("wedding not found with ID: %d", id)
 	} else if err.Code != 0 {
-		return fmt.Errorf("error fetching wedding: %s", err.Message)
+		return model.Wedding{}, fmt.Errorf("error fetching wedding: %s", err.Message)
 	}
 
 	result := config.DB.Model(&existingWedding).Updates(updatedWedding)
 	if result.Error != nil {
-		return result.Error
+		return model.Wedding{}, result.Error
 	}
 
-	return nil
+	// Renvoyer le mariage mis à jour après la mise à jour dans la base de données
+	return existingWedding, nil
+}
+
+func (wr *WeddingRepository) FindByUserID(userID uint64) (model.Wedding, dto.HttpErrorDto) {
+	var wedding model.Wedding
+
+	result := config.DB.Where("user_id = ?", userID).First(&wedding)
+
+	if result.RowsAffected == 0 {
+		return model.Wedding{}, dto.HttpErrorDto{Message: "Wedding not found for this user", Code: 404}
+	}
+
+	if result.Error != nil {
+		return model.Wedding{}, dto.HttpErrorDto{Message: "Error while fetching wedding", Code: 500}
+	}
+
+	return wedding, dto.HttpErrorDto{}
 }
