@@ -81,39 +81,6 @@ class _ServiceInfoPageState extends State<ServiceInfoPage> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      if (!_isServiceExists)
-                        ElevatedButton(
-                          onPressed: () {
-                            Navigator.push( context, MaterialPageRoute(
-                              builder: (context) => ServiceForm(),
-                            ),
-                            ).then((currentService) {
-                              print('je reviens de creer');
-                              if (currentService != null) {
-                                setState(() {
-                                  _service = currentService;
-                                  _isServiceExists = true;
-                                });
-                              }
-                            });
-                          },
-                          style: ElevatedButton.styleFrom(
-                            fixedSize: const Size(double.maxFinite, 60),
-                            backgroundColor: AppColors.pink,
-                            padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 10),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(15),
-                            ),
-                          ),
-                          child: const Text(
-                            'Nouvelle prestation',
-                            style: TextStyle(
-                              color: AppColors.textIcons,
-                              fontSize: 20,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
                       if (_isServiceExists)
                         Expanded(
                           child: Container(
@@ -232,7 +199,7 @@ class _ServiceInfoPageState extends State<ServiceInfoPage> {
                                 ),
                               ),
                               child: const Text(
-                                'Modifier le Mariage',
+                                'Modifier la prestation',
                                 style: TextStyle(
                                   color: AppColors.textIcons,
                                   fontSize: 16,
@@ -280,6 +247,24 @@ class _ServiceInfoPageState extends State<ServiceInfoPage> {
           ],
         ),
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => ServiceForm()),
+          ).then((currentService) {
+            if (currentService != null) {
+              setState(() {
+                _service = currentService;
+                _isServiceExists = true;
+              });
+            }
+          });
+        },
+        backgroundColor: AppColors.pink,
+        child: Icon(Icons.add, color: Colors.white),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
     );
   }
 }
