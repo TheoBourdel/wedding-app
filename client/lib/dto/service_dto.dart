@@ -49,7 +49,7 @@ class ServiceDto {
       'Mail': mail,
       'Price': price,
       'UserID': UserID,
-      'CategoryID': 1
+      'CategoryID': CategoryID,
     };
   }
 }

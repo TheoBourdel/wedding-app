@@ -106,7 +106,7 @@ class _ServiceInfoPageState extends State<ServiceInfoPage> {
                             ),
                           ),
                           child: const Text(
-                            'Créer un Mariage',
+                            'Nouvelle prestation',
                             style: TextStyle(
                               color: AppColors.textIcons,
                               fontSize: 20,

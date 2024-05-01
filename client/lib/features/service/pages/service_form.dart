@@ -1,11 +1,14 @@
 import 'package:client/core/theme/app_colors.dart';
 import 'package:client/model/service.dart';
+import 'package:client/model/category.dart';
 import 'package:client/repository/auth_repository.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:client/dto/service_dto.dart';
+import 'package:client/dto/category_dto.dart';
 import 'package:client/repository/service_repository.dart';
+import 'package:client/repository/category_repository.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -32,16 +35,29 @@ class _ServiceFormState extends State<ServiceForm> {
   late final TextEditingController _mailController;
   late final TextEditingController _priceController;
 
+  List<Category> categories = [];
+  int? selectedCategoryId;
+
   @override
   void initState() {
     super.initState();
-    // Initialize your TextEditingController's with the values from widget.service if it's not null
     _nameController = TextEditingController(text: widget.currentService?.name ?? '');
     _descriptionController = TextEditingController(text: widget.currentService?.description ?? '');
     _localisationController = TextEditingController(text: widget.currentService?.localisation ?? '');
     _phoneController = TextEditingController(text: widget.currentService?.phone ?? '');
     _mailController = TextEditingController(text: widget.currentService?.mail ?? '');
     _priceController = TextEditingController(text: widget.currentService?.price.toString() ?? '');
+    _loadCategories();
+  }
+
+  void _loadCategories() async {
+    categories = await CategoryRepository().getCategorys();
+    if (widget.currentService != null) {
+      selectedCategoryId = widget.currentService?.CategoryID;
+    } else if (categories.isNotEmpty) {
+      selectedCategoryId = categories.first.id;
+    }
+    setState(() {});
   }
 
   void serviceAction() async {
@@ -49,8 +65,7 @@ class _ServiceFormState extends State<ServiceForm> {
     String token = prefs.getString('token')!;
     Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
     int userId = decodedToken['sub'];
-    print("test userid");
-    print(userId);
+
     if(widget.currentService == null) {
       ServiceDto service = ServiceDto(
         name: _nameController.text,
@@ -61,7 +76,7 @@ class _ServiceFormState extends State<ServiceForm> {
         phone: _phoneController.text,
         price: int.tryParse(_priceController.text),
         UserID: userId,
-        CategoryID: 1,
+        CategoryID: selectedCategoryId,
       );
       try {
         final createdService = await serviceRepository.createService(service);
@@ -80,6 +95,7 @@ class _ServiceFormState extends State<ServiceForm> {
         phone: _mailController.text,
         price: int.tryParse(_priceController.text),
         UserID: userId,
+        CategoryID: selectedCategoryId,
       );
       try {
         final updatedService = await serviceRepository.updateService(updatedServiceDto);
@@ -172,6 +188,31 @@ class _ServiceFormState extends State<ServiceForm> {
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Veuillez entrer une prix d\'estimation';
+                  }
+                  return null;
+                },
+              ),
+              SizedBox(height: 20),
+              DropdownButtonFormField<int>(
+                value: selectedCategoryId,
+                decoration: InputDecoration(
+                  labelText: 'Catégorie',
+                  border: OutlineInputBorder(),
+                ),
+                onChanged: (int? newValue) {
+                  setState(() {
+                    selectedCategoryId = newValue;
+                  });
+                },
+                items: categories.map<DropdownMenuItem<int>>((Category category) {
+                  return DropdownMenuItem<int>(
+                    value: category.id,
+                    child: Text(category.name),
+                  );
+                }).toList(),
+                validator: (value) {
+                  if (value == null) {
+                    return 'Veuillez sélectionner une catégorie';
                   }
                   return null;
                 },
