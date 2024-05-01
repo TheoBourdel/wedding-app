@@ -11,6 +11,8 @@ import 'package:client/repository/service_repository.dart';
 import 'package:client/repository/category_repository.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
 
 
 
@@ -48,6 +50,18 @@ class _ServiceFormState extends State<ServiceForm> {
     _mailController = TextEditingController(text: widget.currentService?.mail ?? '');
     _priceController = TextEditingController(text: widget.currentService?.price.toString() ?? '');
     _loadCategories();
+  }
+
+  final ImagePicker _picker = ImagePicker();
+  List<XFile>? _imageFiles;
+
+  void pickImages() async {
+    final List<XFile>? selectedImages = await _picker.pickMultiImage();
+    if (selectedImages != null && selectedImages.isNotEmpty) {
+      setState(() {
+        _imageFiles = selectedImages;
+      });
+    }
   }
 
   void _loadCategories() async {
@@ -217,6 +231,18 @@ class _ServiceFormState extends State<ServiceForm> {
                   return null;
                 },
               ),
+              //SizedBox(height: 100),
+              ListTile(
+                leading: Icon(Icons.photo_library),
+                title: Text("Sélectionner des images"),
+                onTap: pickImages,
+              ),
+              if (_imageFiles != null)
+                Wrap(
+                  spacing: 8.0,
+                  runSpacing: 4.0,
+                  children: _imageFiles!.map((file) => Image.file(File(file.path), width: 100, height: 100)).toList(),
+                ),
               SizedBox(height: 100),
               ElevatedButton(
                 onPressed: serviceAction,
