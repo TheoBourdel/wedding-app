@@ -8,4 +8,5 @@ type ServiceControllerInterface interface {
 	GetServiceByID(c *gin.Context)
 	DeleteServiceByID(c *gin.Context)
 	UpdateService(c *gin.Context)
+	GetServiceImages(c *gin.Context)
 }

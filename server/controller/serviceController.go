@@ -8,6 +8,7 @@ import (
 	"strconv"
 	"github.com/gin-gonic/gin"
 	"strings"
+	"api/config"
 )
 
 type ServiceController struct {
@@ -15,6 +16,42 @@ type ServiceController struct {
     UserService service.UserService
 
 	
+}
+
+
+// GetServiceImages godoc
+// @Summary Get images for a service
+// @Description Get all images associated with a specific service
+// @Tags services
+// @Accept json
+// @Produce json
+// @Param id path int true "Service ID"
+// @Success 200 {object} []model.Image
+// @Failure 404 {string} string "Service not found"
+// @Router /services/{id}/images [get]
+func (wc *ServiceController) GetServiceImages(ctx *gin.Context) {
+    id, err := strconv.ParseUint(ctx.Param("id"), 10, 64)
+    if err != nil {
+        ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid service ID"})
+        return
+    }
+
+    service, err := wc.ServiceService.FindByID(id)
+    if err != nil { // Check if there is an error
+        ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
+        return
+    }
+
+    if service.ID == 0 {
+        ctx.JSON(http.StatusNotFound, gin.H{"error": "Service not found"})
+        return
+    }
+
+    if len(service.Images) == 0 {
+        config.DB.Model(&service).Association("Images").Find(&service.Images)
+    }
+
+    ctx.JSON(http.StatusOK, service.Images)
 }
 
 // GetServices godoc

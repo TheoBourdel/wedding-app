@@ -1,14 +1,14 @@
 class Service {
   final int? id;
-  final String name;
-  final String description;
+  final String? name;
+  final String? description;
   final String? profileImage;
-  final String localisation;
-  final String phone;
-  final String mail;
-  final int price;
-  final int UserID;
-  final int CategoryID;
+  final String? localisation;
+  final String? phone;
+  final String? mail;
+  final int? price;
+  final int? UserID;
+  final int? CategoryID;
   final String? createdAt;
   final String? updatedAt;
   final String? deletedAt;
@@ -32,15 +32,15 @@ class Service {
   factory Service.fromJson(Map<String, dynamic> json) {
     return Service(
       id: json['ID'] as int?,
-      name: json['Name'] as String,
-      description: json['Description'] as String,
+      name: json['Name'] as String?,
+      description: json['Description'] as String?,
       profileImage: json['ProfileImage'] as String?,
-      localisation: json['Localisation'] as String,
-      phone: json['Phone'] as String,
-      mail: json['Email'] as String,
-      price: json['Budget'] as int,
-      UserID: json['UserID'] as int,
-      CategoryID: json['CategoryID'] as int,
+      localisation: json['Localisation'] as String?,
+      phone: json['Phone'] as String?,
+      mail: json['Email'] as String?,
+      price: json['Price'] as int?,
+      UserID: json['UserID'] as int?,
+      CategoryID: json['CategoryID'] as int?,
       createdAt: json['CreatedAt'] as String?,
       updatedAt: json['UpdatedAt'] as String?,
       deletedAt: json['DeletedAt'] as String?,

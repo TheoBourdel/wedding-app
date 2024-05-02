@@ -14,6 +14,18 @@ type ServiceRepository struct {
     DB *gorm.DB
 }
 
+func (r *ServiceRepository) FindImagesByServiceID(serviceID uint64) ([]model.Image, dto.HttpErrorDto) {
+    var images []model.Image
+    result := r.DB.Where("service_id = ?", serviceID).Find(&images)
+    if result.Error != nil {
+        return nil, dto.HttpErrorDto{Message: "Error fetching images", Code: 500}
+    }
+    if result.RowsAffected == 0 {
+        return nil, dto.HttpErrorDto{Message: "No images found for this service", Code: 404}
+    }
+    return images, dto.HttpErrorDto{}
+}
+
 func (wr *ServiceRepository) FindAll() []model.Service {
     var services []model.Service
 

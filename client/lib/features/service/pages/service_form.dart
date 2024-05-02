@@ -8,6 +8,7 @@ import 'package:flutter/widgets.dart';
 import 'package:client/dto/service_dto.dart';
 import 'package:client/dto/category_dto.dart';
 import 'package:client/repository/service_repository.dart';
+import 'package:client/repository/image_repository.dart';
 import 'package:client/repository/category_repository.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -80,43 +81,35 @@ class _ServiceFormState extends State<ServiceForm> {
     Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
     int userId = decodedToken['sub'];
 
-    if(widget.currentService == null) {
-      ServiceDto service = ServiceDto(
-        name: _nameController.text,
-        description: _descriptionController.text,
-        localisation: _localisationController.text,
-        profileImage: "path/to/imgg",
-        mail: _mailController.text,
-        phone: _phoneController.text,
-        price: int.tryParse(_priceController.text),
-        UserID: userId,
-        CategoryID: selectedCategoryId,
-      );
-      try {
-        final createdService = await serviceRepository.createService(service);
-        Navigator.pop(context, createdService);
-      } catch (e) {
-        print('Erreur lors de la creation de la prestation: $e');
+    ServiceDto serviceDto = ServiceDto(
+      name: _nameController.text,
+      description: _descriptionController.text,
+      localisation: _localisationController.text,
+      profileImage: "/path/to/img",
+      mail: _mailController.text,
+      phone: _phoneController.text,
+      price: int.tryParse(_priceController.text),
+      UserID: userId,
+      CategoryID: selectedCategoryId,
+    );
+
+    try {
+
+      print("new test");
+
+      Service? response = widget.currentService == null ?
+      await serviceRepository.createService(serviceDto) :
+      await serviceRepository.updateService(serviceDto);
+
+      if (response != null && response.id != null && _imageFiles != null) {
+        print("passe ici");
+        await serviceRepository.uploadImages(response.id!, _imageFiles!); // Use ! to assert that id is not null
       }
-    } else {
-      ServiceDto updatedServiceDto = ServiceDto(
-        id: widget.currentService?.id,
-        name: _nameController.text,
-        description: _descriptionController.text,
-        localisation: _localisationController.text,
-        profileImage: "path/to/imgg",
-        mail: _phoneController.text,
-        phone: _mailController.text,
-        price: int.tryParse(_priceController.text),
-        UserID: userId,
-        CategoryID: selectedCategoryId,
-      );
-      try {
-        final updatedService = await serviceRepository.updateService(updatedServiceDto);
-        Navigator.pop(context, updatedService);
-      } catch (e) {
-        print('Erreur lors de la modification de la prestation: $e');
-      }
+
+
+      Navigator.pop(context, response);
+    } catch (e) {
+      print('Error processing service action: $e');
     }
   }
 

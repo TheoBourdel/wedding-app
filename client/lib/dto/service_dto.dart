@@ -17,25 +17,25 @@ class ServiceDto {
     required this.description,
     required this.localisation,
     required this.phone,
-    this.profileImage,
+    required this.profileImage,
     required this.mail,
     required this.price,
     required this.UserID,
-    this.CategoryID,
+    required this.CategoryID,
   });
 
   factory ServiceDto.fromJson(Map<String, dynamic> json) {
     return ServiceDto(
       id: json['ID'] as int?,
-      name: json['Name'] as String,
-      description: json['Description'] as String,
-      localisation: json['Address'] as String,
-      phone: json['Phone'] as String,
-      profileImage: json['Phone'] as String,
-      mail: json['Email'] as String,
-      price: json['Budget'] as int ,
-      UserID: json['UserID'] as int ,
-      CategoryID: json['CategoryID'] as int ,
+      name: json['Name'] as String?,
+      description: json['Description'] as String?,
+      localisation: json['Address'] as String?,
+      phone: json['Phone'] as String?,
+      profileImage: json['ProfileImage'] as String?,
+      mail: json['Mail'] as String?,
+      price: json['Price'] as int? ,
+      UserID: json['UserID'] as int? ,
+      CategoryID: json['CategoryID'] as int? ,
     );
   }
 

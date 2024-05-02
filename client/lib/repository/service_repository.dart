@@ -1,15 +1,18 @@
+import 'dart:convert';
+import 'dart:io';
 import 'package:client/core/constant/constant.dart';
 import 'package:client/dto/service_dto.dart';
+import 'package:client/dto/image_dto.dart';
 import 'package:client/model/service.dart';
+import 'package:client/model/image.dart';
+import 'package:client/repository/image_repository.dart';
 import 'package:http/http.dart';
-import 'dart:convert';
-
+import 'package:image_picker/image_picker.dart';
 
 class ServiceRepository {
   final String _baseUrl = apiUrl;
 
   Future createService(ServiceDto service) async {
-    print(service);
     final res = await post(
       Uri.parse('$_baseUrl/addservice'),
       body: json.encode(service),
@@ -81,6 +84,23 @@ class ServiceRepository {
       return;
     } else {
       throw Exception(res.body);
+    }
+  }
+
+  Future<void> uploadImages(int serviceId, List<XFile> images) async {
+    for (var image in images) {
+      var file = File(image.path);
+      var base64Image = base64Encode(file.readAsBytesSync());
+      print("object");
+      print(base64Image);
+      var imageDto = ImageDto(path: base64Image, ServiceID: serviceId);
+
+      try {
+        Image uploadedImage = await ImageRepository().createImage(imageDto);
+        print("Image enregistrée avec ID: ${uploadedImage.id}");
+      } catch (e) {
+        print("Erreur lors de l'enregistrement de l'image : $e");
+      }
     }
   }
 }
