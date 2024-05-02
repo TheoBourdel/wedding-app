@@ -47,6 +47,8 @@ dependencies:
   jwt_decoder: 
   # Local storage
   shared_preferences: ^2.2.3 
+  # Toast
+  toastification: ^1.2.1
 
 
   # State management
