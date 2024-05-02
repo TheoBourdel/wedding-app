@@ -12,7 +12,7 @@ class Wedding {
   final String? createdAt;
   final String? updatedAt;
   final String? deletedAt;
-  final List? organizers;
+  final List<User>? organizers;
 
   Wedding({
     this.id,
@@ -30,6 +30,9 @@ class Wedding {
   });
 
   factory Wedding.fromJson(Map<String, dynamic> json) {
+    var organizersJson = json['User'] as List<dynamic>?;
+    List<User>? organizers = organizersJson?.map((organizer) => User.fromJson(organizer as Map<String, dynamic>)).toList();
+
     return Wedding(
       id: json['ID'] as int?,
       name: json['Name'] as String,
@@ -42,7 +45,7 @@ class Wedding {
       createdAt: json['CreatedAt'] as String?,
       updatedAt: json['UpdatedAt'] as String?,
       deletedAt: json['DeletedAt'] as String?,
-      organizers: json['User']?.map((organizer) => User.fromJson(organizer)).toList(),
+      organizers: organizers,
     );
   }
 }

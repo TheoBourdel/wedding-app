@@ -24,13 +24,16 @@ class WeddingRepository {
     }
   }
   
-  Future createWedding(WeddingDto wedding) async {
+  Future createWedding(WeddingDto wedding, UserId) async {
+
+    final userId = UserId;
+
     final res = await post(
-      Uri.parse('$_baseUrl/wedding'),
-      body: json.encode(wedding),
+      Uri.parse('$_baseUrl/user/$userId/wedding'),
+      body: wedding.toJson(),
     );
 
-    if (res.statusCode == 201) {
+    if (res.statusCode == 200) {
       return Wedding.fromJson(jsonDecode(res.body));
     } else {
       throw Exception(res.body);
@@ -42,7 +45,7 @@ class WeddingRepository {
 
     final res = await patch(
       Uri.parse('$_baseUrl/wedding/$id'),
-      body: json.encode(wedding),
+      body: wedding.toJson(),
     );
 
     if (res.statusCode == 201) {
@@ -65,7 +68,6 @@ class WeddingRepository {
       throw Exception(res.body);
     }
   }
-
 
   Future<List<Wedding>> getWeddings() async {
     Response res = await get(

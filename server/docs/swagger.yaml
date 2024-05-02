@@ -8,6 +8,36 @@ definitions:
         description: Valid is true if Time is not NULL
         type: boolean
     type: object
+  model.Category:
+    properties:
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      id:
+        type: integer
+      name:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+  model.Image:
+    properties:
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      id:
+        type: integer
+      path:
+        type: string
+      service:
+        $ref: '#/definitions/model.Service'
+      serviceID:
+        type: integer
+      updatedAt:
+        type: string
+    type: object
   model.Role:
     enum:
     - admin
@@ -18,16 +48,49 @@ definitions:
     - Admin
     - Provider
     - Marry
-  model.User:
+  model.Service:
     properties:
+      category:
+        $ref: '#/definitions/model.Category'
+      categoryID:
+        type: integer
       createdAt:
         type: string
       deletedAt:
         $ref: '#/definitions/gorm.DeletedAt'
-      email:
+      description:
         type: string
-      firstname:
+      id:
+        type: integer
+      localisation:
         type: string
+      mail:
+        type: string
+      name:
+        type: string
+      phone:
+        type: string
+      price:
+        type: number
+      profileImage:
+        type: string
+      updatedAt:
+        type: string
+      user:
+        $ref: '#/definitions/model.User'
+      userID:
+        type: integer
+    type: object
+  model.User:
+    properties:
+      Email:
+        type: string
+      Firstname:
+        type: string
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
       id:
         type: integer
       lastname:
@@ -68,38 +131,9 @@ definitions:
       updatedAt:
         type: string
       user:
-        $ref: '#/definitions/model.User'
-      userID:
-        type: integer
-    type: object
-  model.Wedding:
-    properties:
-      address:
-        type: string
-      budget:
-        type: number
-      createdAt:
-        type: string
-      deletedAt:
-        $ref: '#/definitions/gorm.DeletedAt'
-      description:
-        type: string
-      email:
-        type: string
-      id:
-        type: integer
-      name:
-        type: string
-      phone:
-        type: string
-      profileImage:
-        type: string
-      updatedAt:
-        type: string
-      user:
-        $ref: '#/definitions/model.User'
-      userID:
-        type: integer
+        items:
+          $ref: '#/definitions/model.User'
+        type: array
     type: object
 host: localhost:8080
 info:
@@ -108,6 +142,336 @@ info:
   title: Challenge API
   version: "1.0"
 paths:
+  /categorys:
+    get:
+      consumes:
+      - application/json
+      description: Get a list of all categorys
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Category'
+            type: array
+      summary: Get all categorys
+      tags:
+      - categorys
+    post:
+      responses: {}
+  /categorys/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a category by its ID
+      parameters:
+      - description: Category ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Invalid category ID
+          schema:
+            type: string
+        "404":
+          description: Category not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Delete a category by ID
+      tags:
+      - categorys
+    get:
+      consumes:
+      - application/json
+      description: Get a category by its ID
+      parameters:
+      - description: Category ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Category'
+        "404":
+          description: Category not found
+          schema:
+            type: string
+      summary: Get a category by ID
+      tags:
+      - categorys
+    put:
+      consumes:
+      - application/json
+      description: Update a category by its ID
+      parameters:
+      - description: Category ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Updated category object
+        in: body
+        name: category
+        required: true
+        schema:
+          $ref: '#/definitions/model.Category'
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Invalid category ID or request body
+          schema:
+            type: string
+        "404":
+          description: Category not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Update a category by ID
+      tags:
+      - categorys
+  /images:
+    get:
+      consumes:
+      - application/json
+      description: Get a list of all images
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Image'
+            type: array
+      summary: Get all images
+      tags:
+      - images
+    post:
+      responses: {}
+  /images/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a image by its ID
+      parameters:
+      - description: Image ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Invalid image ID
+          schema:
+            type: string
+        "404":
+          description: Image not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Delete a image by ID
+      tags:
+      - images
+    get:
+      consumes:
+      - application/json
+      description: Get a image by its ID
+      parameters:
+      - description: Image ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Image'
+        "404":
+          description: Image not found
+          schema:
+            type: string
+      summary: Get a image by ID
+      tags:
+      - images
+    put:
+      consumes:
+      - application/json
+      description: Update a image by its ID
+      parameters:
+      - description: Image ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Updated image object
+        in: body
+        name: image
+        required: true
+        schema:
+          $ref: '#/definitions/model.Image'
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Invalid image ID or request body
+          schema:
+            type: string
+        "404":
+          description: Image not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Update a image by ID
+      tags:
+      - images
+  /services:
+    get:
+      consumes:
+      - application/json
+      description: Get a list of all services
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Service'
+            type: array
+      summary: Get all services
+      tags:
+      - services
+    post:
+      responses: {}
+  /services/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a service by its ID
+      parameters:
+      - description: Service ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Invalid service ID
+          schema:
+            type: string
+        "404":
+          description: Service not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Delete a service by ID
+      tags:
+      - services
+    get:
+      consumes:
+      - application/json
+      description: Get a service by its ID
+      parameters:
+      - description: Service ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Service'
+        "404":
+          description: Service not found
+          schema:
+            type: string
+      summary: Get a service by ID
+      tags:
+      - services
+    put:
+      consumes:
+      - application/json
+      description: Update a service by its ID
+      parameters:
+      - description: Service ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Updated service object
+        in: body
+        name: service
+        required: true
+        schema:
+          $ref: '#/definitions/model.Service'
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Invalid service ID or request body
+          schema:
+            type: string
+        "404":
+          description: Service not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Update a service by ID
+      tags:
+      - services
   /signin:
     post:
       consumes:
@@ -186,23 +550,7 @@ paths:
       summary: Get all users
       tags:
       - users
-  /weddings:
-    get:
-      consumes:
-      - application/json
-      description: Get a list of all weddings
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/model.Wedding'
-            type: array
-      summary: Get all weddings
-      tags:
-      - weddings
+  /wedding:
     post:
       consumes:
       - application/json
@@ -226,6 +574,23 @@ paths:
           schema:
             type: string
       summary: Create a new wedding
+      tags:
+      - weddings
+  /weddings:
+    get:
+      consumes:
+      - application/json
+      description: Get a list of all weddings
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Wedding'
+            type: array
+      summary: Get all weddings
       tags:
       - weddings
   /weddings/{id}:
@@ -317,6 +682,62 @@ paths:
           schema:
             type: string
       summary: Update a wedding by ID
+      tags:
+      - weddings
+  /weddings/{id}/organizer:
+    post:
+      consumes:
+      - application/json
+      description: Add a wedding organizer
+      parameters:
+      - description: Wedding ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: User object to be added as an organizer
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/model.User'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.User'
+        "400":
+          description: Invalid request
+          schema:
+            type: string
+      summary: Add a wedding organizer
+      tags:
+      - weddings
+  /weddings/user/{userId}:
+    get:
+      consumes:
+      - application/json
+      description: Get a wedding by its User ID
+      parameters:
+      - description: User ID
+        in: path
+        name: userId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Wedding'
+        "404":
+          description: Wedding not found
+          schema:
+            type: string
+      summary: Get a wedding by User ID
       tags:
       - weddings
 swagger: "2.0"
