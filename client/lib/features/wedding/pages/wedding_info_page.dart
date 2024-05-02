@@ -26,7 +26,6 @@ class _WeddingInfoPageState extends State<WeddingInfoPage> {
     getWedding();
   }
 
-
   @override
   void deleteWedding(Wedding wedding) async {
     if (wedding.id != null) {
@@ -62,8 +61,6 @@ class _WeddingInfoPageState extends State<WeddingInfoPage> {
     } catch (e) {
       print('Erreur lors de la récupération du wedding !!: $e');
     }
-
-
   }
 
   @override
@@ -86,8 +83,9 @@ class _WeddingInfoPageState extends State<WeddingInfoPage> {
                               builder: (context) => const WeddingForm(),
                             ),
                           ).then((currentWedding) {
-                            //print('je reviens de creer');
                           if (currentWedding != null) {
+
+                            print(currentWedding);
                               setState(() {
                                 _wedding = currentWedding;
                                 _isWeddingExists = true;

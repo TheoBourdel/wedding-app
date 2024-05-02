@@ -33,6 +33,25 @@ func (ur *UserRepository) Create(user model.User) (model.User, dto.HttpErrorDto)
 	return user, dto.HttpErrorDto{}
 }
 
+// func (wr *UserRepository) Update(id uint64, updatedUser model.User) (model.User, error) {
+
+// 	existingUser, err := wr.FindOneBy("id", strconv.FormatUint(id, 10))
+
+// 	if err.Code == 404 {
+
+// 		return model.User{}, fmt.Errorf("wedding not found with ID: %d", id)
+// 	} else if err.Code != 0 {
+// 		return model.User{}, fmt.Errorf("error fetching wedding: %s", err.Message)
+// 	}
+
+// 	result := config.DB.Model(&existingUser).Updates(updatedUser)
+// 	if result.Error != nil {
+// 		return model.User{}, result.Error
+// 	}
+
+// 	return existingUser, nil
+// }
+
 func (ur *UserRepository) FindOneBy(field string, value string) (model.User, dto.HttpErrorDto) {
 	var user model.User
 
