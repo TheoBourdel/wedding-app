@@ -9,3 +9,7 @@
 
 # Mettre à jour le swagger
 `docker compose exec server swag init --parseDependency --parseInternal`
+
+# Création d'une nouvelle entité
+`cd wedding-app`
+`./new_entity.sh "Entité" "Champ1:type" "Champ2:type" "Champ3:type"`
