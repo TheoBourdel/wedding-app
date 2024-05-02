@@ -73,6 +73,10 @@ class _OrganizersPageState extends State<OrganizersPage> {
         setState(() {
           organizers.add(user);
         });
+
+        emailController.clear();
+        nameController.clear();
+
         toastification.show(
           context: context,
           type: ToastificationType.success,
