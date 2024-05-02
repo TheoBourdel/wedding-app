@@ -25,6 +25,7 @@ func (wr *WeddingRepository) FindAll() []model.Wedding {
 }
 
 func (wr *WeddingRepository) Create(wedding model.Wedding) (model.Wedding, dto.HttpErrorDto) {
+
 	result := config.DB.Create(&wedding)
 	if result.Error != nil {
 		return model.Wedding{}, dto.HttpErrorDto{Message: "Error while creating wedding", Code: 500}
@@ -81,7 +82,8 @@ func (wr *WeddingRepository) Update(id uint64, updatedWedding model.Wedding) (mo
 func (wr *WeddingRepository) FindByUserID(userID uint64) (model.Wedding, dto.HttpErrorDto) {
 	var wedding model.Wedding
 
-	result := config.DB.Where("user_id = ?", userID).First(&wedding)
+	// Recherchez le mariage associé à l'utilisateur via la relation many-to-many
+	result := config.DB.Preload("User", "id = ?", userID).First(&wedding)
 
 	if result.RowsAffected == 0 {
 		return model.Wedding{}, dto.HttpErrorDto{Message: "Wedding not found for this user", Code: 404}

@@ -4,6 +4,7 @@ import (
 	_ "api/docs"
 	"api/model"
 	"api/service"
+	"fmt"
 	"net/http"
 	"strconv"
 	"strings"
@@ -53,18 +54,28 @@ func (wc *WeddingController) GetWeddings(ctx *gin.Context) {
 // @Router /wedding [post]
 func (wc *WeddingController) CreateWedding(ctx *gin.Context) {
 	var wedding model.Wedding
-	if err := ctx.ShouldBindJSON(&wedding); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+
+	if ctx.Bind(&wedding) != nil {
+		ctx.JSON(400, gin.H{"error": "Invalid request"})
 		return
 	}
 
-	createdWedding, err := wc.WeddingService.Create(wedding)
-	if err.Code != 0 {
-		ctx.JSON(err.Code, gin.H{"message": err.Message})
+	id, err := strconv.ParseUint(ctx.Param("id"), 10, 64)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid wedding ID"})
 		return
 	}
 
-	ctx.JSON(http.StatusCreated, createdWedding)
+	wedding, error := wc.WeddingService.Create(id, wedding)
+
+	fmt.Print(wedding.Address)
+
+	if error != (dto.HttpErrorDto{}) {
+		ctx.JSON(error.Code, gin.H{"error": error.Message})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, wedding)
 }
 
 // GetWeddingByID godoc
@@ -142,8 +153,16 @@ func (wc *WeddingController) UpdateWedding(ctx *gin.Context) {
 	}
 
 	var updatedWedding model.Wedding
-	if err := ctx.ShouldBindJSON(&updatedWedding); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body"})
+
+	fmt.Println("JSON envoyé par le front-end:", updatedWedding, id)
+
+	// if err := ctx.ShouldBindJSON(&updatedWedding); err != nil {
+	// 	ctx.JSON(http.StatusBadRequest, gin.H{"Invalid request body ": updatedWedding})
+	// 	return
+	// }
+
+	if ctx.Bind(&updatedWedding) != nil {
+		ctx.JSON(400, gin.H{"error": "Invalid request"})
 		return
 	}
 
@@ -171,7 +190,7 @@ func (wc *WeddingController) UpdateWedding(ctx *gin.Context) {
 // @Failure 404 {string} string "Wedding not found"
 // @Router /weddings/user/{userId} [get]
 func (wc *WeddingController) GetWeddingByUserID(ctx *gin.Context) {
-	userID, err := strconv.ParseUint(ctx.Param("id"), 10, 64)
+	userID, err := strconv.ParseUint(ctx.Param("id"), 10, 64) // Corrected parameter name
 
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
