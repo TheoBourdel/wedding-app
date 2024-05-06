@@ -9,11 +9,14 @@ import 'package:client/dto/service_dto.dart';
 import 'package:client/dto/category_dto.dart';
 import 'package:client/repository/service_repository.dart';
 import 'package:client/repository/image_repository.dart';
+import 'package:client/dto/image_dto.dart';
 import 'package:client/repository/category_repository.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart' as path;
 
 
 
@@ -40,6 +43,9 @@ class _ServiceFormState extends State<ServiceForm> {
 
   List<Category> categories = [];
   int? selectedCategoryId;
+  final ImagePicker _picker = ImagePicker();
+  List<XFile>? _imageFiles;
+  List<String>? _imagePaths;
 
   @override
   void initState() {
@@ -53,15 +59,35 @@ class _ServiceFormState extends State<ServiceForm> {
     _loadCategories();
   }
 
-  final ImagePicker _picker = ImagePicker();
-  List<XFile>? _imageFiles;
-
   void pickImages() async {
-    final List<XFile>? selectedImages = await _picker.pickMultiImage();
-    if (selectedImages != null && selectedImages.isNotEmpty) {
-      setState(() {
-        _imageFiles = selectedImages;
-      });
+    try {
+      final List<XFile>? selectedImages = await _picker.pickMultiImage();
+      if (selectedImages != null && selectedImages.isNotEmpty) {
+        List<String> filePaths = [];
+        final directory = await getApplicationDocumentsDirectory();
+        final imageDirectory = Directory('${directory.path}/images');
+
+        if (!await imageDirectory.exists()) {
+          await imageDirectory.create(recursive: true);
+        }
+
+        for (var image in selectedImages) {
+          final imagePath = path.join(imageDirectory.path, path.basename(image.path));
+          final File newImage = await File(image.path).copy(imagePath);
+          filePaths.add(newImage.path);
+        }
+
+        setState(() {
+          _imageFiles = selectedImages;
+          _imagePaths = filePaths;
+        });
+
+        print("Images selected: ${_imagePaths}");
+      } else {
+        print("No images selected or permission denied.");
+      }
+    } catch (e) {
+      print("Failed to pick images: $e");
     }
   }
 
@@ -94,22 +120,63 @@ class _ServiceFormState extends State<ServiceForm> {
     );
 
     try {
-
-      print("new test");
-
       Service? response = widget.currentService == null ?
       await serviceRepository.createService(serviceDto) :
       await serviceRepository.updateService(serviceDto);
 
-      if (response != null && response.id != null && _imageFiles != null) {
-        print("passe ici");
-        await serviceRepository.uploadImages(response.id!, _imageFiles!); // Use ! to assert that id is not null
+      print("hors if");
+      if (response != null && response.id != null) {
+        print("dans if");
+        if (_imageFiles != null && _imageFiles!.isNotEmpty) {
+          await serviceRepository.uploadImages(response.id!, _imageFiles!);
+        }
+        Navigator.pop(context, response);
+      } else {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text('Erreur'),
+              content: Text('Impossible de créer ou de mettre à jour le service.'),
+              actions: <Widget>[
+                TextButton(
+                  child: Text('Fermer'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            );
+          },
+        );
       }
-
-
-      Navigator.pop(context, response);
     } catch (e) {
+      //remplacer par alerte de l'appli
       print('Error processing service action: $e');
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Erreur de réseau'),
+            content: Text(
+                'Une erreur est survenue lors de la communication avec le serveur. Veuillez réessayer.'),
+            actions: <Widget>[
+              TextButton(
+                child: Text('Fermer'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
+    }
+  }
+
+  Future<void> saveImagePaths(List<String> imagePaths, int serviceId) async {
+    for (String path in imagePaths) {
+      await ImageRepository().createImage(ImageDto(path: path, ServiceID: serviceId));
     }
   }
 
