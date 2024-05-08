@@ -80,3 +80,11 @@ func (ws *ServiceService) Update(id uint64, updatedService model.Service) error 
 
     return nil
 }
+
+func (ws *ServiceService) FindByUserID(userID uint64) ([]model.Service, error) {
+    services, err := ws.ServiceRepository.FindByUserID(userID)
+    if err.Code != 0 {
+        return nil, fmt.Errorf("error fetching services: %s", err.Message)
+    }
+    return services, nil
+}

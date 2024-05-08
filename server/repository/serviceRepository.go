@@ -87,3 +87,16 @@ func (wr *ServiceRepository) Update(id uint64, updatedService model.Service) err
 
     return nil
 }
+
+func (wr *ServiceRepository) FindByUserID(userID uint64) ([]model.Service, dto.HttpErrorDto) {
+    var services []model.Service
+    result := config.DB.Where("user_id = ?", userID).Find(&services)
+
+    if result.Error != nil {
+        return nil, dto.HttpErrorDto{Message: "Error fetching services", Code: 500}
+    }
+    if result.RowsAffected == 0 {
+        return nil, dto.HttpErrorDto{Message: "No services found for this user", Code: 404}
+    }
+    return services, dto.HttpErrorDto{}
+}

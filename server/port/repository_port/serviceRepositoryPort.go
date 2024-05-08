@@ -12,4 +12,5 @@ type ServiceRepositoryInterface interface {
 	Delete(id uint64) error
 	Update(id uint64, service model.Service) error
 	FindImagesByServiceID(serviceID uint64) ([]model.Image, dto.HttpErrorDto)
+	FindByUserID(userID uint64) ([]model.Service, error)
 }

@@ -194,3 +194,34 @@ func (wc *ServiceController) UpdateService(ctx *gin.Context) {
     // If the update was successful, return No Content
     ctx.Status(http.StatusNoContent)
 }
+
+// GetServicesByUserID godoc
+// @Summary Get services by user ID
+// @Description Get all services associated with a specific user ID
+// @Tags services
+// @Accept json
+// @Produce json
+// @Param userId path int true "User ID"
+// @Success 200 {object} []model.Service
+// @Failure 404 {string} string "No services found for this user"
+// @Router /user/{userId}/services [get]
+func (wc *ServiceController) GetServicesByUserID(ctx *gin.Context) {
+    userId, err := strconv.ParseUint(ctx.Param("userId"), 10, 64)
+    if err != nil {
+        ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
+        return
+    }
+
+    services, err := wc.ServiceService.FindByUserID(userId)
+    if err != nil { // Handle the error appropriately, maybe log it
+        ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
+        return
+    }
+
+    if len(services) == 0 {
+        ctx.JSON(http.StatusNotFound, gin.H{"error": "No services found for this user"})
+        return
+    }
+
+    ctx.JSON(http.StatusOK, services)
+}
