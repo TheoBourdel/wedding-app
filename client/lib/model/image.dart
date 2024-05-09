@@ -18,7 +18,7 @@ class Image {
   factory Image.fromJson(Map<String, dynamic> json) {
     return Image(
       id: json['ID'] as int?,
-      path: json['Name'] as String?,
+      path: json['Path'] as String?,
       ServiceID: json['ServiceID'] as int?,
       createdAt: json['CreatedAt'] as String?,
       updatedAt: json['UpdatedAt'] as String?,

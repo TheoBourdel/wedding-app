@@ -18,7 +18,7 @@ class _ProviderServicesScreenState extends State<ProviderServicesScreen> with Ti
   void initState() {
     super.initState();
     animationController = AnimationController(duration: const Duration(milliseconds: 1000), vsync: this);
-    futureServiceList = ServiceRepository().getServicesByUserID(1); // Remplacez 5 par l'ID utilisateur approprié
+    futureServiceList = ServiceRepository().getServicesByUserID(1);
   }
 
   @override
@@ -35,22 +35,13 @@ class _ProviderServicesScreenState extends State<ProviderServicesScreen> with Ti
         body: NestedScrollView(
           controller: _scrollController,
           headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-            return <Widget>[
-              SliverPersistentHeader(
-                pinned: true,
-                floating: true,
-                delegate: ContestTabHeader(
-                  getFilterBarUI(0), // Valeur par défaut, mise à jour ci-dessous
-                ),
-              ),
-            ];
+            return <Widget>[];
           },
           body: FutureBuilder<List<Service>>(
             future: futureServiceList,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.done) {
                 if (snapshot.hasData) {
-                  // Utilisez les services chargés
                   return Column(
                     children: [
                       getFilterBarUI(snapshot.data!.length),
@@ -61,7 +52,6 @@ class _ProviderServicesScreenState extends State<ProviderServicesScreen> with Ti
                   return Center(child: Text("Erreur : ${snapshot.error}"));
                 }
               }
-              // Par défaut, montrez un spinner de chargement
               return Center(child: CircularProgressIndicator());
             },
           ),
