@@ -44,7 +44,6 @@ class ServiceRepository {
     }
   }
 
-
   Future<Service> getUserService(int userId) async {
     Response res = await get(
       Uri.parse('$_baseUrl/userservice/$userId'),
@@ -56,6 +55,24 @@ class ServiceRepository {
       return service;
     } else {
       throw Exception(res.body);
+    }
+  }
+
+
+  Future<List<Service>> getServicesByUserID(int userId) async {
+    final res = await http.get(
+      Uri.parse('$_baseUrl/user/$userId/services'),
+    );
+
+    print('Status Code: ${res.statusCode}');
+    print('Response Body: ${res.body}');
+
+    if (res.statusCode == 200) {
+      final List<dynamic> decodedBody = jsonDecode(res.body);
+      final List<Service> services = decodedBody.map((serviceJson) => Service.fromJson(serviceJson)).toList();
+      return services;
+    } else {
+      throw Exception('Failed to load services: ${res.body}');
     }
   }
 
