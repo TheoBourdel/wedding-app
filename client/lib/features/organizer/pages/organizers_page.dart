@@ -2,13 +2,13 @@ import 'package:client/core/theme/app_colors.dart';
 import 'package:client/dto/organizer_dto.dart';
 import 'package:client/features/organizer/widgets/organizer_list.dart';
 import 'package:client/model/user.dart';
-import 'package:client/model/wedding.dart';
 import 'package:client/repository/user_repository.dart';
 import 'package:client/repository/wedding_repository.dart';
 import 'package:client/shared/widget/button.dart';
 import 'package:flutter/material.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:toastification/toastification.dart';
 
 class OrganizersPage extends StatefulWidget {
   const OrganizersPage({super.key});
@@ -47,7 +47,7 @@ class _OrganizersPageState extends State<OrganizersPage> {
         organizers = user.weddings?.first.organizers as List;
       });
     } catch (e) {
-      // Show error toast
+      //
     }
   }
 
@@ -74,8 +74,32 @@ class _OrganizersPageState extends State<OrganizersPage> {
           organizers.add(user);
         });
 
+        emailController.clear();
+        nameController.clear();
+
+        toastification.show(
+          context: context,
+          type: ToastificationType.success,
+          style: ToastificationStyle.flat,
+          title: const Text("Succès"),
+          description: const Text("Organisateur invité avec succès"),
+          alignment: Alignment.topRight,
+          autoCloseDuration: const Duration(seconds: 4),
+          borderRadius: BorderRadius.circular(12.0),
+          boxShadow: lowModeShadow,
+	      );
       } catch (e) {
-        // Show error toast
+        toastification.show(
+          context: context,
+          type: ToastificationType.error,
+          style: ToastificationStyle.flat,
+          title: const Text("Erreur"),
+          description: const Text("Erreur lors de l'invitation de l'organisateur"),
+          alignment: Alignment.topRight,
+          autoCloseDuration: const Duration(seconds: 4),
+          borderRadius: BorderRadius.circular(12.0),
+          boxShadow: lowModeShadow,
+	      );
       }
     }
   }

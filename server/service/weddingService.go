@@ -1,6 +1,7 @@
 package service
 
 import (
+	"api/config"
 	"api/dto"
 	"api/mailer"
 	"api/model"
@@ -8,6 +9,8 @@ import (
 	"api/utils"
 	"fmt"
 	"strconv"
+
+	"gorm.io/gorm"
 
 	"golang.org/x/crypto/bcrypt"
 )
@@ -17,6 +20,7 @@ type WeddingService struct {
 	UserRepository    repository.UserRepository
 	PasswordGenerator utils.PasswordGenerator
 	Mailer            mailer.Mailer
+	DB                *gorm.DB
 }
 
 func (ws *WeddingService) FindAll() []model.Wedding {
@@ -25,17 +29,28 @@ func (ws *WeddingService) FindAll() []model.Wedding {
 	return weddings
 }
 
-func (ws *WeddingService) Create(wedding model.Wedding) (model.Wedding, dto.HttpErrorDto) {
-
-	// _, err := ws.UserRepository.FindOneBy("id", strconv.Itoa(int(wedding.UserID)))
-
-	// if err.Code != 0 {
-	// 	return model.Wedding{}, err
-	// }
-
-	createdWedding, err := ws.WeddingRepository.Create(wedding)
-	if err.Code != 0 {
+func (ws *WeddingService) Create(userId uint64, wedding model.Wedding) (model.Wedding, dto.HttpErrorDto) {
+	user, err := ws.UserRepository.FindOneBy("id", strconv.FormatUint(userId, 10))
+	if err != (dto.HttpErrorDto{}) {
 		return model.Wedding{}, err
+	}
+
+	if user.ID == 0 {
+		return model.Wedding{}, dto.HttpErrorDto{Code: 404, Message: "User not found"}
+	}
+
+	createdWedding, error := ws.WeddingRepository.Create(wedding)
+	user.Weddings = append(user.Weddings, wedding)
+	createdWedding.User = append(createdWedding.User, user)
+
+	saveErr := config.DB.Save(&user).Error
+	if saveErr != nil {
+		fmt.Printf("Failed to save user: %v", saveErr)
+		return model.Wedding{}, dto.HttpErrorDto{Code: 500, Message: "Failed to save user"}
+	}
+
+	if error != (dto.HttpErrorDto{}) {
+		return model.Wedding{}, dto.HttpErrorDto{Code: 404, Message: "Problem creating wedding"}
 	}
 
 	return createdWedding, dto.HttpErrorDto{}
@@ -119,7 +134,6 @@ func (ws *WeddingService) AddWeddingOrganizer(weddingID uint64, user model.User)
 	}
 
 	return organizer, dto.HttpErrorDto{}
-
 }
 
 func (ws *WeddingService) Update(id uint64, updatedWedding model.Wedding) (model.Wedding, error) {
@@ -139,11 +153,13 @@ func (ws *WeddingService) Update(id uint64, updatedWedding model.Wedding) (model
 }
 
 func (ws *WeddingService) FindByUserID(userID uint64) (model.Wedding, error) {
-	// Utilisez l'ID de l'utilisateur pour rechercher le mariage associé
 	wedding, err := ws.WeddingRepository.FindByUserID(userID)
 
 	if err.Code != 0 {
-		return model.Wedding{}, fmt.Errorf("wedding not found: %s", err.Message)
+		if err.Code == 404 {
+			return model.Wedding{}, fmt.Errorf("wedding not found for user ID %d", userID)
+		}
+		return model.Wedding{}, fmt.Errorf("error finding wedding for user ID %d: %s", userID, err.Message)
 	}
 
 	return wedding, nil

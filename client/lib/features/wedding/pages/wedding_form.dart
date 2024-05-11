@@ -47,39 +47,40 @@ class _WeddingFormState extends State<WeddingForm> {
     String token = prefs.getString('token')!;
     Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
     int userId = decodedToken['sub'];
+    int? budget = int.tryParse(_budgetController.text);
 
     if(widget.currentWedding == null) {
-      WeddingDto wedding = WeddingDto(
-        name: _nameController.text,
-        description: _descriptionController.text,
-        address: _addressController.text,
-        email: _phoneController.text,
-        phone: _emailController.text,
-        budget: int.tryParse(_budgetController.text),
-        UserID: userId,
-      );
-      try {
-        final createdWedding = await weddingRepository.createWedding(wedding);
-        Navigator.pop(context, createdWedding);
-      } catch (e) {
-        //print('Erreur lors de la creation du mariage: $e');
-      }
+        WeddingDto wedding = WeddingDto(
+          name: _nameController.text,
+          description: _descriptionController.text,
+          address: _addressController.text,
+          phone: _phoneController.text,
+          email: _emailController.text ,
+          budget: budget != null ? budget : 0,
+        );
+        try {
+          final createdWedding = await weddingRepository.createWedding(wedding, userId);
+         Navigator.pop(context, createdWedding);
+        } catch (e) {
+          print('Erreur lors de la creation du mariage: $e');
+        }
+
     } else {
       WeddingDto updatedWeddingDto = WeddingDto(
         id: widget.currentWedding?.id,
         name: _nameController.text,
         description: _descriptionController.text,
         address: _addressController.text,
-        email: _phoneController.text,
-        phone: _emailController.text,
-        budget: int.tryParse(_budgetController.text),
-        UserID: userId,
+        phone: _phoneController.text,
+        email: _emailController.text,
+        budget: budget != null ? budget : 0,
+
       );
       try {
         final updatedWedding = await weddingRepository.updateWedding(updatedWeddingDto);
         Navigator.pop(context, updatedWedding);
       } catch (e) {
-        //print('Erreur lors de la modification du mariage: $e');
+        print('Erreur lors de la modification du mariage: $e');
       }
     }
   }
