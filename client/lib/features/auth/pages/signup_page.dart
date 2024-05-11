@@ -4,6 +4,7 @@ import 'package:client/features/auth/widgets/auth_field.dart';
 import 'package:client/repository/auth_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:client/features/auth/pages/signin_page.dart';
+import 'package:flutter_gen/gen_l10n/app_localization.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -86,8 +87,8 @@ class _SignUpPageState extends State<SignUpPage> {
                     child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Text(
-                        'S\'inscrire',
+                       Text(
+                        AppLocalizations.of(context)!.register,
                         style: TextStyle(
                           color: AppColors.pink,
                           fontSize: 30,
@@ -141,8 +142,8 @@ class _SignUpPageState extends State<SignUpPage> {
                             borderRadius: BorderRadius.circular(15),
                           ),
                         ),
-                        child: const Text(
-                          'S\'inscrire',
+                        child: Text(
+                          AppLocalizations.of(context)!.register,
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 20,
