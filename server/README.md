@@ -12,3 +12,4 @@
 
 # Mettre à jour le swagger
 `docker compose exec server swag init --parseDependency --parseInternal`
+ 
