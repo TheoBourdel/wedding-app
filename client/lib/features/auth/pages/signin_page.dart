@@ -5,7 +5,11 @@ import 'package:client/features/auth/widgets/auth_field.dart';
 import 'package:client/repository/auth_repository.dart';
 import 'package:client/shared/widget/navigation_menu.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_i18n/flutter_i18n.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_gen/gen_l10n/app_localization.dart';
+import '../../../main.dart';
 
 class SignInPage extends StatefulWidget {
   const SignInPage({super.key});
@@ -51,6 +55,32 @@ class _SignInPageState extends State<SignInPage> {
     }
   }
 
+  Widget _buildLanguagePicker(BuildContext context) {
+    final localeProvider = Provider.of<LocaleProvider>(context, listen: false);
+
+    return DropdownButton<String>(
+      value: localeProvider.currentLocale.languageCode,
+      icon: Icon(Icons.language, color: Colors.white),
+      onChanged: (String? newValue) {
+        if (newValue != null) {
+          localeProvider.setLocale(newValue);
+          SharedPreferences.getInstance().then((prefs) {
+            prefs.setString('locale_code', newValue);
+          });
+        }
+      },
+      items: <String>['en', 'fr'].map<DropdownMenuItem<String>>((String value) {
+        return DropdownMenuItem<String>(
+          value: value,
+          child: Text(
+              value.toUpperCase(),
+              style: TextStyle(color: Colors.black)
+          ),
+        );
+      }).toList(),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -73,7 +103,8 @@ class _SignInPageState extends State<SignInPage> {
                     style: TextStyle(
                     fontSize: 30,
                     color: AppColors.pink,
-                    fontWeight: FontWeight.bold))
+                    fontWeight: FontWeight.bold)),
+                    _buildLanguagePicker(context),
                 ],
               )),
             ),
@@ -87,8 +118,8 @@ class _SignInPageState extends State<SignInPage> {
                     child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Text(
-                        'Se connecter',
+                       Text(
+                        AppLocalizations.of(context)!.register,
                         style: TextStyle(
                           color: AppColors.pink,
                           fontSize: 30,
@@ -114,8 +145,8 @@ class _SignInPageState extends State<SignInPage> {
                             borderRadius: BorderRadius.circular(15),
                           ),
                         ),
-                        child: const Text(
-                          'Se connecter',
+                        child: Text(
+                          AppLocalizations.of(context)!.register,
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 20,
