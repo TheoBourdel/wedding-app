@@ -21,7 +21,7 @@ version: 1.0.0+1
 environment:
   sdk: '>=3.3.1 <4.0.0'
 
-# Dependencies specify other packages that your package needs in order to work.
+# Dependencies specify olther packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
 # consider running `flutter pub upgrade --major-versions`. Alternatively,
 # dependencies can be manually updated by changing the version numbers below to
@@ -30,7 +30,10 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-
+  flutter_localizations:
+    sdk: flutter
+  flutter_i18n: ^0.35.1
+  provider: ^6.0.0
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -100,11 +103,13 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+  generate: true
 
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/images/
     - assets/icons/
+    - assets/lang/
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 
