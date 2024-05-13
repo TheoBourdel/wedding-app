@@ -67,7 +67,7 @@ class _SignInPageState extends State<SignInPage> {
 
     return DropdownButton<String>(
       value: localeProvider.currentLocale.languageCode,
-      icon: Icon(Icons.language, color: Colors.white),
+      icon: const Icon(Icons.language, color: Colors.white),
       onChanged: (String? newValue) {
         if (newValue != null) {
           localeProvider.setLocale(newValue);
@@ -80,8 +80,8 @@ class _SignInPageState extends State<SignInPage> {
         return DropdownMenuItem<String>(
           value: value,
           child: Text(
-              value.toUpperCase(),
-              style: TextStyle(color: Colors.black)
+            value.toUpperCase(),
+            style: const TextStyle(color: Colors.black)
           ),
         );
       }).toList(),
@@ -126,8 +126,8 @@ class _SignInPageState extends State<SignInPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                        Text(
-                        AppLocalizations.of(context)!.register,
-                        style: TextStyle(
+                        AppLocalizations.of(context)!.login,
+                        style: const TextStyle(
                           color: AppColors.pink,
                           fontSize: 30,
                           fontWeight: FontWeight.bold,
@@ -153,8 +153,8 @@ class _SignInPageState extends State<SignInPage> {
                           ),
                         ),
                         child: Text(
-                          AppLocalizations.of(context)!.register,
-                          style: TextStyle(
+                          AppLocalizations.of(context)!.login,
+                          style: const TextStyle(
                             color: Colors.white,
                             fontSize: 20,
                             fontWeight: FontWeight.w600,

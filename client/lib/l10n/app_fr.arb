@@ -1,4 +1,5 @@
 {
    "language": "Francais",
-   "register": "s'inscrire"
+   "login": "Se connecter",
+   "register": "S'inscrire"
 }

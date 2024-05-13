@@ -35,9 +35,7 @@ class WeddingPage extends StatelessWidget {
             } else {
               return WeddingInfoPage(wedding: state.wedding.first);
             }
-            
           }
-
           return const SizedBox();
         },
       )
