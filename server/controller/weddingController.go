@@ -2,6 +2,7 @@ package controller
 
 import (
 	_ "api/docs"
+	"api/dto"
 	"api/model"
 	"api/service"
 	"fmt"
@@ -50,11 +51,9 @@ func (wc *WeddingController) GetWeddings(ctx *gin.Context) {
 // @Param wedding body model.Wedding true "Wedding object to be created"
 // @Success 201 {object} model.Wedding
 // @Failure 400 {string} string "Invalid request"
-
 // @Router /wedding [post]
 func (wc *WeddingController) CreateWedding(ctx *gin.Context) {
 	var wedding model.Wedding
-
 	if ctx.Bind(&wedding) != nil {
 		ctx.JSON(400, gin.H{"error": "Invalid request"})
 		return
@@ -67,8 +66,6 @@ func (wc *WeddingController) CreateWedding(ctx *gin.Context) {
 	}
 
 	wedding, error := wc.WeddingService.Create(id, wedding)
-
-	fmt.Print(wedding.Address)
 
 	if error != (dto.HttpErrorDto{}) {
 		ctx.JSON(error.Code, gin.H{"error": error.Message})
@@ -154,8 +151,6 @@ func (wc *WeddingController) UpdateWedding(ctx *gin.Context) {
 
 	var updatedWedding model.Wedding
 
-	fmt.Println("JSON envoyé par le front-end:", updatedWedding, id)
-
 	// if err := ctx.ShouldBindJSON(&updatedWedding); err != nil {
 	// 	ctx.JSON(http.StatusBadRequest, gin.H{"Invalid request body ": updatedWedding})
 	// 	return
@@ -175,8 +170,43 @@ func (wc *WeddingController) UpdateWedding(ctx *gin.Context) {
 		}
 		return
 	}
-
+	fmt.Println("WeddingController", &wedding.Budget)
+	// If the update was successful, return No Content
 	ctx.JSON(http.StatusCreated, wedding)
+}
+
+// addWeddingOrganizer godoc
+// @Summary Add a wedding organizer
+// @Description Add a wedding organizer
+// @Tags weddings
+// @Accept json
+// @Produce json
+// @Param id path int true "Wedding ID"
+// @Param user body model.User true "User object to be added as an organizer"
+// @Success 200 {object} model.User
+// @Failure 400 {string} string "Invalid request"
+// @Router /weddings/{id}/organizer [post]
+func (wc *WeddingController) AddWeddingOrganizer(ctx *gin.Context) {
+
+	var body model.User
+	if ctx.Bind(&body) != nil {
+		ctx.JSON(400, gin.H{"error": "Invalid request"})
+		return
+	}
+
+	id, err := strconv.ParseUint(ctx.Param("id"), 10, 64)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid wedding ID"})
+		return
+	}
+
+	organizer, error := wc.WeddingService.AddWeddingOrganizer(id, body)
+	if error != (dto.HttpErrorDto{}) {
+		ctx.JSON(error.Code, gin.H{"error": error.Message})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, organizer)
 }
 
 // GetWeddingByUserID godoc
@@ -191,7 +221,7 @@ func (wc *WeddingController) UpdateWedding(ctx *gin.Context) {
 // @Router /weddings/user/{userId} [get]
 func (wc *WeddingController) GetWeddingByUserID(ctx *gin.Context) {
 	userID, err := strconv.ParseUint(ctx.Param("id"), 10, 64) // Corrected parameter name
-
+	fmt.Println("UserID: ", userID)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
 		return
@@ -205,5 +235,4 @@ func (wc *WeddingController) GetWeddingByUserID(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, wedding)
-
 }

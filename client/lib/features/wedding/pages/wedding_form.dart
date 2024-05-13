@@ -1,194 +1,140 @@
-import 'package:client/core/theme/app_colors.dart';
-import 'package:client/model/wedding.dart';
-import 'package:client/repository/auth_repository.dart';
-import 'package:flutter/material.dart';
 import 'package:client/dto/wedding_dto.dart';
-import 'package:client/repository/wedding_repository.dart';
-import 'package:jwt_decoder/jwt_decoder.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:client/features/wedding/bloc/wedding_bloc.dart';
+import 'package:client/model/wedding.dart';
+import 'package:client/provider/user_provider.dart';
+import 'package:client/shared/bottom_navigation.dart';
+import 'package:client/shared/widget/button.dart';
+import 'package:client/shared/widget/input.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-
-
-class WeddingForm extends StatefulWidget {
-  final Wedding? currentWedding;
-
-  const WeddingForm({Key? key, this.currentWedding});
+class WeddingFormPage extends StatefulWidget {
+  final String title;
+  final Wedding? wedding;
+  const WeddingFormPage({super.key, required this.title, this.wedding});
 
   @override
-  State<WeddingForm> createState() => _WeddingFormState();
+  State<WeddingFormPage> createState() => _WeddingFormPageState();
 }
 
-class _WeddingFormState extends State<WeddingForm> {
+class _WeddingFormPageState extends State<WeddingFormPage> {
   final _formKey = GlobalKey<FormState>();
-  final weddingRepository = WeddingRepository();
-  final AuthRepository authRepository = AuthRepository();
-
-  late final TextEditingController _nameController;
-  late final TextEditingController _descriptionController;
-  late final TextEditingController _addressController;
-  late final TextEditingController _phoneController;
-  late final TextEditingController _emailController;
-  late final TextEditingController _budgetController;
+  final _nameController = TextEditingController();
+  final _descriptionController = TextEditingController();
+  final _addressController = TextEditingController();
+  final _phoneController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _budgetController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    // Initialize your TextEditingController's with the values from widget.wedding if it's not null
-    _nameController = TextEditingController(text: widget.currentWedding?.name ?? '');
-    _descriptionController = TextEditingController(text: widget.currentWedding?.description ?? '');
-    _addressController = TextEditingController(text: widget.currentWedding?.address ?? '');
-    _phoneController = TextEditingController(text: widget.currentWedding?.phone ?? '');
-    _emailController = TextEditingController(text: widget.currentWedding?.email ?? '');
-    _budgetController = TextEditingController(text: widget.currentWedding?.budget.toString() ?? '');
+    if (widget.wedding != null) {
+      _nameController.text = widget.wedding!.name;
+      _descriptionController.text = widget.wedding!.description;
+      _addressController.text = widget.wedding!.address;
+      _phoneController.text = widget.wedding!.phone;
+      _emailController.text = widget.wedding!.email;
+      _budgetController.text = widget.wedding!.budget.toString();
+    }
+
   }
 
-  void weddingAction() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String token = prefs.getString('token')!;
-    Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
-    int userId = decodedToken['sub'];
-    int? budget = int.tryParse(_budgetController.text);
-
-    if(widget.currentWedding == null) {
-        WeddingDto wedding = WeddingDto(
-          name: _nameController.text,
-          description: _descriptionController.text,
-          address: _addressController.text,
-          phone: _phoneController.text,
-          email: _emailController.text ,
-          budget: budget != null ? budget : 0,
-        );
-        try {
-          final createdWedding = await weddingRepository.createWedding(wedding, userId);
-         Navigator.pop(context, createdWedding);
-        } catch (e) {
-          print('Erreur lors de la creation du mariage: $e');
-        }
-
-    } else {
-      WeddingDto updatedWeddingDto = WeddingDto(
-        id: widget.currentWedding?.id,
-        name: _nameController.text,
-        description: _descriptionController.text,
-        address: _addressController.text,
-        phone: _phoneController.text,
-        email: _emailController.text,
-        budget: budget != null ? budget : 0,
-
-      );
-      try {
-        final updatedWedding = await weddingRepository.updateWedding(updatedWeddingDto);
-        Navigator.pop(context, updatedWedding);
-      } catch (e) {
-        print('Erreur lors de la modification du mariage: $e');
-      }
-    }
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _descriptionController.dispose();
+    _addressController.dispose();
+    _phoneController.dispose();
+    _emailController.dispose();
+    _budgetController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        foregroundColor: Colors.black,
-        backgroundColor: Colors.white,
-        elevation: 0,
-        centerTitle: true,
-
-        title: const Text('Créer Votre Mariage',
-          style:TextStyle(
-            fontSize: 20,
-          ) ,),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Form(
-          key: _formKey,
-          child: ListView(
-            children: [
-              const SizedBox(height: 20),
-              TextFormField(
-                controller: _nameController,
-                decoration: const InputDecoration(labelText: 'Nom'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Veuillez entrer le nom du mariage';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 20),
-              TextFormField(
-                controller: _descriptionController,
-                decoration: const InputDecoration(labelText: 'Description'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Veuillez entrer une description';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 20),
-              TextFormField(
-                controller: _addressController,
-                decoration: const InputDecoration(labelText: 'Adresse'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Veuillez entrer une Adresse';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 20),
-              TextFormField(
-                controller: _phoneController,
-                decoration: const InputDecoration(labelText: 'Phone'),
-              ),
-              const SizedBox(height: 20),
-              TextFormField(
-                controller: _emailController,
-                decoration: const InputDecoration(labelText: 'Email'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Veuillez entrer une Email';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 20),
-              TextFormField(
-                controller: _budgetController,
-                decoration: const InputDecoration(labelText: 'Budget'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Veuillez entrer une Budget';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 100),
-              ElevatedButton(
-                onPressed: weddingAction,
-                style: ElevatedButton.styleFrom(
-                  fixedSize: const Size(double.maxFinite, 60),
-                  backgroundColor: AppColors.pink,
-                  padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 10),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                ),
-                child: Text(
-                  widget.currentWedding != null ? 'Modifier' : 'Créer',
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-            ],
-          ),
+    return BlocProvider(
+      create: (context) => WeddingBloc(),
+      child: BlocBuilder<WeddingBloc, WeddingState>(
+        builder: (context, state) {
+          
+          return Scaffold(
+        appBar: AppBar(
+          title: Text("${widget.title} un mariage"),
         ),
-      ),
+        body: Padding(
+          padding: const EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 40),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                children: [
+                  Expanded(
+                    flex: 5,
+                    child: Column(
+                      children: [
+                        Input(hintText: "Nom", controller: _nameController),
+                        const SizedBox(height: 20),
+                        Input(hintText: "Description", controller: _descriptionController),
+                        const SizedBox(height: 20),
+                        Input(hintText: "Adresse", controller: _addressController),
+                        const SizedBox(height: 20),
+                        Input(hintText: "Téléphone", controller: _phoneController),
+                        const SizedBox(height: 20),
+                        Input(hintText: "Email", controller: _emailController),
+                        const SizedBox(height: 20),
+                        Input(hintText: "Budget", controller: _budgetController),
+                      ],
+                    )
+                  ),
+                  Expanded(
+                    flex: 1,
+                    child: Container(
+                      alignment: Alignment.bottomCenter,
+                      child: Button(
+                        text: widget.title,
+                        onPressed: () {
+                          if (widget.title == "Créer") {
+                            context.read<WeddingBloc>().add(
+                              WeddingCreated(
+                                weddingDto: WeddingDto(
+                                  name: _nameController.text,
+                                  description: _descriptionController.text,
+                                  address: _addressController.text,
+                                  phone: _phoneController.text,
+                                  email: _emailController.text,
+                                  budget: int.parse(_budgetController.text),
+                                ),
+                                userId: context.read<UserProvider>().getUserId()
+                              )
+                            );
+                          } else if (widget.title == "Modifier") {
+                            context.read<WeddingBloc>().add(
+                              WeddingUpdated(
+                                weddingDto: WeddingDto(
+                                  id: widget.wedding!.id,
+                                  name: _nameController.text,
+                                  description: _descriptionController.text,
+                                  address: _addressController.text,
+                                  phone: _phoneController.text,
+                                  email: _emailController.text,
+                                  budget: int.parse(_budgetController.text),
+                                )
+                              )
+                            );
+                          }
+                          Navigator.pop(context);
+                        },
+                      )
+                    )
+                  ),
+                ],
+              ),
+              )
+          )
+        );
+        },
+      )
     );
   }
 }
+

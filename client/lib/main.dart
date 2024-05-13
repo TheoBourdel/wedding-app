@@ -1,5 +1,9 @@
 import 'package:client/core/theme/theme.dart';
 import 'package:client/features/auth/pages/signin_page.dart';
+import 'package:client/features/wedding/pages/wedding_form.dart';
+import 'package:client/features/wedding/pages/wedding_page.dart';
+import 'package:client/provider/user_provider.dart';
+import 'package:client/shared/bottom_navigation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -41,17 +45,26 @@ class MyApp extends StatelessWidget {
     if (token == null) {
       page = const SignInPage();
     } else {
-      page = NavigationMenu(token: token);
+      page = BottomNavigation();
+      //page = NavigationMenu(token: token);
     }
     final localeProvider = Provider.of<LocaleProvider>(context);
-    return MaterialApp(
-      locale: localeProvider.currentLocale,
-      debugShowCheckedModeBanner: false,
-      localizationsDelegates: AppLocalizations.localizationsDelegates,
-      supportedLocales: AppLocalizations.supportedLocales,
-      title: 'Weddy',
-      theme: AppTheme.lightTheme,
-      home: page,
+
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (context) => UserProvider()
+        ),
+      ],
+      child: MaterialApp(
+        locale: localeProvider.currentLocale,
+        debugShowCheckedModeBanner: false,
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        title: 'Weddy',
+        theme: AppTheme.lightTheme,
+        home: page,
+      )
     );
   }
 }

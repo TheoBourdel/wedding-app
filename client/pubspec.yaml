@@ -56,10 +56,11 @@ dependencies:
   shared_preferences: ^2.2.3 
   # Toast
   toastification: ^1.2.1
-
-
   # State management
   flutter_bloc: ^8.1.2
+  # Provider
+  provider: ^6.1.2
+
 
   # Comparing dart objects
   equatable: ^2.0.5

@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:client/core/constant/constant.dart';
+import 'package:client/core/error/failure.dart';
 import 'package:client/dto/organizer_dto.dart';
 import 'package:client/model/user.dart';
 import 'package:client/model/wedding.dart';
@@ -23,49 +24,61 @@ class WeddingRepository {
       throw Exception(res.body);
     }
   }
+
+  static Future<List<Wedding>> getUserWedding(int userId) async {
+    try {
+      final response = await get(Uri.parse('$apiUrl/userwedding/$userId'));
+      
+      if (response.statusCode < 200 || response.statusCode >= 400) {
+        throw ApiException(
+          message: 'Erreur lors de la récupérations des informations', 
+          statusCode: response.statusCode
+        );
+      }
+      final decodedBody = jsonDecode(response.body);
+      return decodedBody.map<Wedding>((wedding) => Wedding.fromJson(wedding)).toList();
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
   
-  Future createWedding(WeddingDto wedding, UserId) async {
+  static Future createWedding(WeddingDto wedding, int userId) async {
+    try {
+      final response = await post(
+        Uri.parse('$apiUrl/user/$userId/wedding'),
+        body: wedding.toJson(),
+      );
 
-    final userId = UserId;
-
-    final res = await post(
-      Uri.parse('$_baseUrl/user/$userId/wedding'),
-      body: wedding.toJson(),
-    );
-
-    if (res.statusCode == 200) {
-      return Wedding.fromJson(jsonDecode(res.body));
-    } else {
-      throw Exception(res.body);
+      if (response.statusCode < 200 || response.statusCode >= 400) {
+        throw ApiException(
+          message: 'Erreur lors de la création du mariage', 
+          statusCode: response.statusCode
+        );
+      }
+      return Wedding.fromJson(jsonDecode(response.body));
+    } catch (e) {
+      throw Exception(e);
     }
   }
 
-  Future updateWedding(WeddingDto wedding) async {
-    final id = wedding.id;
+  static Future updateWedding(WeddingDto wedding) async {
+    try {
+      final response = await patch(
+        Uri.parse('$apiUrl/wedding/${wedding.id}'),
+        body: wedding.toJson(),
+      );
 
-    final res = await patch(
-      Uri.parse('$_baseUrl/wedding/$id'),
-      body: wedding.toJson(),
-    );
-
-    if (res.statusCode == 201) {
-      return Wedding.fromJson(jsonDecode(res.body));
-    } else {
-       throw Exception(res.body);
-    }
-  }
-
-  Future<Wedding> getUserWedding(int userId) async {
-    Response res = await get(
-      Uri.parse('$_baseUrl/userwedding/$userId'),
-    );
-
-    if (res.statusCode == 200) {
-      Map<String, dynamic> decodedBody = jsonDecode(res.body);
-      Wedding wedding = Wedding.fromJson(decodedBody);
-      return wedding;
-    } else {
-      throw Exception(res.body);
+      if (response.statusCode < 200 || response.statusCode >= 400) {
+        throw ApiException(
+          message: 'Erreur lors de la mise à jour du mariage', 
+          statusCode: response.statusCode
+        );
+      }
+      print("repository");
+      print(Wedding.fromJson(jsonDecode(response.body)).budget);
+      return Wedding.fromJson(jsonDecode(response.body));
+    } catch (e) {
+      throw Exception(e);
     }
   }
 

@@ -1,5 +1,6 @@
-class Failure {
+class ApiException extends Error {
   final String message;
+  int? statusCode;
 
-  Failure([this.message = 'An unexpected error occurred.']);
+  ApiException({required this.message, this.statusCode});
 }
