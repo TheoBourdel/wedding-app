@@ -84,8 +84,6 @@ class _WeddingInfoPageState extends State<WeddingInfoPage> {
                             ),
                           ).then((currentWedding) {
                           if (currentWedding != null) {
-
-                            print(currentWedding);
                               setState(() {
                                 _wedding = currentWedding;
                                 _isWeddingExists = true;
