@@ -2,6 +2,7 @@ package ws
 
 import (
 	"api/config"
+	"api/dto"
 	"api/model"
 
 	"api/repository"
@@ -17,12 +18,17 @@ import (
 )
 
 type Handler struct {
-	hub *Hub
+	hub         *Hub
+	RoomService *service.RoomService
+	UserService service.UserService
 }
 
 func NewHandler(h *Hub) *Handler {
+	roomRepo := repository.NewRoomRepository(config.DB)
+	roomService := service.NewRoomService(roomRepo)
 	return &Handler{
-		hub: h,
+		hub:         h,
+		RoomService: roomService,
 	}
 }
 
@@ -37,18 +43,22 @@ func (h *Handler) CreateRoom(c *gin.Context) {
 		RoomName: req.Name,
 	}
 
-	if result := config.DB.Create(&room); result.Error != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
-		return
+	if h.RoomService == nil {
+		log.Fatal("RoomService is not initialized")
 	}
 
-	h.hub.Rooms[fmt.Sprintf("%d", room.ID)] = &Room{
-		ID:           fmt.Sprintf("%d", room.ID),
-		Name:         room.RoomName,
+	createdRoom, err := h.RoomService.CreateRoom(room)
+	if err.Code != 0 {
+		log.Printf("Failed to save message: %s", err.Message)
+	}
+
+	h.hub.Rooms[fmt.Sprintf("%d", createdRoom.ID)] = &Room{
+		ID:           fmt.Sprintf("%d", createdRoom.ID),
+		Name:         createdRoom.RoomName,
 		SessionChats: make(map[string]*SessionChat),
 	}
 
-	c.JSON(http.StatusOK, room)
+	c.JSON(http.StatusOK, createdRoom)
 }
 
 var upgrader = websocket.Upgrader{
@@ -69,30 +79,36 @@ func (h *Handler) JoinRoom(c *gin.Context) {
 	roomID := c.Param("roomId")
 	userID := c.Query("userId")
 
-	var user model.User
-	if result := config.DB.First(&user, "id = ?", userID); result.Error != nil {
+	user, errDto := h.UserService.GetUser(userID)
+	if errDto != (dto.HttpErrorDto{}) {
 		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
 		return
 	}
-	var room model.Room
-	if result := config.DB.First(&room, "id = ?", roomID); result.Error != nil {
+
+	room, errDto := h.RoomService.GetRoom(roomID)
+	if errDto != (dto.HttpErrorDto{}) {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Room not found"})
 		return
 	}
+
 	participant := model.RoomParticipant{
 		RoomID: room.ID,
 		UserID: user.ID,
 	}
-	if result := config.DB.Create(&participant); result.Error != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
+
+	cp, errDto := h.RoomService.CreateParticipant(participant)
+	if errDto != (dto.HttpErrorDto{}) {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Room not found"})
 		return
+	} else {
+		fmt.Println(cp)
 	}
+
 	roomIDStr := strconv.FormatUint(uint64(room.ID), 10)
 	userIDStr := strconv.FormatUint(uint64(user.ID), 10)
 
 	msgRepository := repository.NewMessageRepository(config.DB)
 	msgService := service.NewMessageService(msgRepository)
-	// msgService := service.NewMessageService(config.DB)
 
 	cl := &SessionChat{
 		Conn:       conn,
@@ -107,8 +123,6 @@ func (h *Handler) JoinRoom(c *gin.Context) {
 		RoomID:  uint(room.ID),
 	}
 
-	log.Println(m.Content)
-
 	h.hub.Register <- cl
 	h.hub.Broadcast <- m
 
@@ -119,13 +133,12 @@ func (h *Handler) JoinRoom(c *gin.Context) {
 }
 
 func (h *Handler) GetRooms(c *gin.Context) {
-	var roomsInDB []model.Room
-	if result := config.DB.Find(&roomsInDB); result.Error != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to load rooms from database"})
+	allRooms, err := h.RoomService.GetAllRooms()
+	if err != (dto.HttpErrorDto{}) {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Failed to load rooms from database"})
 		return
 	}
-
-	for _, room := range roomsInDB {
+	for _, room := range allRooms {
 		if _, exists := h.hub.Rooms[fmt.Sprintf("%d", room.ID)]; !exists {
 			h.hub.Rooms[fmt.Sprintf("%d", room.ID)] = &Room{
 				ID:           fmt.Sprintf("%d", room.ID),
@@ -134,7 +147,6 @@ func (h *Handler) GetRooms(c *gin.Context) {
 			}
 		}
 	}
-
 	rooms := make([]model.RoomRes, 0)
 	for _, r := range h.hub.Rooms {
 		rooms = append(rooms, model.RoomRes{
@@ -147,24 +159,45 @@ func (h *Handler) GetRooms(c *gin.Context) {
 }
 
 func (h *Handler) GetSessionChats(c *gin.Context) {
-	var SessionChats []model.SessionChatRes
-	roomId := c.Param("roomId")
-
-	if _, ok := h.hub.Rooms[roomId]; !ok {
-		SessionChats = make([]model.SessionChatRes, 0)
-		c.JSON(http.StatusOK, SessionChats)
+	roomId, err := strconv.ParseUint(c.Param("roomId"), 10, 32)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid room ID"})
+		return
 	}
 
-	for _, c := range h.hub.Rooms[roomId].SessionChats {
-		SessionChats = append(SessionChats, model.SessionChatRes{
-			ID:     c.ID,
-			UserId: c.UserID,
+	participants, cerr := h.RoomService.GetParticipantsByRoomID(uint(roomId))
+
+	if cerr != (dto.HttpErrorDto{}) {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Failed to load participants from database"})
+		return
+	}
+
+	sessionChats := make([]model.User, 0)
+	for _, participant := range participants {
+		sessionChats = append(sessionChats, model.User{
+			Firstname: participant.Firstname,
 		})
 	}
 
-	c.JSON(http.StatusOK, SessionChats)
+	c.JSON(http.StatusOK, participants)
 }
 
+func (h *Handler) GetRoomsByUser(c *gin.Context) {
+	userIDStr := c.Param("userId")
+	userID, err := strconv.ParseUint(userIDStr, 10, 32)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
+		return
+	}
+
+	rooms, cerr := h.RoomService.GetRoomsByUserID(uint(userID))
+	if cerr != (dto.HttpErrorDto{}) {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Failed to load participants from database"})
+		return
+	}
+
+	c.JSON(http.StatusOK, rooms)
+}
 func parseUint(s string) uint {
 	u, err := strconv.ParseUint(s, 10, 32)
 	if err != nil {

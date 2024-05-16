@@ -31,11 +31,6 @@ func (mc *MessageController) GetMessagesByRoomID(ctx *gin.Context) {
 		return
 	}
 
-	// if mc.MessageService == nil {
-	// 	ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Service is not initialized"})
-	// 	return
-	// }
-
 	messages, err := mc.MessageService.FindByID(uint(roomID))
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})

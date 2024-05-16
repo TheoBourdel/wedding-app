@@ -13,5 +13,7 @@ func WSRoutes(router *gin.Engine, handler *ws.Handler) {
 	router.POST("/ws/createRoom", wsHandler.CreateRoom)
 	router.GET("/ws/joinRoom/:roomId", wsHandler.JoinRoom)
 	router.GET("/ws/getRooms", wsHandler.GetRooms)
-	router.GET("/ws/getClients/:roomId", wsHandler.GetSessionChats)
+	router.GET("/ws/getParticipants/:roomId", wsHandler.GetSessionChats)
+	router.GET("/ws/users/:userId/rooms", handler.GetRoomsByUser)
+
 }
