@@ -1,35 +1,25 @@
 class Message {
   final int id;
-  final String content;
-  final int senderId;
   final int roomId;
-  final DateTime timestamp;
+  final int userId;
+  final String content;
+  final DateTime createdAt;
 
   Message({
     required this.id,
-    required this.content,
-    required this.senderId,
     required this.roomId,
-    required this.timestamp,
+    required this.userId,
+    required this.content,
+    required this.createdAt,
   });
 
   factory Message.fromJson(Map<String, dynamic> json) {
     return Message(
-      id: json['id'] ?? 0, // Provide default value if null
-      content: json['content'] ?? '',
-      senderId: json['senderId'] ?? 0,
-      roomId: json['roomId'] ?? 0,
-      timestamp: DateTime.parse(json['timestamp'] ?? DateTime.now().toIso8601String()),
+      id: json['ID'],
+      roomId: json['RoomID'],
+      userId: json['UserID'],
+      content: json['Content'],
+      createdAt: DateTime.parse(json['CreatedAt']),
     );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'content': content,
-      'senderId': senderId,
-      'roomId': roomId,
-      'timestamp': timestamp.toIso8601String(),
-    };
   }
 }
