@@ -1,6 +1,5 @@
 part of 'message_bloc.dart';
 
-
 abstract class MessageState extends Equatable {
   const MessageState();
 
@@ -32,7 +31,6 @@ class MessagesLoaded extends MessageState {
 
 class MessageError extends MessageState {
   final String message;
-
 
   const MessageError(this.message);
 

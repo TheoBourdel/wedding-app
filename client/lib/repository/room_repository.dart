@@ -13,6 +13,8 @@ class RoomRepository {
   final String _baseUrl = apiUrl;
   final String _baseWsUrl = wsApiUrl;
   WebSocketChannel? channel;
+  final StreamController<Message> _messageController = StreamController<Message>.broadcast();
+  Stream<Message> get messageStream => _messageController.stream;
 
   Future<Room> createRoom(RoomDto roomDto) async {
     final res = await http.post(
@@ -37,6 +39,7 @@ class RoomRepository {
     channel?.stream.listen((message) {
       print('Received: $message');
       final messageObj = Message.fromJson(json.decode(message));
+      _messageController.add(messageObj);
       if (!completer.isCompleted) {
         completer.complete(messageObj);
       }
@@ -55,6 +58,7 @@ class RoomRepository {
   }
 
   void closeConnection() {
+   // _messageController.close();
     channel?.sink.close();
   }
 

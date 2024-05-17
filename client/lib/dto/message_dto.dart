@@ -13,16 +13,16 @@ class MessageDto {
     required this.roomId,
     required this.userId,
     required this.content,
-     this.createdAt,
+    this.createdAt,
   });
 
   factory MessageDto.fromJson(Map<String, dynamic> json) {
     return MessageDto(
-      id: json['id'] as int?,
-      roomId: json['roomId'] as int,
-      userId: json['userId'] as int,
-      content: json['content'] as String,
-      createdAt: DateTime.parse(json['createdAt'] as String),
+      id: json['ID'] as int?,
+      roomId: json['RoomID'] as int,
+      userId: json['UserID'] as int,
+      content: json['Content'] as String,
+      createdAt: DateTime.parse(json['CreatedAt'] as String),
     );
   }
 
