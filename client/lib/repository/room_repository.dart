@@ -37,7 +37,6 @@ class RoomRepository {
     final completer = Completer<Message>();
 
     channel?.stream.listen((message) {
-      print('Received: $message');
       final messageObj = Message.fromJson(json.decode(message));
       _messageController.add(messageObj);
       if (!completer.isCompleted) {

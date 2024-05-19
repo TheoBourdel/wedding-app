@@ -13,10 +13,8 @@ class MessageBloc extends Bloc<MessageEvent, MessageState> {
   MessageBloc(this.messageRepository) : super(MessageInitial()) {
     on<SendMessageEvent>((event, emit) async {
       try {
-        print('SendMessageEvent received');
         await messageRepository.sendMessage(event.messageDto);
         emit(MessageSent());
-        print('MessageSent state emitted');
         add(FetchMessagesEvent(event.messageDto.roomId)); // Fetch messages after sending one
       } catch (e) {
         emit(MessageError(e.toString()));
@@ -24,9 +22,15 @@ class MessageBloc extends Bloc<MessageEvent, MessageState> {
     });
 
     on<ReceiveMessageEvent>((event, emit) {
-      print('ReceiveMessageEvent received');
       if (state is MessagesLoaded) {
         final updatedMessages = List<Message>.from((state as MessagesLoaded).messages)..add(event.message);
+        final b = updatedMessages.sort((a, b) => a.createdAt.compareTo(b.createdAt));
+
+        //updatedMessages.sort((a, b) => a.createdAt.compareTo(b.createdAt));
+        updatedMessages.forEach((element) {
+          print('${element.content}  ${element.createdAt}');
+
+        });
         emit(MessagesLoaded(updatedMessages));
       } else {
         emit(MessagesLoaded([event.message]));
@@ -35,9 +39,8 @@ class MessageBloc extends Bloc<MessageEvent, MessageState> {
 
     on<FetchMessagesEvent>((event, emit) async {
       try {
-        print('Fetching messages in MessageBloc for room ID: ${event.roomId}');
         final messages = await messageRepository.fetchMessages(event.roomId);
-        print('Messages fetched: $messages');
+        messages.sort((a, b) => a.createdAt.compareTo(b.createdAt));
         emit(MessagesLoaded(messages));
       } catch (e) {
         emit(MessageError(e.toString()));
