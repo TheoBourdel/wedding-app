@@ -5,6 +5,7 @@ import (
 	"api/service"
 	"log"
 	"strconv"
+	"time"
 
 	"github.com/gorilla/websocket"
 )
@@ -63,9 +64,10 @@ func (c *SessionChat) readMessage(hub *Hub) {
 		}
 
 		msg := &model.Message{
-			Content: string(m),
-			RoomID:  uint(roomIDUint),
-			UserID:  uint(userIDUint),
+			Content:   string(m),
+			RoomID:    uint(roomIDUint),
+			UserID:    uint(userIDUint),
+			CreatedAt: time.Now(),
 		}
 		hub.Broadcast <- msg
 		savedMessage, errDto := c.MsgService.SaveMessage(*msg)

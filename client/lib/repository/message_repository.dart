@@ -22,17 +22,13 @@ class MessageRepository {
   }
 
   Future<List<Message>> fetchMessages(int roomId) async {
-    print('Fetching messages for room ID: $roomId');
     final res = await http.get(
       Uri.parse('$_baseUrl/room/$roomId/messages'),
       headers: {'Content-Type': 'application/json'},
     );
 
-    print('HTTP response status: ${res.statusCode}');
     if (res.statusCode == 200) {
       Iterable decodedBody = json.decode(res.body);
-      print('Decoded messages: $decodedBody');
-
       return decodedBody.map((json) => Message.fromJson(json)).toList();
     } else {
       throw Exception('Failed to fetch messages: ${res.body}');

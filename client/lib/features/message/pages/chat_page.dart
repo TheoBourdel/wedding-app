@@ -38,17 +38,14 @@ class _ChatState extends State<ChatForm> {
     messageRepository = context.read<MessageRepository>();
 
     roomBlocSubscription = context.read<RoomBloc>().stream.listen((state) {
-      print('RoomBloc state: $state');
       if (state is RoomJoined) {
         if (mounted) {
           setState(() {
             channel = roomRepository.getChannel();
             messageRepository.channel = channel;
           });
-          print('Room joined, fetching messages for room ID: ${widget.roomId}');
           context.read<MessageBloc>().add(FetchMessagesEvent(int.parse(widget.roomId)));
 
-          // Écouter les nouveaux messages du RoomRepository
           messageSubscription = roomRepository.messageStream.listen((message) {
             context.read<MessageBloc>().add(ReceiveMessageEvent(message));
           });
@@ -56,10 +53,8 @@ class _ChatState extends State<ChatForm> {
       }
     });
 
-    print('Adding JoinRoomEvent');
     context.read<RoomBloc>().add(JoinRoomEvent(roomId: widget.roomId, userId: widget.userId));
   }
-
 
   @override
   void dispose() {
