@@ -117,7 +117,7 @@ class _SignInPageState extends State<SignInPage> {
                         child: const Text(
                           'Se connecter',
                           style: TextStyle(
-                            color: Colors.white,
+                            color: AppColors.textIcons,
                             fontSize: 20,
                             fontWeight: FontWeight.w600,
                           ),

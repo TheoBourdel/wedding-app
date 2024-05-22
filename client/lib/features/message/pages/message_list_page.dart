@@ -1,5 +1,4 @@
 import 'package:client/features/auth/pages/signin_page.dart';
-import 'package:client/features/message/widgets/rooms_list.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -9,25 +8,26 @@ class MessageListPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Messages'),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.logout),
-            onPressed: () async {
-              SharedPreferences sp = await SharedPreferences.getInstance();
-              sp.clear();
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => SignInPage()),
-              );
-            },
-          ),
-        ],
-      ),
       body: SafeArea(
-        child: RoomsView(),
-      ),
+        child: InkWell(
+                onTap: () async {
+                  SharedPreferences sp = await SharedPreferences.getInstance();
+
+                  sp.clear();
+
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => SignInPage()));
+                },
+                child: Container(
+                  height: 50,
+                  width: double.infinity,
+                  color: Colors.green,
+                  child: const Center(
+                    child: Text("Log Out"),
+                  ),
+                ),
+              )
+      )
     );
   }
 }

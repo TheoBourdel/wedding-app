@@ -36,7 +36,6 @@ class _SignUpPageState extends State<SignUpPage> {
         role: selectedRole,
       );
       try {
-        print('test');
         await authRepository.signUp(user);
         
         Navigator.pushReplacement(context,
@@ -144,7 +143,7 @@ class _SignUpPageState extends State<SignUpPage> {
                         child: const Text(
                           'S\'inscrire',
                           style: TextStyle(
-                            color: Colors.white,
+                            color: AppColors.textIcons,
                             fontSize: 20,
                             fontWeight: FontWeight.w600,
                           ),

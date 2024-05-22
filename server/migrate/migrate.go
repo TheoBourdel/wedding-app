@@ -16,9 +16,6 @@ func main() {
 	config.DB.AutoMigrate(&model.Service{})
 	config.DB.AutoMigrate(&model.Category{})
 	config.DB.AutoMigrate(&model.Image{})
-	config.DB.AutoMigrate(&model.Room{})
-	config.DB.AutoMigrate(&model.Message{})
-	config.DB.AutoMigrate(&model.RoomParticipant{})
 
 	fmt.Println("Migration has been processed!")
 }

@@ -11,6 +11,5 @@ func UserRoutes(router *gin.Engine) {
 	var userControllerPort controller_port.UserControllerInterface = &controller.UserController{}
 
 	router.GET("/users", userControllerPort.GetUsers)
-	router.POST("/user", userControllerPort.CreateUser)
-	router.GET("/user/:id", userControllerPort.GetUser)
+
 }
