@@ -37,6 +37,8 @@ class MessageBloc extends Bloc<MessageEvent, MessageState> {
       }
     });
 
+
+
     on<FetchMessagesEvent>((event, emit) async {
       try {
         final messages = await messageRepository.fetchMessages(event.roomId);
