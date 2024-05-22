@@ -1,5 +1,3 @@
-import 'package:client/model/wedding.dart';
-
 class User {
   final int id;
   final String email;
@@ -10,7 +8,6 @@ class User {
   final String updatedAt;
   final String? deletedAt;
   final String role;
-  final List? weddings;
 
   User({
     required this.id,
@@ -22,7 +19,6 @@ class User {
     required this.updatedAt,
     this.deletedAt,
     required this.role,
-    this.weddings,
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
@@ -30,13 +26,12 @@ class User {
       id: json['ID'] as int,
       email: json['Email'] as String,
       password: json['Password'] as String,
-      firstName: json['Firstname'] as String?,
-      lastName: json['Lastname'] as String?,
+      firstName: json['FirstName'] as String?,
+      lastName: json['LastName'] as String?,
       createdAt: json['CreatedAt'] as String,
       updatedAt: json['UpdatedAt'] as String,
       deletedAt: json['DeletedAt'] as String?,
       role: json['Role'] as String,
-      weddings: json['Weddings']?.map((wedding) => Wedding.fromJson(wedding)).toList(),
     );
   }
 }

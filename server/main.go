@@ -3,7 +3,6 @@ package main
 import (
 	"api/config"
 	"api/route"
-	"api/ws"
 
 	"github.com/gin-gonic/gin"
 
@@ -32,14 +31,6 @@ func main() {
 	route.CategoryRoutes(router)
 	route.ImageRoutes(router)
 	route.AuthRoutes(router)
-	route.MessageRoutes(router)
-
-	// ws
-	hub := ws.NewHub()
-	hub.LoadRoomsFromDB()
-	handler := ws.NewHandler(hub)
-	route.WSRoutes(router, handler)
-	go hub.Run()
 
 	// Swagger
 	router.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))

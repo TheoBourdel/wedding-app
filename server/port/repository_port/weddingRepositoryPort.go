@@ -11,5 +11,4 @@ type WeddingRepositoryInterface interface {
 	Create(user model.Wedding) (model.Wedding, dto.HttpErrorDto)
 	Delete(id uint64) error
 	Update(id uint64, wedding model.Wedding) error
-	FindByUserID(id uint64, wedding model.Wedding) error
 }

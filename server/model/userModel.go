@@ -14,10 +14,9 @@ const (
 
 type User struct {
 	gorm.Model
-	Firstname string `json:"Firstname"`
+	Firstname string
 	Lastname  string
-	Email     string `json:"Email"`
+	Email     string
 	Password  string
 	Role      Role
-	Weddings  []Wedding `gorm:"many2many:organizer;"`
 }

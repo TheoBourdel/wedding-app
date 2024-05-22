@@ -1,4 +1,3 @@
-import 'package:client/core/theme/app_colors.dart';
 import 'package:client/features/message/pages/message_list_page.dart';
 import 'package:client/features/provider/pages/provider_info_page.dart';
 import 'package:client/features/search/pages/search_page.dart';
@@ -66,7 +65,6 @@ class _NavigationMenu extends State<NavigationMenu> {
 
     return Scaffold(
       bottomNavigationBar: BottomNavigationBar(
-        selectedItemColor: AppColors.pink500,
         items: destinations,
         onTap: (index) {
           setState(() {
@@ -74,7 +72,7 @@ class _NavigationMenu extends State<NavigationMenu> {
           });
           _pageController.animateToPage(
             index,
-            duration: const Duration(milliseconds: 500),
+            duration: Duration(milliseconds: 500),
             curve: Curves.ease,
           );
         },
