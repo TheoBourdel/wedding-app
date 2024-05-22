@@ -317,7 +317,7 @@ class _ServiceFormState extends State<ServiceForm> {
                 child: Text(
                   widget.currentService != null ? 'Modifier' : 'Créer',
                   style: TextStyle(
-                    color: AppColors.textIcons,
+                    color: Colors.black,
                     fontSize: 20,
                     fontWeight: FontWeight.w600,
                   ),

@@ -201,7 +201,7 @@ class _ServiceInfoPageState extends State<ServiceInfoPage> {
                               child: const Text(
                                 'Modifier la prestation',
                                 style: TextStyle(
-                                  color: AppColors.textIcons,
+                                  color: Colors.black,
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -231,7 +231,7 @@ class _ServiceInfoPageState extends State<ServiceInfoPage> {
                               child: const Text(
                                 'Supprimer ',
                                 style: TextStyle(
-                                  color: AppColors.textIcons,
+                                  color: Colors.black,
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,
                                 ),
