@@ -1,6 +1,5 @@
 import 'package:client/features/wedding/bloc/wedding_bloc.dart';
 import 'package:client/features/wedding/pages/no_wedding_page.dart';
-import 'package:client/features/wedding/pages/wedding_form.dart';
 import 'package:client/features/wedding/pages/wedding_info_page.dart';
 import 'package:client/provider/user_provider.dart';
 import 'package:flutter/material.dart';

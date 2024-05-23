@@ -2,7 +2,6 @@ import 'package:client/dto/wedding_dto.dart';
 import 'package:client/features/wedding/bloc/wedding_bloc.dart';
 import 'package:client/model/wedding.dart';
 import 'package:client/provider/user_provider.dart';
-import 'package:client/shared/bottom_navigation.dart';
 import 'package:client/shared/widget/button.dart';
 import 'package:client/shared/widget/input.dart';
 import 'package:flutter/material.dart';

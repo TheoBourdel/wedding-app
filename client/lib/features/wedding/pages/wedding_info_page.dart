@@ -1,302 +1,130 @@
-import 'package:client/features/guest/pages/guest_page.dart';
 import 'package:client/features/organizer/pages/organizers_page.dart';
-import 'package:client/core/theme/app_colors.dart';
 import 'package:client/features/wedding/pages/wedding_form.dart';
+import 'package:client/features/wedding/widgets/wedding_countdown_card.dart';
+import 'package:client/features/wedding/widgets/wedding_info_card.dart';
 import 'package:client/model/wedding.dart';
-import 'package:client/repository/wedding_repository.dart';
+import 'package:client/shared/widget/button.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:jwt_decoder/jwt_decoder.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/widgets.dart';
+import 'package:iconsax/iconsax.dart';
 
-class WeddingInfoPage extends StatefulWidget {
-  const WeddingInfoPage({Key? key});
-
-  @override
-  State<WeddingInfoPage> createState() => _WeddingInfoPageState();
-}
-
-class _WeddingInfoPageState extends State<WeddingInfoPage> {
-  bool _isWeddingExists = false;
-  final weddingRepository = WeddingRepository();
-  Wedding? _wedding;
-
-  @override
-  void initState() {
-    super.initState();
-    getWedding();
-  }
-
-  @override
-  void deleteWedding(Wedding wedding) async {
-    if (wedding.id != null) {
-      final weddingId = wedding.id!;
-
-      try {
-        await weddingRepository.deleteWedding(weddingId);
-        setState(() {
-          _isWeddingExists = false;
-          _wedding = null;
-        });
-      } catch (e) {
-        print('Erreur lors de la suppression du wedding: $e');
-      }
-    }
-  }
-
-  @override
-  void getWedding() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String token = prefs.getString('token')!;
-    Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
-    int userId = decodedToken['sub'];
-
-    try {
-      final wedding = await weddingRepository.getUserWedding(userId);
-      bool isWeddingExists = wedding != null;
-
-      setState(() {
-        _isWeddingExists = isWeddingExists;
-        _wedding = wedding;
-      });
-    } catch (e) {
-      print('Erreur lors de la récupération du wedding !!: $e');
-    }
-  }
+class WeddingInfoPage extends StatelessWidget {
+  final Wedding wedding;
+  const WeddingInfoPage({super.key, required this.wedding});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            Expanded(
-              child: Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      if (!_isWeddingExists)
-                          ElevatedButton(
-                        onPressed: () {
-                          Navigator.push( context, MaterialPageRoute(
-                              builder: (context) => const WeddingForm(),
-                            ),
-                          ).then((currentWedding) {
-                          if (currentWedding != null) {
-                              setState(() {
-                                _wedding = currentWedding;
-                                _isWeddingExists = true;
-                              });
-                            }
-                          });
-                        },
-                        style: ElevatedButton.styleFrom(
-                          fixedSize: const Size(double.maxFinite, 60),
-                          backgroundColor: AppColors.pink,
-                          padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 10),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15),
-                          ),
-                        ),
-                        child: const Text(
-                          'Créer un Mariage',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 20,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                      if (_isWeddingExists)
-                          Expanded(
-                          child: Container(
-                            width: double.infinity,
-                            height: 200,
-                            child: Card(
-                              elevation: 9,
-                              margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                              child: Padding(
-                                padding: const EdgeInsets.all(20),
-                                child: Text(
-                                  _wedding?.name ?? 'No wedding name available',
-                                  style: const TextStyle(
-                                    fontSize: 24,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      if (_isWeddingExists)
-                          Expanded(
-                          child: Container(
-                            width: double.infinity, // Définit la largeur maximale
-                            height: 200, // Définit une hauteur spécifique
-                            child: Card(
-                              elevation: 9,
-                              margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                              child: Padding(
-                                padding: const EdgeInsets.all(20),
-
-                                child: Text(
-                                  _wedding?.description ?? 'No wedding name available',
-                                  style: const TextStyle(
-                                    fontSize: 24,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      if (_isWeddingExists)
-                          Row(
+            const Expanded(
+              flex: 1,
+              child: Padding(
+                padding: EdgeInsets.only(left: 20, top: 8, right: 20, bottom: 0),
+                //child: Container(color: Colors.red,)
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Expanded(
-                              child: Container(
-                                width: double.infinity, // Définit la largeur maximale
-                                height: 200, // Définit une hauteur spécifique
-                                child: Card(
-                                  elevation: 9,
-                                  margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(20),
-
-                                    child: Text(
-                                      _wedding?.budget?.toString()  ?? 'No description available',
-                                      style: const TextStyle(
-                                        fontSize: 24,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              child: Container(
-                                width: double.infinity, // Définit la largeur maximale
-                                height: 200, // Définit une hauteur spécifique
-                                child: Card(
-                                  elevation: 9,
-                                  margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(20),
-
-                                    child: Text(
-                                      _wedding?.name ?? 'No wedding name available',
-                                      style: const TextStyle(
-                                        fontSize: 24,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ]
-                        ),
-                      if (_isWeddingExists)
-                          Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          ElevatedButton(
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => WeddingForm(currentWedding: _wedding),
-                                ),
-                              ).then((currentWedding) {
-                                if (currentWedding != null) {
-                                  setState(() {
-                                    _wedding = currentWedding;
-                                  });
-                                }
-                              });
-                            },
-                            style: ElevatedButton.styleFrom(
-                              fixedSize: const Size(250, 60),
-                              backgroundColor: AppColors.pink,
-                              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(15),
-                              ),
-                            ),
-                            child: const Text(
-                              'Modifier le Mariage',
+                            Text(
+                              "Gérer votre mariage",
                               style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
+                                fontSize: 22,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
-                          ),
-                          ElevatedButton(
-                            onPressed: ()  {
-                              if (_wedding != null) {
-                                try {
-                                  deleteWedding(_wedding!);
-                                  setState(() {
-                                    _isWeddingExists = false;
-                                  });
-                                } catch (e) {
-                                  //print('Erreur lors de la suppression du mariage: $e');
-                                }
-                              }
-                            },
-                            style: ElevatedButton.styleFrom(
-                              fixedSize: const Size(70, 60),
-                              backgroundColor: Colors.red,
-                              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(15),
-                              ),
-                            ),
-                            child: const Text(
-                              'Supprimer ',
+                            Text(
+                              "Votre mariage est dans :",
                               style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
+                                fontSize: 14,
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        )
+                      ],
+                    ),
+                    SizedBox(height: 10),
+                    WeddingCountDownCard()
+                  ],
+                )
+              )
+            ),
+            Expanded(
+              flex: 3,
+              child: Padding(
+                padding: const EdgeInsets.only(left: 20, right: 20, top: 20),
+                //child: Container(color: Colors.blue,)
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    const Text(
+                      'Planning',
+                      textAlign: TextAlign.left,
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
                       ),
-                    ],
-                  ),
+                    ),
+                    const SizedBox(height: 15),
+                    WeddingInfoCard(title: "Budget", value: "TOTAL : ${wedding.budget}€", icon: Iconsax.wallet),
+                    const SizedBox(height: 15),
+                    const Row(
+                      children: [
+                        Expanded(
+                          child: WeddingInfoCard(title: "Invités", value: "0", icon: Iconsax.people),
+                        ),
+                        SizedBox(width: 20),
+                        Expanded(
+                          child: WeddingInfoCard(title: "Prestations", value: "0", icon: Iconsax.briefcase),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 15),
+                    Row(
+                      children: [
+                        const Expanded(
+                          child: WeddingInfoCard(title: "ToDo", value: "11/20", icon: Iconsax.clipboard_text),
+                        ),
+                        const SizedBox(width: 20),
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.push(context, MaterialPageRoute(
+                                builder: (context) => const OrganizersPage(),
+                              ));
+                            },
+                            child: const WeddingInfoCard(title: "Organisateurs", value: "0", icon: Iconsax.profile_2user),
+                          )
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
               ),
             ),
-            const Text('Wedding Info Page'),
-            InkWell(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const GuestPage(),
-                  ),
-                );
-              },
-              child: const Text('Go to Guest Page'),
-            ),
-            InkWell(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const OrganizersPage(),
-                  ),
-                );
-              },
-              child: const Text('Go to Organizer Page'),
+            Padding(
+              padding: const EdgeInsets.all(20),
+              child: Button(
+                text: "Modifier",
+                onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(
+                    builder: (context) => WeddingFormPage(title: "Modifier", wedding: wedding),
+                  )); 
+                },
+                isOutlined: true,
+              )
             )
           ],
         ),
-      ),
+      )
     );
   }
 }
