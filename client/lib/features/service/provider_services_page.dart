@@ -1,6 +1,8 @@
+import 'package:client/features/service/pages/service_form.dart';
 import 'package:flutter/material.dart';
 import 'package:client/repository/service_repository.dart';
 import 'package:client/model/service.dart';
+import '../../core/theme/app_colors.dart';
 import 'services_list_view.dart';
 import 'services_theme.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
@@ -69,6 +71,21 @@ class _ProviderServicesScreenState extends State<ProviderServicesScreen> with Ti
             },
           ),
         ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => ServiceForm()),
+            ).then((currentService) {
+              if (currentService != null) {
+                loadUserId();
+              }
+            });
+          },
+          backgroundColor: AppColors.pink,
+          child: Icon(Icons.add, color: Colors.white),
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
       ),
     );
   }
