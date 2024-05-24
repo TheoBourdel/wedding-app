@@ -3,6 +3,8 @@ import 'package:client/repository/service_repository.dart';
 import 'package:client/model/service.dart';
 import 'services_list_view.dart';
 import 'services_theme.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProviderServicesScreen extends StatefulWidget {
   @override
@@ -14,11 +16,20 @@ class _ProviderServicesScreenState extends State<ProviderServicesScreen> with Ti
   Future<List<Service>>? futureServiceList;
   final ScrollController _scrollController = ScrollController();
 
-  @override
   void initState() {
     super.initState();
     animationController = AnimationController(duration: const Duration(milliseconds: 1000), vsync: this);
-    futureServiceList = ServiceRepository().getServicesByUserID(1);
+    loadUserId();
+  }
+
+  void loadUserId() {
+    SharedPreferences.getInstance().then((prefs) {
+      final String token = prefs.getString('token')!;
+      final int userId = JwtDecoder.decode(token)['sub'];
+      setState(() {
+        futureServiceList = ServiceRepository().getServicesByUserID(userId);
+      });
+    });
   }
 
   @override
