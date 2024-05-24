@@ -403,14 +403,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-    flutter_plugin_android_lifecycle:
-      dependency: transitive
-      description:
-        name: flutter_plugin_android_lifecycle
-        sha256: "8cf40eebf5dec866a6d1956ad7b4f7016e6c0cc69847ab946833b7d43743809f"
-        url: "https://pub.dev"
-      source: hosted
-      version: "2.0.19"
   flutter_plugin_android_lifecycle:
     dependency: transitive
     description:
@@ -517,14 +509,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.0.8"
-    iconsax_flutter:
-      dependency: transitive
-      description:
-        name: iconsax_flutter
-        sha256: "95b65699da8ea98f87c5d232f06b0debaaf1ec1332b697e4d90969ec9a93037d"
-        url: "https://pub.dev"
-      source: hosted
-      version: "1.0.0"
+  iconsax_flutter:
+    dependency: transitive
+    description:
+      name: iconsax_flutter
+      sha256: "95b65699da8ea98f87c5d232f06b0debaaf1ec1332b697e4d90969ec9a93037d"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.0"
   image_picker:
     dependency: "direct main"
     description:
@@ -1090,14 +1082,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.1"
-  toml:
-    dependency: transitive
-    description:
-      name: toml
-      sha256: "9968de24e45b632bf1a654fe1ac7b6fe5261c349243df83fd262397799c45a2d"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.15.0"
   toastification:
     dependency: "direct main"
     description:
@@ -1106,6 +1090,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.2.1"
+  toml:
+    dependency: transitive
+    description:
+      name: toml
+      sha256: "9968de24e45b632bf1a654fe1ac7b6fe5261c349243df83fd262397799c45a2d"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.15.0"
   tuple:
     dependency: transitive
     description:

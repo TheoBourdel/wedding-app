@@ -204,9 +204,9 @@ func (wc *ServiceController) UpdateService(ctx *gin.Context) {
 // @Param userId path int true "User ID"
 // @Success 200 {object} []model.Service
 // @Failure 404 {string} string "No services found for this user"
-// @Router /user/{userId}/services [get]
+// @Router /user/{id}/services [get]
 func (wc *ServiceController) GetServicesByUserID(ctx *gin.Context) {
-    userId, err := strconv.ParseUint(ctx.Param("userId"), 10, 64)
+    userId, err := strconv.ParseUint(ctx.Param("id"), 10, 64)
     if err != nil {
         ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
         return

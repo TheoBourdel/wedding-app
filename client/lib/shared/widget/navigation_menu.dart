@@ -1,7 +1,11 @@
-import 'package:client/core/theme/app_colors.dart';
+import 'package:client/features/service/provider_services_page.dart';
 import 'package:client/features/message/pages/message_list_page.dart';
 import 'package:client/features/provider/pages/provider_info_page.dart';
 import 'package:client/features/search/pages/search_page.dart';
+import 'package:client/core/theme/app_colors.dart';
+import 'package:client/features/service/provider_services_page.dart';
+import 'package:client/features/service/pages/service_info_page.dart';
+import 'package:client/features/wedding/pages/wedding_info_page.dart';
 import 'package:client/features/wedding/pages/wedding_page.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
@@ -46,11 +50,19 @@ class _NavigationMenu extends State<NavigationMenu> {
       label: "Search",
     ));
     if (role == 'provider') {
-      destinations.add(const BottomNavigationBarItem(
+      /*destinations.add(const BottomNavigationBarItem(
         icon: Icon(Iconsax.profile),
         label: "Profile",
       ));
-        _screens.add(const ProviderInfoPage());
+        _screens.add(const ProviderInfoPage());*/
+
+      // Assurez-vous que cet onglet est ajouté seulement pour le role 'provider'
+      destinations.add(const BottomNavigationBarItem(
+        icon: Icon(Iconsax.briefcase), // Changez l'icône si nécessaire
+        label: "Services",
+      ));
+      _screens.add(ProviderServicesScreen());
+
     } else if (role == 'marry') {
       destinations.add(const BottomNavigationBarItem(
         icon: Icon(Iconsax.profile_2user),
