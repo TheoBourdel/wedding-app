@@ -25,4 +25,9 @@ class Image {
       deletedAt: json['DeletedAt'] as String?,
     );
   }
+
+  @override
+  String toString() {
+    return 'Image{id: $id, Path: $path, ServiceID: $ServiceID}';
+  }
 }

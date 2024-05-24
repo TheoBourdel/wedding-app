@@ -64,4 +64,15 @@ class ImageRepository {
       throw Exception(res.body);
     }
   }
+
+  Future<List<Image>> getServiceImages(int serviceId) async {
+    final response = await get(Uri.parse('$_baseUrl/service/$serviceId/images'));
+    if (response.statusCode == 200) {
+      List<dynamic> body = jsonDecode(response.body);
+      return body.map((data) => Image.fromJson(data)).toList();
+    } else {
+      throw Exception('Failed to load images: ${response.body}');
+    }
+  }
+
 }
