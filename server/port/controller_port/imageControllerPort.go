@@ -8,4 +8,5 @@ type ImageControllerInterface interface {
 	GetImageByID(c *gin.Context)
 	DeleteImageByID(c *gin.Context)
 	UpdateImage(c *gin.Context)
+	UploadImage(c *gin.Context)
 }

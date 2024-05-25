@@ -39,18 +39,27 @@ func (ws *WeddingService) Create(userId uint64, wedding model.Wedding) (model.We
 		return model.Wedding{}, dto.HttpErrorDto{Code: 404, Message: "User not found"}
 	}
 
-	createdWedding, error := ws.WeddingRepository.Create(wedding)
-	user.Weddings = append(user.Weddings, wedding)
-	createdWedding.User = append(createdWedding.User, user)
+	tx := config.DB.Begin()
 
-	saveErr := config.DB.Save(&user).Error
-	if saveErr != nil {
+	// Création du mariage dans la base de données
+	createdWedding, error := ws.WeddingRepository.Create(wedding)
+	if error != (dto.HttpErrorDto{}) {
+		tx.Rollback()
+		return model.Wedding{}, dto.HttpErrorDto{Code: 404, Message: "Problem creating wedding"}
+	}
+
+	// Ajout du mariage à l'utilisateur et sauvegarde dans la base de données
+	user.Weddings = append(user.Weddings, createdWedding)
+	if saveErr := tx.Save(&user).Error; saveErr != nil {
+		tx.Rollback()
 		fmt.Printf("Failed to save user: %v", saveErr)
 		return model.Wedding{}, dto.HttpErrorDto{Code: 500, Message: "Failed to save user"}
 	}
 
-	if error != (dto.HttpErrorDto{}) {
-		return model.Wedding{}, dto.HttpErrorDto{Code: 404, Message: "Problem creating wedding"}
+	// Validation de la transaction
+	if err := tx.Commit().Error; err != nil {
+		fmt.Printf("Failed to commit transaction: %v", err)
+		return model.Wedding{}, dto.HttpErrorDto{Code: 500, Message: "Failed to commit transaction"}
 	}
 
 	return createdWedding, dto.HttpErrorDto{}
@@ -136,7 +145,7 @@ func (ws *WeddingService) AddWeddingOrganizer(weddingID uint64, user model.User)
 	return organizer, dto.HttpErrorDto{}
 }
 
-func (ws *WeddingService) Update(id uint64, updatedWedding model.Wedding) (model.Wedding, error) {
+func (ws *WeddingService) Update(id uint64, wedding model.Wedding) (model.Wedding, error) {
 	_, findErr := ws.WeddingRepository.FindOneBy("id", strconv.FormatUint(id, 10))
 	if findErr.Code == 404 {
 		return model.Wedding{}, fmt.Errorf("wedding not found with ID: %d", id)
@@ -144,7 +153,7 @@ func (ws *WeddingService) Update(id uint64, updatedWedding model.Wedding) (model
 		return model.Wedding{}, fmt.Errorf("error fetching wedding: %s", findErr.Message)
 	}
 
-	updatedWedding, updateErr := ws.WeddingRepository.Update(id, updatedWedding)
+	updatedWedding, updateErr := ws.WeddingRepository.Update(id, wedding)
 	if updateErr != nil {
 		return model.Wedding{}, fmt.Errorf("error updating wedding: %s")
 	}
@@ -152,14 +161,16 @@ func (ws *WeddingService) Update(id uint64, updatedWedding model.Wedding) (model
 	return updatedWedding, nil
 }
 
-func (ws *WeddingService) FindByUserID(userID uint64) (model.Wedding, error) {
-	wedding, err := ws.WeddingRepository.FindByUserID(userID)
+func (ws *WeddingService) FindByUserID(userID uint64) ([]model.Wedding, error) {
+	//wedding, err := ws.WeddingRepository.FindByUserID(userID)
+	user, err := ws.UserRepository.FindOneBy("id", strconv.FormatUint(userID, 10))
+	wedding := user.Weddings
 
 	if err.Code != 0 {
 		if err.Code == 404 {
-			return model.Wedding{}, fmt.Errorf("wedding not found for user ID %d", userID)
+			return []model.Wedding{}, fmt.Errorf("wedding not found for user ID %d", userID)
 		}
-		return model.Wedding{}, fmt.Errorf("error finding wedding for user ID %d: %s", userID, err.Message)
+		return []model.Wedding{}, fmt.Errorf("error finding wedding for user ID %d: %s", userID, err.Message)
 	}
 
 	return wedding, nil

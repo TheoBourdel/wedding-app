@@ -76,30 +76,8 @@ class _OrganizersPageState extends State<OrganizersPage> {
 
         emailController.clear();
         nameController.clear();
-
-        toastification.show(
-          context: context,
-          type: ToastificationType.success,
-          style: ToastificationStyle.flat,
-          title: const Text("Succès"),
-          description: const Text("Organisateur invité avec succès"),
-          alignment: Alignment.topRight,
-          autoCloseDuration: const Duration(seconds: 4),
-          borderRadius: BorderRadius.circular(12.0),
-          boxShadow: lowModeShadow,
-	      );
       } catch (e) {
-        toastification.show(
-          context: context,
-          type: ToastificationType.error,
-          style: ToastificationStyle.flat,
-          title: const Text("Erreur"),
-          description: const Text("Erreur lors de l'invitation de l'organisateur"),
-          alignment: Alignment.topRight,
-          autoCloseDuration: const Duration(seconds: 4),
-          borderRadius: BorderRadius.circular(12.0),
-          boxShadow: lowModeShadow,
-	      );
+        // toast error
       }
     }
   }

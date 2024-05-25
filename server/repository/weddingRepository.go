@@ -6,7 +6,6 @@ import (
 	"api/helper"
 	"api/model"
 	"fmt"
-	"strconv"
 
 	"gorm.io/gorm"
 )
@@ -37,7 +36,7 @@ func (wr *WeddingRepository) Create(wedding model.Wedding) (model.Wedding, dto.H
 func (wr *WeddingRepository) FindOneBy(field string, value string) (model.Wedding, dto.HttpErrorDto) {
 	var wedding model.Wedding
 
-	result := config.DB.Where(field+" = ?", value).Preload("User").First(&wedding)
+	result := config.DB.Where(field+" = ?", value).First(&wedding)
 	if result.RowsAffected == 0 {
 		return model.Wedding{}, dto.HttpErrorDto{Message: "Wedding not found", Code: 404}
 	}
@@ -62,27 +61,19 @@ func (wr *WeddingRepository) Delete(id uint64) error {
 	return nil
 }
 
-func (wr *WeddingRepository) Update(id uint64, updatedWedding model.Wedding) (model.Wedding, error) {
-	existingWedding, err := wr.FindOneBy("id", strconv.FormatUint(id, 10))
-	if err.Code == 404 {
-		return model.Wedding{}, fmt.Errorf("wedding not found with ID: %d", id)
-	} else if err.Code != 0 {
-		return model.Wedding{}, fmt.Errorf("error fetching wedding: %s", err.Message)
-	}
+func (wr *WeddingRepository) Update(id uint64, wedding model.Wedding) (model.Wedding, error) {
 
-	result := config.DB.Model(&existingWedding).Updates(updatedWedding)
+	result := config.DB.Model(&model.Wedding{}).Where("id = ?", id).Updates(wedding)
 	if result.Error != nil {
 		return model.Wedding{}, result.Error
 	}
 
-	// Renvoyer le mariage mis à jour après la mise à jour dans la base de données
-	return existingWedding, nil
+	return wedding, nil
 }
 
 func (wr *WeddingRepository) FindByUserID(userID uint64) (model.Wedding, dto.HttpErrorDto) {
 	var wedding model.Wedding
 
-	// Recherchez le mariage associé à l'utilisateur via la relation many-to-many
 	result := config.DB.Preload("User", "id = ?", userID).First(&wedding)
 
 	if result.RowsAffected == 0 {

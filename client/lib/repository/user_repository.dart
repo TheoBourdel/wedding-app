@@ -7,7 +7,6 @@ class UserRepository {
   final String _baseUrl = apiUrl;
 
   Future<User> getUser(int userId) async {
-
     Response res = await get(
       Uri.parse('$_baseUrl/user/$userId'),
     );

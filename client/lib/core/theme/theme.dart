@@ -8,7 +8,6 @@ class AppTheme {
       color: color,
       width: width,
     ),
-    
   );
 
   static final darkTheme = ThemeData.dark();

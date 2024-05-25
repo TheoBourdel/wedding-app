@@ -11,11 +11,11 @@ func ImageRoutes(router *gin.Engine) {
 	var imageControllerPort controller_port.ImageControllerInterface = &controller.ImageController{}
 
 	router.GET("/images", imageControllerPort.GetImages)
-	router.POST("/addimage", imageControllerPort.CreateImage)
+	router.POST("/addimage", imageControllerPort.UploadImage)
 	router.GET("/image/:id", imageControllerPort.GetImageByID)
 	router.DELETE("/image/:id", imageControllerPort.DeleteImageByID)
 	router.PATCH("/image/:id", imageControllerPort.UpdateImage)
-
+    router.POST("/images/upload", imageControllerPort.UploadImage)
 
 
 

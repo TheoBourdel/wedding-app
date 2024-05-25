@@ -2,11 +2,15 @@ import 'package:client/core/theme/app_colors.dart';
 import 'package:client/dto/signin_user_dto.dart';
 import 'package:client/features/auth/pages/signup_page.dart';
 import 'package:client/features/auth/widgets/auth_field.dart';
+import 'package:client/provider/user_provider.dart';
 import 'package:client/repository/auth_repository.dart';
+import 'package:client/shared/bottom_navigation.dart';
 import 'package:client/shared/widget/navigation_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_gen/gen_l10n/app_localization.dart';
 import '../../../main.dart';
@@ -43,10 +47,13 @@ class _SignInPageState extends State<SignInPage> {
         // Save token in shared preferences (local storage)
         final prefs = await SharedPreferences.getInstance();
         prefs.setString('token', token);
+        Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
+        int userId = decodedToken['sub'];
+        context.read<UserProvider>().setUserId(userId: userId);
         
         Navigator.push(context,
           MaterialPageRoute(
-            builder: (context) => NavigationMenu(token: token)
+            builder: (context) => BottomNavigation(token: token)
           )
         );
       } catch (e) {
@@ -60,7 +67,7 @@ class _SignInPageState extends State<SignInPage> {
 
     return DropdownButton<String>(
       value: localeProvider.currentLocale.languageCode,
-      icon: Icon(Icons.language, color: Colors.white),
+      icon: const Icon(Icons.language, color: Colors.white),
       onChanged: (String? newValue) {
         if (newValue != null) {
           localeProvider.setLocale(newValue);
@@ -73,8 +80,8 @@ class _SignInPageState extends State<SignInPage> {
         return DropdownMenuItem<String>(
           value: value,
           child: Text(
-              value.toUpperCase(),
-              style: TextStyle(color: Colors.black)
+            value.toUpperCase(),
+            style: const TextStyle(color: Colors.black)
           ),
         );
       }).toList(),
@@ -119,8 +126,8 @@ class _SignInPageState extends State<SignInPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                        Text(
-                        AppLocalizations.of(context)!.register,
-                        style: TextStyle(
+                        AppLocalizations.of(context)!.login,
+                        style: const TextStyle(
                           color: AppColors.pink,
                           fontSize: 30,
                           fontWeight: FontWeight.bold,
@@ -146,8 +153,8 @@ class _SignInPageState extends State<SignInPage> {
                           ),
                         ),
                         child: Text(
-                          AppLocalizations.of(context)!.register,
-                          style: TextStyle(
+                          AppLocalizations.of(context)!.login,
+                          style: const TextStyle(
                             color: Colors.white,
                             fontSize: 20,
                             fontWeight: FontWeight.w600,

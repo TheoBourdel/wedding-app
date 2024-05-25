@@ -30,7 +30,7 @@ class OrganizerList extends StatelessWidget {
                 Text(organizer.lastName ?? ''),
                 const SizedBox(width: 10),
                 organizer.role == "marry" 
-                  ?  const CustomBadge.Badge(badgeText: "Vous", badgeColor: AppColors.pink400)
+                  ?  const CustomBadge.Badge(badgeText: "Marié(e)", badgeColor: AppColors.pink400)
                   : organizer.role == "provider" 
                   ? const CustomBadge.Badge(badgeText: "Planner", badgeColor: AppColors.pink400)
                   : const SizedBox.shrink(),

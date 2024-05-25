@@ -17,4 +17,5 @@ type Service struct {
     User        User `gorm:"foreignKey:UserID"`
     CategoryID      uint
     Category        Category `gorm:"foreignKey:CategoryID"`
+    Images      []Image  `gorm:"foreignKey:ServiceID"`
 }

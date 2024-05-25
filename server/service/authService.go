@@ -56,9 +56,10 @@ func (as *AuthService) SignIn(body dto.SignInDto) (string, dto.HttpErrorDto) {
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"sub":  user.ID,
-		"exp":  time.Now().Add(time.Hour * 24 * 30).Unix(),
-		"role": user.Role,
+		"sub":       user.ID,
+		"firstname": user.Firstname,
+		"exp":       time.Now().Add(time.Hour * 24 * 30).Unix(),
+		"role":      user.Role,
 	})
 
 	tokenString, err := token.SignedString([]byte(os.Getenv("JWT_SECRET")))
