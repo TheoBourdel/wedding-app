@@ -1,3 +1,4 @@
+import 'package:client/features/profile/pages/profile_page.dart';
 import 'package:flutter/material.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:iconsax/iconsax.dart';
@@ -7,7 +8,6 @@ import 'package:client/features/search/pages/search_page.dart';
 import 'package:client/features/service/pages/service_info_page.dart';
 import 'package:client/features/wedding/pages/wedding_page.dart';
 import 'package:client/repository/user_repository.dart';
-import 'package:client/features/service/provider_services_page.dart';
 
 class BottomNavigation extends StatefulWidget {
   final String? token;
@@ -47,9 +47,9 @@ class _BottomNavigationState extends State<BottomNavigation> {
     if (role == 'provider') {
       destinations.add(const BottomNavigationBarItem(
         icon: Icon(Iconsax.briefcase),
-        label: "Prestations",
+        label: "Services",
       ));
-      screens.add(ProviderServicesScreen());
+      screens.add(const ServiceInfoPage());
 
     } else if (role == 'marry') {
       destinations.add(const BottomNavigationBarItem(
@@ -64,6 +64,12 @@ class _BottomNavigationState extends State<BottomNavigation> {
     ));
     screens.add(const MessageListPage());
 
+    destinations.add(const BottomNavigationBarItem(
+      icon: Icon(Iconsax.setting),
+      label: "Settings",
+    ));
+    screens.add(const ProfilePage());
+
 
     return Scaffold(
       body: screens[_currentIndex],
@@ -76,6 +82,7 @@ class _BottomNavigationState extends State<BottomNavigation> {
         },
         items: destinations,
         selectedItemColor: AppColors.pink500,
+        unselectedItemColor: Colors.grey[400],
       ),
     );
   }
