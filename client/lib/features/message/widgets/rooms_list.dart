@@ -23,16 +23,17 @@ class RoomsView extends StatelessWidget {
               ..add(FetchRoomsEvent(userId: userId)),
             child: BlocBuilder<RoomBloc, RoomState>(
               builder: (context, state) {
+
                 if (state is RoomInitial) {
                   return Center(child: CircularProgressIndicator());
                 } else if (state is RoomsLoaded) {
+
                   return ListView.builder(
                     itemCount: state.rooms.length,
                     itemBuilder: (context, index) {
                       final roomOfUser = state.rooms[index];
                       return ListTile(
                         leading: CircleAvatar(
-                          // backgroundImage: NetworkImage(roomOfUser.avatarUrl),
                         ),
                         title: Text('${roomOfUser.firstname} ${roomOfUser.lastname}'),
                         subtitle: Text(roomOfUser.email),

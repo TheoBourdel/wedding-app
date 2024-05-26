@@ -27,9 +27,11 @@ class RoomBloc extends Bloc<RoomEvent, RoomState> {
     });
 
     on<CreateRoomEvent>((event, emit) async {
+      emit(RoomLoading());
       try {
         final roomDto = RoomDto(name: event.roomName);
-        final room = await roomRepository.createRoom(roomDto);
+        final room = await roomRepository.createRoom(roomDto, event.userId, event.otherUser);
+        final message = await roomRepository.joinRoom(room.id.toString(), event.userId);
         emit(RoomCreated(room));
       } catch (e) {
         emit(RoomError(e.toString()));
@@ -39,7 +41,7 @@ class RoomBloc extends Bloc<RoomEvent, RoomState> {
     on<JoinRoomEvent>((event, emit) async {
       try {
         final message = await roomRepository.joinRoom(event.roomId, event.userId);
-        emit(RoomJoined(message));
+        emit(RoomJoined(Room(id:int.parse(event.roomId), name: ''), message));
       } catch (e) {
         emit(RoomError(e.toString()));
       }

@@ -1,3 +1,4 @@
+import 'package:client/features/message/pages/rooms_page.dart';
 import 'package:client/features/service/provider_services_page.dart';
 import 'package:client/features/message/pages/message_list_page.dart';
 import 'package:client/features/provider/pages/provider_info_page.dart';
@@ -74,7 +75,9 @@ class _NavigationMenu extends State<NavigationMenu> {
       icon: Icon(Iconsax.message),
       label: "Messages",
     ));
-    _screens.add(const MessageListPage());
+    _screens.add(const RoomPage());
+    //_screens.add(const MessageListPage());
+
 
     return Scaffold(
       bottomNavigationBar: BottomNavigationBar(

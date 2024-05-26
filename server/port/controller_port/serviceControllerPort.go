@@ -10,4 +10,5 @@ type ServiceControllerInterface interface {
 	UpdateService(c *gin.Context)
 	GetServiceImages(c *gin.Context)
 	GetServicesByUserID(c *gin.Context)
+	SearchServicesByName(c *gin.Context)
 }

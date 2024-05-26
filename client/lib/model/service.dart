@@ -7,7 +7,7 @@ class Service {
   final String? phone;
   final String? mail;
   final int? price;
-  final int? UserID;
+  final int UserID;
   final int? CategoryID;
   final String? createdAt;
   final String? updatedAt;
@@ -39,7 +39,7 @@ class Service {
       phone: json['Phone'] as String?,
       mail: json['Email'] as String?,
       price: json['Price'] as int?,
-      UserID: json['UserID'] as int?,
+      UserID: json['UserID'] as int,
       CategoryID: json['CategoryID'] as int?,
       createdAt: json['CreatedAt'] as String?,
       updatedAt: json['UpdatedAt'] as String?,

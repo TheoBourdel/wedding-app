@@ -9,7 +9,7 @@ abstract class RoomState extends Equatable {
 }
 
 class RoomInitial extends RoomState {}
-
+class RoomLoading extends RoomState {}
 class RoomsLoaded extends RoomState {
   final List<RoomWithUsers> rooms;
 
@@ -29,12 +29,13 @@ class RoomCreated extends RoomState {
 }
 
 class RoomJoined extends RoomState {
+  final Room room;
   final Message message;
 
-  const RoomJoined(this.message);
+  const RoomJoined(this.room, this.message);
 
   @override
-  List<Object> get props => [message];
+  List<Object> get props => [room, message];
 }
 
 class RoomError extends RoomState {

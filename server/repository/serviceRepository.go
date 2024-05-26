@@ -16,15 +16,15 @@ type ServiceRepository struct {
 }
 
 func (r *ServiceRepository) FindImagesByServiceID(serviceID uint64) ([]model.Image, dto.HttpErrorDto) {
-    var images []model.Image
-    result := r.DB.Where("service_id = ?", serviceID).Find(&images)
-    if result.Error != nil {
-        return nil, dto.HttpErrorDto{Message: "Error fetching images", Code: 500}
-    }
-    if result.RowsAffected == 0 {
-        return nil, dto.HttpErrorDto{Message: "No images found for this service", Code: 404}
-    }
-    return images, dto.HttpErrorDto{}
+	var images []model.Image
+	result := r.DB.Where("service_id = ?", serviceID).Find(&images)
+	if result.Error != nil {
+		return nil, dto.HttpErrorDto{Message: "Error fetching images", Code: 500}
+	}
+	if result.RowsAffected == 0 {
+		return nil, dto.HttpErrorDto{Message: "No images found for this service", Code: 404}
+	}
+	return images, dto.HttpErrorDto{}
 }
 
 func (wr *ServiceRepository) FindAll() []model.Service {
@@ -88,14 +88,27 @@ func (wr *ServiceRepository) Update(id uint64, updatedService model.Service) err
 }
 
 func (wr *ServiceRepository) FindByUserID(userID uint64) ([]model.Service, dto.HttpErrorDto) {
-    var services []model.Service
-    result := config.DB.Where("user_id = ?", userID).Find(&services)
+	var services []model.Service
+	result := config.DB.Where("user_id = ?", userID).Find(&services)
 
-    if result.Error != nil {
-        return nil, dto.HttpErrorDto{Message: "Error fetching services", Code: 500}
-    }
-    if result.RowsAffected == 0 {
-        return nil, dto.HttpErrorDto{Message: "No services found for this user", Code: 404}
-    }
-    return services, dto.HttpErrorDto{}
+	if result.Error != nil {
+		return nil, dto.HttpErrorDto{Message: "Error fetching services", Code: 500}
+	}
+	if result.RowsAffected == 0 {
+		return nil, dto.HttpErrorDto{Message: "No services found for this user", Code: 404}
+	}
+	return services, dto.HttpErrorDto{}
+}
+
+func (wr *ServiceRepository) SearchByName(name string) ([]model.Service, dto.HttpErrorDto) {
+	var services []model.Service
+	result := config.DB.Where("name LIKE ?", "%"+name+"%").Find(&services)
+
+	if result.Error != nil {
+		return nil, dto.HttpErrorDto{Message: "Error fetching services", Code: 500}
+	}
+	if result.RowsAffected == 0 {
+		return nil, dto.HttpErrorDto{Message: "No services found with the given name", Code: 404}
+	}
+	return services, dto.HttpErrorDto{}
 }

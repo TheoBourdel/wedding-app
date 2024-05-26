@@ -64,9 +64,6 @@ class ServiceRepository {
       Uri.parse('$_baseUrl/user/$userId/services'),
     );
 
-    print('Status Code: ${res.statusCode}');
-    print('Response Body: ${res.body}');
-
     if (res.statusCode == 200) {
       final List<dynamic> decodedBody = jsonDecode(res.body);
       final List<Service> services = decodedBody.map((serviceJson) => Service.fromJson(serviceJson)).toList();
@@ -132,6 +129,21 @@ class ServiceRepository {
         // Capture les exceptions lors de l'envoi
         print("Error uploading image: $e");
       }
+    }
+  }
+
+  Future<List<Service>> searchServicesByName(String name) async {
+    final res = await http.get(
+      Uri.parse('$_baseUrl/services/search?name=$name'),
+    );
+
+    if (res.statusCode == 200) {
+      final List<dynamic> decodedBody = jsonDecode(res.body);
+      final List<Service> services = decodedBody.map((serviceJson) => Service.fromJson(serviceJson)).toList();
+      return services;
+    } else {
+      return [];
+     // throw Exception('Failed to load services: ${res.body}');
     }
   }
 }
