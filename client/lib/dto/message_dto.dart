@@ -1,6 +1,3 @@
-import 'package:client/model/message.dart';
-
-
 class MessageDto {
   final int? id;
   final int roomId;

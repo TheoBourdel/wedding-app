@@ -5,11 +5,8 @@ import 'package:client/features/auth/widgets/auth_field.dart';
 import 'package:client/provider/user_provider.dart';
 import 'package:client/repository/auth_repository.dart';
 import 'package:client/shared/bottom_navigation.dart';
-import 'package:client/shared/widget/navigation_menu.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_gen/gen_l10n/app_localization.dart';
@@ -49,8 +46,10 @@ class _SignInPageState extends State<SignInPage> {
         prefs.setString('token', token);
         Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
         int userId = decodedToken['sub'];
+        // ignore: use_build_context_synchronously
         context.read<UserProvider>().setUserId(userId: userId);
         
+        // ignore: use_build_context_synchronously
         Navigator.push(context,
           MaterialPageRoute(
             builder: (context) => BottomNavigation(token: token)
