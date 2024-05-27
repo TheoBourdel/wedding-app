@@ -52,7 +52,7 @@ class _ChatState extends State<ChatForm> {
         }
       }
     });
-
+  //join the other user
     context.read<RoomBloc>().add(JoinRoomEvent(roomId: widget.roomId, userId: widget.userId));
   }
 
@@ -96,7 +96,6 @@ class _ChatState extends State<ChatForm> {
                     if (state.messages.isEmpty) {
                       return Center(child: Text('No messages'));
                     }
-
                     return ListView.builder(
                       itemCount: state.messages.length,
                       itemBuilder: (context, index) {

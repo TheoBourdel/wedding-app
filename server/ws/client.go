@@ -11,12 +11,13 @@ import (
 )
 
 type SessionChat struct {
-	Conn       *websocket.Conn
-	Message    chan *model.Message
-	ID         string `json:"id"`
-	RoomID     string `json:"roomId"`
-	UserID     string `json:"userId"`
-	MsgService *service.MessageService
+	Conn        *websocket.Conn
+	Message     chan *model.Message
+	ID          string `json:"id"`
+	RoomID      string `json:"roomId"`
+	UserID      string `json:"userId"`
+	OtherUserID string `json:"otherUserId"`
+	MsgService  *service.MessageService
 }
 
 func (c *SessionChat) writeMessage() {

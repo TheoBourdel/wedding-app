@@ -13,4 +13,5 @@ type ServiceRepositoryInterface interface {
 	Update(id uint64, service model.Service) error
 	FindImagesByServiceID(serviceID uint64) ([]model.Image, dto.HttpErrorDto)
 	FindByUserID(userID uint64) ([]model.Service, error)
+	SearchByName(name string) ([]model.Service, dto.HttpErrorDto)
 }

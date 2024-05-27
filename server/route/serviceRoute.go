@@ -17,8 +17,8 @@ func ServiceRoutes(router *gin.Engine) {
 	router.PATCH("/service/:id", serviceControllerPort.UpdateService)
 	router.GET("/service/:id/images", serviceControllerPort.GetServiceImages)
 	router.GET("/user/:id/services", serviceControllerPort.GetServicesByUserID)
-    router.Static("/uploads", "/server/uploads")
+	router.GET("/services/search", serviceControllerPort.SearchServicesByName)
 
-
+	router.Static("/uploads", "/server/uploads")
 
 }
