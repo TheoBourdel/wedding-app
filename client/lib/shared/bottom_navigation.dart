@@ -1,4 +1,3 @@
-import 'package:client/features/hotel_booking/pages/home_page.dart';
 import 'package:client/features/profile/pages/profile_page.dart';
 import 'package:flutter/material.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
@@ -10,7 +9,6 @@ import 'package:client/features/service/pages/service_info_page.dart';
 import 'package:client/features/wedding/pages/wedding_page.dart';
 import 'package:client/repository/user_repository.dart';
 import 'package:client/features/service/provider_services_page.dart';
-import '../features/hotel_booking/pages/details_page.dart';
 
 class BottomNavigation extends StatefulWidget {
   final String? token;
