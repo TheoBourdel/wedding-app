@@ -28,7 +28,7 @@ class _ProviderServicesScreenState extends State<ProviderServicesScreen> with Ti
     SharedPreferences.getInstance().then((prefs) {
       final String token = prefs.getString('token')!;
       //final int userId = JwtDecoder.decode(token)['sub'];
-      final int userId = 6;
+      final int userId = 10; //remplacer par lid de votre user
 
       setState(() {
         futureServiceList = ServiceRepository().getServicesByUserID(userId);

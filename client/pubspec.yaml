@@ -36,6 +36,9 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   flutter_i18n: ^0.35.1
+  google_fonts: ^6.2.1
+  get: ^4.6.6         # Utilisez la dernière version disponible
+  unicons: ^2.1.1
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -81,6 +84,7 @@ dependencies:
   # Cached network images
   cached_network_image: ^3.2.0
   dartz: ^0.10.1
+  carousel_slider: ^4.2.1
 
 dev_dependencies:
   flutter_test:
