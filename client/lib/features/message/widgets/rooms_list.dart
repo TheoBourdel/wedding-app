@@ -23,20 +23,29 @@ class RoomsView extends StatelessWidget {
               ..add(FetchRoomsEvent(userId: userId)),
             child: BlocBuilder<RoomBloc, RoomState>(
               builder: (context, state) {
-
                 if (state is RoomInitial) {
                   return Center(child: CircularProgressIndicator());
                 } else if (state is RoomsLoaded) {
-
-                  return ListView.builder(
+                  return ListView.separated(
                     itemCount: state.rooms.length,
                     itemBuilder: (context, index) {
                       final roomOfUser = state.rooms[index];
+
                       return ListTile(
+                        contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 16.0),
                         leading: CircleAvatar(
+                          radius: 30.0,
+                          backgroundColor: Colors.pink[100],
+                          child: Icon(Icons.person, color: Colors.white, size: 30.0),
                         ),
-                        title: Text('${roomOfUser.firstname} ${roomOfUser.lastname}'),
-                        subtitle: Text(roomOfUser.email),
+                        title: Text(
+                          '${roomOfUser.firstname} ${roomOfUser.lastname}',
+                          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 18.0),
+                        ),
+                        subtitle: Text(
+                          roomOfUser.email,
+                          style: TextStyle(color: Colors.black54, fontSize: 16.0),
+                        ),
                         onTap: () {
                           Navigator.push(
                             context,
@@ -51,6 +60,12 @@ class RoomsView extends StatelessWidget {
                         },
                       );
                     },
+                    separatorBuilder: (context, index) => Divider(
+                      color: Colors.grey,
+                      thickness: 1.0,
+                      indent: 16.0,
+                      endIndent: 16.0,
+                    ),
                   );
                 } else if (state is RoomError) {
                   return Center(child: Text('Failed to load rooms: ${state.message}'));

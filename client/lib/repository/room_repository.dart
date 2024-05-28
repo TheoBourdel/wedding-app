@@ -74,6 +74,7 @@ class RoomRepository {
       if (response.body == "null") {
         return [];
       } else {
+        print(json.decode(response.body));
         List<dynamic> data = json.decode(response.body);
         return data.map((json) => RoomWithUsers.fromJson(json)).toList();
       }

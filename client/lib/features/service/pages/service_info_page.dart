@@ -54,7 +54,6 @@ class _ServiceInfoPageState extends State<ServiceInfoPage> {
     try {
       final service = await serviceRepository.getUserService(userId);
       bool isServiceExists = service != null;
-      print(service.id);
 
       setState(() {
         _isServiceExists = isServiceExists;

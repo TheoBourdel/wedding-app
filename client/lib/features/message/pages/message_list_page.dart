@@ -9,22 +9,6 @@ class MessageListPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Messages'),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.logout),
-            onPressed: () async {
-              SharedPreferences sp = await SharedPreferences.getInstance();
-              sp.clear();
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => SignInPage()),
-              );
-            },
-          ),
-        ],
-      ),
       body: SafeArea(
         child: RoomsView(),
       ),

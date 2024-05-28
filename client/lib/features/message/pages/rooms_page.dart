@@ -20,7 +20,6 @@ class RoomPage extends StatelessWidget {
       child: BlocBuilder<RoomBloc, RoomState>(
         builder: (context, state) {
           if (state is RoomError) {
-
             return Center(
               child: Text('${state.message}'),
             );
@@ -28,14 +27,12 @@ class RoomPage extends StatelessWidget {
 
           if (state is RoomsLoaded) {
             print(state);
-
             if (state.rooms.isEmpty) {
               return const NoRoomPage();
             } else {
               return MessageListPage();
             }
           }
-
           return const SizedBox();
         },
       ),

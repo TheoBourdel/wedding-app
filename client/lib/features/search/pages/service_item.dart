@@ -23,9 +23,8 @@ class ServiceListItem extends StatelessWidget {
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('ID: ${service.id}'),
             Text(service.description ?? 'No Description'),
-            Text('Price: ${service.price}'),
+            Text('Prix: ${service.price} euros'),
           ],
         ),
         trailing: Icon(Icons.arrow_forward_ios),

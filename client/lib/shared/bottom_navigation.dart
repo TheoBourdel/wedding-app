@@ -1,3 +1,4 @@
+import 'package:client/features/message/pages/rooms_page.dart';
 import 'package:client/features/profile/pages/profile_page.dart';
 import 'package:flutter/material.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
@@ -63,7 +64,7 @@ class _BottomNavigationState extends State<BottomNavigation> {
       icon: Icon(Iconsax.message),
       label: "Messages",
     ));
-    screens.add(const MessageListPage());
+    screens.add(const RoomPage());
 
     destinations.add(const BottomNavigationBarItem(
       icon: Icon(Iconsax.setting),

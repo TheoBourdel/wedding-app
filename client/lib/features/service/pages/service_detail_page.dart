@@ -73,9 +73,6 @@ class _ServiceDetailPageState extends State<ServiceDetailPage> {
               Text('Price: ${widget.service.price ?? 'No Price'}', style: TextStyle(fontSize: 16)),
               SizedBox(height: 10),
               Text('Location: ${widget.service.localisation ?? 'No Location'}', style: TextStyle(fontSize: 16)),
-              SizedBox(height: 10),
-              Text('user: ${widget.service.UserID ?? 'No ser'}', style: TextStyle(fontSize: 16)),
-
               // Add more fields as needed
               SizedBox(height: 20),
               ElevatedButton(

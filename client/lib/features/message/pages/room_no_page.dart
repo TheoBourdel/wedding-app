@@ -7,7 +7,7 @@ class NoRoomPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Text('No rooms available.'),
+        child: Text('Vous n\'avez pas de conversation.'),
       ),
     );
   }

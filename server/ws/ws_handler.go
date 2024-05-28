@@ -32,35 +32,6 @@ func NewHandler(h *Hub) *Handler {
 	}
 }
 
-// func (h *Handler) CreateRoom(c *gin.Context) {
-// 	var req model.CreateRoomReq
-// 	if err := c.ShouldBindJSON(&req); err != nil {
-// 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-// 		return
-// 	}
-
-// 	room := model.Room{
-// 		RoomName: req.Name,
-// 	}
-
-// 	if h.RoomService == nil {
-// 		log.Fatal("RoomService is not initialized")
-// 	}
-
-// 	createdRoom, err := h.RoomService.CreateRoom(room)
-// 	if err.Code != 0 {
-// 		log.Printf("Failed to save message: %s", err.Message)
-// 	}
-
-// 	h.hub.Rooms[fmt.Sprintf("%d", createdRoom.ID)] = &Room{
-// 		ID:           fmt.Sprintf("%d", createdRoom.ID),
-// 		Name:         createdRoom.RoomName,
-// 		SessionChats: make(map[string]*SessionChat),
-// 	}
-
-// 	c.JSON(http.StatusOK, createdRoom)
-// }
-
 func (h *Handler) CreateRoom(c *gin.Context) {
 	var req model.CreateRoomReq
 	if err := c.ShouldBindJSON(&req); err != nil {
