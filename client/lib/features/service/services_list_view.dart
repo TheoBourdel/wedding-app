@@ -6,6 +6,7 @@ import 'package:client/model/service.dart';
 import 'package:client/repository/image_repository.dart';
 import 'package:client/model/image.dart' as serviceImage;
 import 'package:client/core/constant/constant.dart';
+import 'package:client/features/service/pages/single_service.dart';
 
 class ServiceListView extends StatefulWidget {
   final VoidCallback? callback;
@@ -68,8 +69,16 @@ class _ServiceListViewState extends State<ServiceListView> {
             child: Padding(
               padding: const EdgeInsets.only(left: 24, right: 24, top: 8, bottom: 16),
               child: InkWell(
-                splashColor: Colors.transparent,
-                onTap: widget.callback,
+                onTap: () {
+                  if (widget.serviceData?.id != null) {
+                    Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => DetailsPage(
+                        size: MediaQuery.of(context).size,
+                        serviceData: widget.serviceData!,
+                      ),
+                    ));
+                  }
+                },
                 child: serviceCard(context),
               ),
             ),
@@ -101,7 +110,7 @@ class _ServiceListViewState extends State<ServiceListView> {
   }
 
   Widget serviceCardContent() {
-    String defaultImage = 'assets/images/hotel.jpg';
+    String defaultImage = apiUrl +'/uploads/presta.jpg';
 
     String imagePath = (images.isNotEmpty && (images[0].path?.isNotEmpty ?? false))
         ? apiUrl + (images[0].path!.startsWith('/') ? images[0].path! : '/${images[0].path!}')
