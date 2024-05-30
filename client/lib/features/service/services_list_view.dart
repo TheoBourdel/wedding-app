@@ -33,7 +33,8 @@ class _ServiceListViewState extends State<ServiceListView> {
   @override
   void didUpdateWidget(covariant ServiceListView oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.serviceData?.id != oldWidget.serviceData?.id) {
+    if (widget.serviceData != oldWidget.serviceData) {
+      _isImagesLoaded = false;
       _loadImages();
     }
   }

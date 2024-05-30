@@ -124,9 +124,7 @@ class _ServiceFormState extends State<ServiceForm> {
       await serviceRepository.createService(serviceDto) :
       await serviceRepository.updateService(serviceDto);
 
-      print("hors if");
       if (response != null && response.id != null) {
-        print("dans if");
         if (_imageFiles != null && _imageFiles!.isNotEmpty) {
           await serviceRepository.uploadImages(response.id!, _imageFiles!);
         }

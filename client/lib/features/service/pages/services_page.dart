@@ -4,9 +4,11 @@ import 'package:client/repository/user_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:client/repository/service_repository.dart';
 import 'package:client/model/service.dart';
-import '../../core/theme/app_colors.dart';
-import 'services_list_view.dart';
-import 'services_theme.dart';
+import '../../../core/theme/app_colors.dart';
+import '../../../model/category.dart';
+import '../../../repository/category_repository.dart';
+import '../services_list_view.dart';
+import '../services_theme.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -22,11 +24,14 @@ class _ProviderServicesScreenState extends State<ProviderServicesScreen> with Ti
   final ScrollController _scrollController = ScrollController();
   TextEditingController searchController = TextEditingController();
   List<Service> filteredServices = [];
+  List<Category> categories = [];
+  int? selectedCategoryId;
 
   void initState() {
     super.initState();
     animationController = AnimationController(duration: const Duration(milliseconds: 1000), vsync: this);
     getServices();
+    _loadCategories();
   }
 
   Future<String> getUser(int userId) async {
@@ -124,6 +129,12 @@ class _ProviderServicesScreenState extends State<ProviderServicesScreen> with Ti
     super.dispose();
   }
 
+  void _loadCategories() async {
+    categories = await CategoryRepository().getCategorys();
+    selectedCategoryId = null;
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return Theme(
@@ -142,6 +153,7 @@ class _ProviderServicesScreenState extends State<ProviderServicesScreen> with Ti
                   return Column(
                     children: [
                       buildSearchBar(),
+                      buildCategorySelector(),
                       if (filteredServices.isNotEmpty)
                         Expanded(child: buildServiceList(filteredServices))
                       else
@@ -171,6 +183,42 @@ class _ProviderServicesScreenState extends State<ProviderServicesScreen> with Ti
           child: Icon(Icons.add, color: Colors.white),
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
+      ),
+    );
+  }
+
+  Widget buildCategorySelector() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      child: DropdownButtonFormField<int?>(
+        value: selectedCategoryId,
+        decoration: InputDecoration(
+          labelText: 'Catégorie',
+          border: OutlineInputBorder(),
+        ),
+        onChanged: (int? newValue) {
+          setState(() {
+            selectedCategoryId = newValue;
+          });
+        },
+        items: [
+          DropdownMenuItem<int?>(
+            value: null,
+            child: Text("Tous"),
+          ),
+          ...categories.map<DropdownMenuItem<int?>>((Category category) {
+            return DropdownMenuItem<int?>(
+              value: category.id,
+              child: Text(category.name),
+            );
+          }).toList(),
+        ],
+        validator: (value) {
+          if (value == null) {
+            return 'Veuillez sélectionner une catégorie ou choisir "Aucun"';
+          }
+          return null;
+        },
       ),
     );
   }

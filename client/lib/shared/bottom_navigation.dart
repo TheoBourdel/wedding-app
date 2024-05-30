@@ -6,7 +6,7 @@ import 'package:client/core/theme/app_colors.dart';
 import 'package:client/features/message/pages/message_list_page.dart';
 import 'package:client/features/wedding/pages/wedding_page.dart';
 import 'package:client/repository/user_repository.dart';
-import 'package:client/features/service/services_page.dart';
+import 'package:client/features/service/pages/services_page.dart';
 
 class BottomNavigation extends StatefulWidget {
   final String? token;
@@ -42,7 +42,7 @@ class _BottomNavigationState extends State<BottomNavigation> {
       screens.add(ProviderServicesScreen());
       destinations.add(const BottomNavigationBarItem(
         icon: Icon(Iconsax.search_normal_1),
-        label: "Search",
+        label: "Rechercher",
       ));
     }
 
