@@ -4,11 +4,9 @@ import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:client/core/theme/app_colors.dart';
 import 'package:client/features/message/pages/message_list_page.dart';
-import 'package:client/features/search/pages/search_page.dart';
-import 'package:client/features/service/pages/service_info_page.dart';
 import 'package:client/features/wedding/pages/wedding_page.dart';
 import 'package:client/repository/user_repository.dart';
-import 'package:client/features/service/provider_services_page.dart';
+import 'package:client/features/service/services_page.dart';
 
 class BottomNavigation extends StatefulWidget {
   final String? token;

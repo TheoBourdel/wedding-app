@@ -20,6 +20,8 @@ class _ProviderServicesScreenState extends State<ProviderServicesScreen> with Ti
   Future<List<Service>>? futureServiceList;
   final UserRepository userRepository = UserRepository();
   final ScrollController _scrollController = ScrollController();
+  TextEditingController searchController = TextEditingController();
+  List<Service> filteredServices = [];
 
   void initState() {
     super.initState();
@@ -30,9 +32,6 @@ class _ProviderServicesScreenState extends State<ProviderServicesScreen> with Ti
   Future<String> getUser(int userId) async {
     try {
       User user = await userRepository.getUser(userId);
-      setState(() {
-        print(user.role);
-      });
       return user.role;
     } catch (e) {
       print("Error fetching user: $e");
@@ -40,15 +39,74 @@ class _ProviderServicesScreenState extends State<ProviderServicesScreen> with Ti
     }
   }
 
+  Widget buildSearchBar() {
+    return Padding(
+      padding: EdgeInsets.all(8),
+      child: TextField(
+        controller: searchController,
+        decoration: InputDecoration(
+          labelText: 'Search',
+          hintText: 'Enter service name',
+          prefixIcon: Icon(Icons.search),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(25.0)),
+          ),
+        ),
+        onChanged: (value) => filterSearchResults(value),
+      ),
+    );
+  }
 
-  void getServices() {
+  void filterSearchResults(String query) {
+    if (query.isEmpty) {
+      setState(() {
+        filteredServices = [];
+      });
+      return;
+    }
+
+    List<Service> dummyListData = [];
+    futureServiceList?.then((serviceList) {
+      dummyListData.addAll(
+          serviceList!.where((item) =>
+          (item.name?.toLowerCase().contains(query.toLowerCase())) ?? false
+          )
+      );
+      setState(() {
+        filteredServices = dummyListData;
+      });
+    });
+  }
+
+  void getServices({String searchQuery = ''}) {
     SharedPreferences.getInstance().then((prefs) async {
       final String token = prefs.getString('token')!;
       final int userId = JwtDecoder.decode(token)['sub'];
       var role = await getUser(userId);
-      print("el role");
       setState(() {
-        print(role);
+        if(role == "provider"){
+          futureServiceList = ServiceRepository().getServicesByUserID(userId).then((services) {
+            return services.where((service) => service.name?.toLowerCase().contains(searchQuery.toLowerCase()) ?? false).toList();
+          });
+        }else if(role == "marry"){
+          futureServiceList = ServiceRepository().getServices().then((services) {
+            return services.where((service) => service.name?.toLowerCase().contains(searchQuery.toLowerCase()) ?? false).toList();
+          });
+        }else{
+          print("error no services found");
+        }
+      });
+    });
+  }
+
+
+
+  /*void getServices() {
+    SharedPreferences.getInstance().then((prefs) async {
+      final String token = prefs.getString('token')!;
+      final int userId = JwtDecoder.decode(token)['sub'];
+      var role = await getUser(userId);
+      setState(() {
         if(role == "provider"){
           futureServiceList = ServiceRepository().getServicesByUserID(userId);
         }else if(role == "marry"){
@@ -58,7 +116,7 @@ class _ProviderServicesScreenState extends State<ProviderServicesScreen> with Ti
         }
       });
     });
-  }
+  }*/
 
   @override
   void dispose() {
@@ -83,8 +141,11 @@ class _ProviderServicesScreenState extends State<ProviderServicesScreen> with Ti
                 if (snapshot.hasData) {
                   return Column(
                     children: [
-                      getFilterBarUI(snapshot.data!.length),
-                      Expanded(child: buildServiceList(snapshot.data!)),
+                      buildSearchBar(),
+                      if (filteredServices.isNotEmpty)
+                        Expanded(child: buildServiceList(filteredServices))
+                      else
+                        Expanded(child: buildServiceList(snapshot.data!)),
                     ],
                   );
                 } else if (snapshot.hasError) {
