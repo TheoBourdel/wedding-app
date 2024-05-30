@@ -1,4 +1,6 @@
 import 'package:client/features/service/pages/service_form.dart';
+import 'package:client/model/user.dart';
+import 'package:client/repository/user_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:client/repository/service_repository.dart';
 import 'package:client/model/service.dart';
@@ -16,20 +18,44 @@ class ProviderServicesScreen extends StatefulWidget {
 class _ProviderServicesScreenState extends State<ProviderServicesScreen> with TickerProviderStateMixin {
   AnimationController? animationController;
   Future<List<Service>>? futureServiceList;
+  final UserRepository userRepository = UserRepository();
   final ScrollController _scrollController = ScrollController();
 
   void initState() {
     super.initState();
     animationController = AnimationController(duration: const Duration(milliseconds: 1000), vsync: this);
-    loadUserId();
+    getServices();
   }
 
-  void loadUserId() {
-    SharedPreferences.getInstance().then((prefs) {
+  Future<String> getUser(int userId) async {
+    try {
+      User user = await userRepository.getUser(userId);
+      setState(() {
+        print(user.role);
+      });
+      return user.role;
+    } catch (e) {
+      print("Error fetching user: $e");
+      return "Error fetching user";
+    }
+  }
+
+
+  void getServices() {
+    SharedPreferences.getInstance().then((prefs) async {
       final String token = prefs.getString('token')!;
       final int userId = JwtDecoder.decode(token)['sub'];
+      var role = await getUser(userId);
+      print("el role");
       setState(() {
-        futureServiceList = ServiceRepository().getServicesByUserID(userId);
+        print(role);
+        if(role == "provider"){
+          futureServiceList = ServiceRepository().getServicesByUserID(userId);
+        }else if(role == "marry"){
+          futureServiceList = ServiceRepository().getServices();
+        }else{
+          print("error no services found");
+        }
       });
     });
   }
@@ -76,7 +102,7 @@ class _ProviderServicesScreenState extends State<ProviderServicesScreen> with Ti
               MaterialPageRoute(builder: (context) => ServiceForm()),
             ).then((currentService) {
               if (currentService != null) {
-                loadUserId();
+                getServices();
               }
             });
           },

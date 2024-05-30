@@ -39,11 +39,14 @@ class _BottomNavigationState extends State<BottomNavigation> {
     List<BottomNavigationBarItem> destinations = [];
     List<Widget> screens = [];
 
-    screens.add(const SearchPage());
-    destinations.add(const BottomNavigationBarItem(
-      icon: Icon(Iconsax.search_normal_1),
-      label: "Search",
-    ));
+
+    if (role == 'marry') {
+      screens.add(ProviderServicesScreen());
+      destinations.add(const BottomNavigationBarItem(
+        icon: Icon(Iconsax.search_normal_1),
+        label: "Search",
+      ));
+    }
 
     if (role == 'provider') {
       destinations.add(const BottomNavigationBarItem(
