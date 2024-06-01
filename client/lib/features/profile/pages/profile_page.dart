@@ -1,7 +1,10 @@
+import 'package:client/features/auth/bloc/auth_bloc.dart';
+import 'package:client/features/auth/bloc/auth_event.dart';
 import 'package:client/features/auth/pages/signin_page.dart';
 import 'package:client/features/profile/pages/language_page.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfilePage extends StatelessWidget {
@@ -135,14 +138,10 @@ class ProfilePage extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 20),
+                  
                   InkWell(
                     onTap: () async {
-                      SharedPreferences sp = await SharedPreferences.getInstance();
-                      sp.clear();
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(builder: (context) => const SignInPage()),
-                      );
+                      context.read<AuthBloc>().add(const SignOutEvent());
                     },
                     child: Container(
                       decoration: BoxDecoration(

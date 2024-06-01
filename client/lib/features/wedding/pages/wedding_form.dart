@@ -27,6 +27,8 @@ class _WeddingFormPageState extends State<WeddingFormPage> {
 
   @override
   void initState() {
+    print("initState");
+    print(widget.wedding!.budget);
     super.initState();
     if (widget.wedding != null) {
       _nameController.text = widget.wedding!.name;
@@ -52,11 +54,8 @@ class _WeddingFormPageState extends State<WeddingFormPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => WeddingBloc(),
-      child: BlocBuilder<WeddingBloc, WeddingState>(
+    return BlocBuilder<WeddingBloc, WeddingState>(
         builder: (context, state) {
-          
           return Scaffold(
         appBar: AppBar(
           title: Text("${widget.title} un mariage"),
@@ -109,7 +108,7 @@ class _WeddingFormPageState extends State<WeddingFormPage> {
                           } else if (widget.title == "Modifier") {
                             context.read<WeddingBloc>().add(
                               WeddingUpdated(
-                                weddingDto: WeddingDto(
+                                wedding: Wedding(
                                   id: widget.wedding!.id,
                                   name: _nameController.text,
                                   description: _descriptionController.text,
@@ -132,8 +131,7 @@ class _WeddingFormPageState extends State<WeddingFormPage> {
           )
         );
         },
-      )
-    );
+      );
   }
 }
 

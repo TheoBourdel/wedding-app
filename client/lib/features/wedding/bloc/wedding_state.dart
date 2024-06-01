@@ -1,19 +1,31 @@
 part of 'wedding_bloc.dart';
 
-@immutable
-sealed class WeddingState {}
+enum WeddingStatus { initial, loading, success, failure }
 
-final class WeddingInitial extends WeddingState {}
-
-final class WeddingLoading extends WeddingState {}
-
-final class WeddingDataLoadedSuccess extends WeddingState {
+class WeddingState {
+  final WeddingStatus status;
   final List<Wedding> wedding;
+  final int? userId;
+  final String? error;
 
-  WeddingDataLoadedSuccess({required this.wedding});
-}
-final class WeddingDataLoadedFailure extends WeddingState {
-  final String error;
+  const WeddingState({
+    this.status = WeddingStatus.initial,
+    this.wedding = const [],
+    this.userId,
+    this.error,
+  });
 
-  WeddingDataLoadedFailure({required this.error});
+  WeddingState copyWith({
+    WeddingStatus? status,
+    List<Wedding>? wedding,
+    int? userId,
+    String? error,
+  }) {
+    return WeddingState(
+      status: status ?? this.status,
+      wedding: wedding ?? this.wedding,
+      userId: userId ?? this.userId,
+      error: error,
+    );
+  }
 }

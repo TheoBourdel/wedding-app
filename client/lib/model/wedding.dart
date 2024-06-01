@@ -1,7 +1,7 @@
 import 'package:client/model/user.dart';
 
 class Wedding {
-  final int? id;
+  final int id;
   final String name;
   final String description;
   final String? profileImage;
@@ -15,7 +15,7 @@ class Wedding {
   final List<User>? organizers;
 
   Wedding({
-    this.id,
+    required this.id,
     required this.name,
     required this.description,
     this.profileImage,
@@ -34,7 +34,7 @@ class Wedding {
     List<User>? organizers = organizersJson?.map((organizer) => User.fromJson(organizer as Map<String, dynamic>)).toList();
 
     return Wedding(
-      id: json['ID'] as int?,
+      id: json['ID'] as int,
       name: json['Name'] as String,
       description: json['Description'] as String,
       profileImage: json['ProfileImage'] as String?,
@@ -47,5 +47,23 @@ class Wedding {
       deletedAt: json['DeletedAt'] as String?,
       organizers: organizers,
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    Map<String, dynamic> data = {
+      'ID': id.toString(),
+      'Name': name,
+      'Description': description,
+      'Address': address,
+      'Phone': phone,
+      'Email': email,
+      'Budget': budget.toString(),
+    };
+
+    if (organizers != null) {
+      data['User'] = organizers;
+    }
+
+    return data;
   }
 }

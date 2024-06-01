@@ -24,7 +24,6 @@ class WeddingInfoPage extends StatelessWidget {
               flex: 1,
               child: Padding(
                 padding: EdgeInsets.only(left: 20, top: 8, right: 20, bottom: 0),
-                //child: Container(color: Colors.red,)
                 child: Column(
                   children: [
                     Row(

@@ -21,9 +21,9 @@ class AuthRepository {
     }
   }
 
-  Future<String> signIn(SignInUserDto user) async {
+  static Future<String> signIn(SignInUserDto user) async {
     Response res = await post(
-      Uri.parse('$_baseUrl/signin'),
+      Uri.parse('$apiUrl/signin'),
       body: user.toJson(),
     );
 

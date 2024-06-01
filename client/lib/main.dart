@@ -1,29 +1,27 @@
 import 'package:client/core/theme/theme.dart';
+import 'package:client/features/auth/bloc/auth_bloc.dart';
+import 'package:client/features/auth/bloc/auth_event.dart';
+import 'package:client/features/auth/bloc/auth_state.dart';
 import 'package:client/features/auth/pages/signin_page.dart';
-import 'package:client/features/wedding/pages/wedding_form.dart';
-import 'package:client/features/wedding/pages/wedding_page.dart';
-import 'package:client/provider/user_provider.dart';
+import 'package:client/features/wedding/bloc/wedding_bloc.dart';
+import 'package:client/repository/auth_repository.dart';
 import 'package:client/shared/bottom_navigation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:client/shared/widget/navigation_menu.dart';
 import 'package:flutter_gen/gen_l10n/app_localization.dart';
 import 'package:client/features/message/bloc_message/message_bloc.dart';
 import 'package:client/features/message/bloc_room/room_bloc.dart';
 import 'package:client/repository/message_repository.dart';
 import 'package:client/repository/room_repository.dart';
-import 'package:client/shared/widget/navigation_menu.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
-
+// Remplacez le LocaleProvider en bloc
 class LocaleProvider with ChangeNotifier {
-  Locale _currentLocale = Locale('en');
+  Locale _currentLocale = const Locale('en');
   Locale get currentLocale => _currentLocale;
   void setLocale(String localeCode) {
-    _currentLocale = Locale(localeCode ?? 'en');
+    _currentLocale = Locale(localeCode);
     notifyListeners();
   }
 }
@@ -47,62 +45,105 @@ void main() async {
   runApp(
     ChangeNotifierProvider(
       create: (_) => LocaleProvider()..setLocale(localeCode),
-      child: MyApp(token: prefs.getString('token')),
+      child: MyApp(),
     ),
   );
 }
 
 class MyApp extends StatelessWidget {
-  final String? token;
-  const MyApp({required this.token, super.key});
+  MyApp({super.key});
+
+  final AuthRepository authRepository = AuthRepository();
+  final RoomRepository roomRepository = RoomRepository();
+  final MessageRepository messageRepository = MessageRepository();
+
 
   @override
   Widget build(BuildContext context) {
-    final Widget? page;
-
-    if (token == null) {
-      page = const SignInPage();
-    } else {
-      page = BottomNavigation(token: token);
-      //page = NavigationMenu(token: token);
-    }
     final localeProvider = Provider.of<LocaleProvider>(context);
 
-    return MultiRepositoryProvider(
-      providers: [
-        RepositoryProvider<RoomRepository>(
-          create: (context) => RoomRepository(),
-        ),
-        RepositoryProvider<MessageRepository>(
-          create: (context) => MessageRepository(),
-        ),
-      ],
-      child: MultiBlocProvider(
+    return BlocProvider(
+      create: (context) => AuthBloc(authRepository)..add(const AppStartedEvent()),
+
+      // Voir pour supprimer le MultiRepositoryProvider
+      child: MultiRepositoryProvider(
         providers: [
-          BlocProvider<RoomBloc>(
-            create: (context) => RoomBloc(context.read<RoomRepository>()),
+          RepositoryProvider<RoomRepository>(
+            create: (context) => roomRepository,
           ),
-          BlocProvider<MessageBloc>(
-            create: (context) => MessageBloc(context.read<MessageRepository>()),
+          RepositoryProvider<MessageRepository>(
+            create: (context) => messageRepository,
           ),
         ],
-        child: MultiProvider(
+        child: MultiBlocProvider(
           providers: [
-            ChangeNotifierProvider(
-              create: (context) => UserProvider()
+            BlocProvider(
+              create: (context) {
+                final authState = context.read<AuthBloc>().state;
+                final userId = authState is Authenticated ? authState.userId : null;
+
+                return WeddingBloc()..add(WeddingDataLoaded(userId: userId!));
+              },
             ),
+            BlocProvider(
+              create: (context) => RoomBloc(context.read<RoomRepository>()),
+            ),
+            BlocProvider(
+              create: (context) => MessageBloc(context.read<MessageRepository>()),
+            ),
+            // Mettez ici les autres blocs providers
           ],
           child: MaterialApp(
             locale: localeProvider.currentLocale,
             debugShowCheckedModeBanner: false,
-            localizationsDelegates: AppLocalizations.localizationsDelegates,
-            supportedLocales: AppLocalizations.supportedLocales,
             title: 'Weddy',
             theme: AppTheme.lightTheme,
-            home: page,
-          )
-        )
-      ),
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            home: const AuthScreen(),
+          ),
+        ),
+      )
+    );
+  }
+}
+
+class AuthScreen extends StatelessWidget {
+  const AuthScreen({super.key});
+  
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<AuthBloc, AuthState>(
+      builder: (context, state) {
+
+        if (state is AuthInitial || state is AuthUnauthenticated) {
+          return const SignInPage();
+        } 
+
+        if (state is AuthLoading) {
+          return const SafeArea(
+            child: Scaffold(
+              body: Center(
+                child: CircularProgressIndicator(),
+              ),
+            ),
+          );
+        }
+        
+        if (state is Authenticated) {
+          return const BottomNavigation();
+        }
+        
+        if (state is AuthError) {
+          return const SafeArea(
+            child: Scaffold(
+              body: Text('Error'),
+            ),
+          );
+        }
+
+        return const SizedBox();
+      },
     );
   }
 }

@@ -1,3 +1,4 @@
+import 'package:client/features/auth/bloc/auth_bloc.dart';
 import 'package:client/features/profile/pages/profile_page.dart';
 import 'package:flutter/material.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
@@ -7,10 +8,10 @@ import 'package:client/features/message/pages/message_list_page.dart';
 import 'package:client/features/wedding/pages/wedding_page.dart';
 import 'package:client/repository/user_repository.dart';
 import 'package:client/features/service/pages/services_page.dart';
+import 'package:provider/provider.dart';
 
 class BottomNavigation extends StatefulWidget {
-  final String? token;
-  const BottomNavigation({super.key, required this.token});
+  const BottomNavigation({super.key});
 
   @override
   State<BottomNavigation> createState() => _BottomNavigationState();
@@ -22,8 +23,7 @@ class _BottomNavigationState extends State<BottomNavigation> {
   String role = '';
 
   void getUserRole() {
-    Map<String, dynamic> decodedToken = JwtDecoder.decode(widget.token!);
-    role = decodedToken['role'];
+    role = "marry";
   }
 
   @override
