@@ -28,6 +28,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           final Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
           final int userId = decodedToken['sub'];
           final String userRole = decodedToken['role'];
+          print('User role: $userRole');
 
           emit(Authenticated(token, userId, userRole));
         } else {
@@ -41,6 +42,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<SignOutEvent>((event, emit) async {
       final prefs = await SharedPreferences.getInstance();
       prefs.remove('token');
+      print('SignOutEvent');
       emit(AuthUnauthenticated());
     });
 

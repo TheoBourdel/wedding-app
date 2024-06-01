@@ -1,4 +1,5 @@
 import 'package:client/features/auth/bloc/auth_bloc.dart';
+import 'package:client/features/auth/bloc/auth_state.dart';
 import 'package:client/features/profile/pages/profile_page.dart';
 import 'package:flutter/material.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
@@ -20,10 +21,12 @@ class BottomNavigation extends StatefulWidget {
 class _BottomNavigationState extends State<BottomNavigation> {
   final UserRepository userRepository = UserRepository();
   int _currentIndex = 0;
-  String role = '';
+  String? role = '';
 
   void getUserRole() {
-    role = "marry";
+    final authState = context.read<AuthBloc>().state;
+    role = authState is Authenticated ? authState.userRole : null;
+
   }
 
   @override

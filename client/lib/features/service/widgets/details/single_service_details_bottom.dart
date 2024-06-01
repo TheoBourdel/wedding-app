@@ -23,29 +23,20 @@ Widget buildDetailsBottomBar(
           children: [
             Text(
               'prix d\'estimation',
-              style: GoogleFonts.poppins(
-                color: defaultColor,
-                fontSize: size.height * 0.02,
-                fontWeight: FontWeight.w500,
-              ),
+              
             ),
             Row(
               children: [
                 Text(
                   "\$ ${price}",
-                  style: GoogleFonts.poppins(
-                    color: defaultColor,
-                    fontSize: size.height * 0.035,
-                    fontWeight: FontWeight.w600,
-                    wordSpacing: -3.5,
-                  ),
+                  
                 ),
               ],
             ),
           ],
         ),
         InkWell(
-          onTap: () => print('book now'), //TODO: action après clic
+          onTap: () => print('book now'),
           child: Container(
             width: size.width * 0.35,
             height: size.height * 0.07,
@@ -56,10 +47,6 @@ Widget buildDetailsBottomBar(
             child: Align(
               child: Text(
                 'Devis',
-                style: GoogleFonts.lato(
-                  color: secondColor,
-                  fontSize: size.height * 0.02,
-                ),
               ),
             ),
           ),
