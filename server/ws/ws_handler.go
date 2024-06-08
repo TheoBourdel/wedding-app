@@ -138,7 +138,7 @@ func (h *Handler) JoinRoom(c *gin.Context) {
 	}
 
 	m := &model.Message{
-		Content: "A new user has joined the room",
+		Content: "",
 		RoomID:  uint(room.ID),
 	}
 
