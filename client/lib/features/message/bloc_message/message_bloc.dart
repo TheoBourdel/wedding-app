@@ -23,15 +23,11 @@ class MessageBloc extends Bloc<MessageEvent, MessageState> {
 
     on<ReceiveMessageEvent>((event, emit) {
       if (state is MessagesLoaded) {
-        final updatedMessages = List<Message>.from((state as MessagesLoaded).messages)..add(event.message);
-        final b = updatedMessages.sort((a, b) => a.createdAt.compareTo(b.createdAt));
-
-        //updatedMessages.sort((a, b) => a.createdAt.compareTo(b.createdAt));
-        updatedMessages.forEach((element) {
-          print('${element.content}  ${element.createdAt}');
-
-        });
-        emit(MessagesLoaded(updatedMessages));
+        if (event.message != null && event.message.content.isNotEmpty) {
+          final updatedMessages = List<Message>.from((state as MessagesLoaded).messages)
+            ..add(event.message);
+          emit(MessagesLoaded(updatedMessages));
+        }
       } else {
         emit(MessagesLoaded([event.message]));
       }
