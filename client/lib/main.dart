@@ -1,4 +1,5 @@
 import 'package:client/core/theme/theme.dart';
+import 'package:client/features/api/firebase_api.dart';
 import 'package:client/features/auth/bloc/auth_bloc.dart';
 import 'package:client/features/auth/bloc/auth_event.dart';
 import 'package:client/features/auth/bloc/auth_state.dart';
@@ -7,10 +8,12 @@ import 'package:client/features/estimate/bloc/estimate_bloc.dart';
 import 'package:client/features/estimate/bloc/estimate_event.dart';
 import 'package:client/features/service/bloc/service_bloc.dart';
 import 'package:client/features/wedding/bloc/wedding_bloc.dart';
+import 'package:client/firebase_options.dart';
 import 'package:client/repository/auth_repository.dart';
 import 'package:client/repository/estimate_repository.dart';
 import 'package:client/repository/service_repository.dart';
 import 'package:client/shared/bottom_navigation.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -45,6 +48,15 @@ class HexColor extends Color {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  String roomId = 'test_room_id'; // Remplacez par le roomId approprié
+  FirebaseApi firebaseApi = FirebaseApi();
+  await firebaseApi.initNotifications(roomId);
+  await firebaseApi.initPushNotifications();
+
+
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String localeCode = prefs.getString('locale_code') ?? 'en';
   runApp(
@@ -128,7 +140,7 @@ class MyApp extends StatelessWidget {
 
 class AuthScreen extends StatelessWidget {
   const AuthScreen({super.key});
-  
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AuthBloc, AuthState>(
@@ -136,7 +148,7 @@ class AuthScreen extends StatelessWidget {
 
         if (state is AuthInitial || state is AuthUnauthenticated) {
           return const SignInPage();
-        } 
+        }
 
         if (state is AuthLoading) {
           return const SafeArea(
@@ -147,11 +159,11 @@ class AuthScreen extends StatelessWidget {
             ),
           );
         }
-        
+
         if (state is Authenticated) {
           return const BottomNavigation();
         }
-        
+
         if (state is AuthError) {
           return const SafeArea(
             child: Scaffold(
