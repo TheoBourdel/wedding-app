@@ -32,13 +32,9 @@ class WeddingBloc extends Bloc<WeddingEvent, WeddingState> {
     on<WeddingUpdated>((event, emit) async {
       emit(state.copyWith(status: WeddingStatus.loading));
       try {
-        print('bloc');
-        print(event.wedding);
         final Wedding wedding = await WeddingRepository.updateWedding(event.wedding);
         emit(state.copyWith(status: WeddingStatus.success, wedding: [wedding]));
       } catch (error) {
-        print('bloc error');
-        print(error);
         emit(state.copyWith(status: WeddingStatus.failure, error: "Error while updating wedding"));
       }
     });
