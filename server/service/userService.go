@@ -113,3 +113,12 @@ func (us *UserService) GetUser(id string) (model.User, dto.HttpErrorDto) {
 
 	return user, dto.HttpErrorDto{}
 }
+
+func (us *UserService) UpdateUserFirebaseToken(userID uint, newToken string) (model.User, dto.HttpErrorDto) {
+	user, err := us.UserRepository.UpdateFirebaseToken(userID, newToken)
+	if err != (dto.HttpErrorDto{}) {
+		return model.User{}, err
+	}
+
+	return user, dto.HttpErrorDto{}
+}
