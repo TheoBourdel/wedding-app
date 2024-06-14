@@ -9,6 +9,8 @@ class User {
   final String createdAt;
   final String updatedAt;
   final String? deletedAt;
+  String? androidToken;
+
   final String role;
   final List? weddings;
 
@@ -21,6 +23,7 @@ class User {
     required this.createdAt,
     required this.updatedAt,
     this.deletedAt,
+    this.androidToken,
     required this.role,
     this.weddings,
   });
@@ -35,6 +38,7 @@ class User {
       createdAt: json['CreatedAt'] as String,
       updatedAt: json['UpdatedAt'] as String,
       deletedAt: json['DeletedAt'] as String?,
+      androidToken: json['AndroidToken'] as String?,
       role: json['Role'] as String,
       weddings: json['Weddings']?.map((wedding) => Wedding.fromJson(wedding)).toList(),
     );

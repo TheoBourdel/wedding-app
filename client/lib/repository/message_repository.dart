@@ -4,12 +4,13 @@ import 'package:client/dto/message_dto.dart';
 import 'package:client/model/message.dart';
 import 'package:http/http.dart' as http;
 import 'package:web_socket_channel/web_socket_channel.dart';
+import 'package:client/features/api/notification_sender.dart';
 
 class MessageRepository {
   final String _baseUrl = apiUrl;
   WebSocketChannel? channel;
 
-  Future<void> sendMessage(MessageDto messageDto) async {
+  Future<void> sendMessage(MessageDto messageDto, String token) async {
     if (channel != null) {
       channel!.sink.add(messageDto.content);
     } else {

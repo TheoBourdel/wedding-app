@@ -1,3 +1,5 @@
+import 'package:client/model/user.dart';
+import 'package:client/repository/user_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:client/model/service.dart';
@@ -17,6 +19,8 @@ class ServiceDetailPage extends StatefulWidget {
 
 class _ServiceDetailPageState extends State<ServiceDetailPage> {
   int userId = 0;
+  String token = "";
+  final UserRepository userRepository = UserRepository();
 
   @override
   void initState() {
@@ -30,6 +34,13 @@ class _ServiceDetailPageState extends State<ServiceDetailPage> {
     Map<String, dynamic> decodedToken = JwtDecoder.decode(token!);
     setState(() {
       userId = decodedToken['sub'];
+    });
+  }
+
+  Future getTokenOfOtherUser(int userId) async {
+    User user = await userRepository.getUser(userId);
+    setState(() {
+      token = user.androidToken!;
     });
   }
 
@@ -49,7 +60,7 @@ class _ServiceDetailPageState extends State<ServiceDetailPage> {
                 builder: (context) => ChatForm(
                   currentChat: state.room.name,
                   roomId: state.room.id.toString(),
-                  //userId: widget.service.UserID,
+                  token: token,
                   userId: userId,
 
                 ),

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:client/model/message.dart';
+import 'package:client/model/user.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:client/dto/message_dto.dart';
@@ -14,8 +15,16 @@ class ChatForm extends StatefulWidget {
   final String? currentChat;
   final String roomId;
   final int userId;
+  final String token;
 
-  const ChatForm({Key? key, this.currentChat, required this.roomId, required this.userId}) : super(key: key);
+
+  const ChatForm({
+    Key? key,
+    this.currentChat,
+    required this.roomId,
+    required this.userId,
+    required this.token
+  }) : super(key: key);
 
   @override
   State<ChatForm> createState() => _ChatState();
@@ -36,7 +45,6 @@ class _ChatState extends State<ChatForm> {
     super.initState();
     roomRepository = context.read<RoomRepository>();
     messageRepository = context.read<MessageRepository>();
-
     roomBlocSubscription = context.read<RoomBloc>().stream.listen((state) {
       if (state is RoomJoined) {
         if (mounted) {
@@ -74,7 +82,7 @@ class _ChatState extends State<ChatForm> {
         roomId: int.parse(widget.roomId),
       );
 
-      context.read<MessageBloc>().add(SendMessageEvent(messageDto: messageDto));
+      context.read<MessageBloc>().add(SendMessageEvent(messageDto: messageDto, token: widget.token));
       _messageController.clear();
     }
   }

@@ -15,6 +15,7 @@ import 'package:client/repository/service_repository.dart';
 import 'package:client/shared/bottom_navigation.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_gen/gen_l10n/app_localization.dart';
@@ -22,9 +23,9 @@ import 'package:client/features/message/bloc_message/message_bloc.dart';
 import 'package:client/features/message/bloc_room/room_bloc.dart';
 import 'package:client/repository/message_repository.dart';
 import 'package:client/repository/room_repository.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localization.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-// Remplacez le LocaleProvider en bloc
 class LocaleProvider with ChangeNotifier {
   Locale _currentLocale = const Locale('en');
   Locale get currentLocale => _currentLocale;
@@ -48,10 +49,10 @@ class HexColor extends Color {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
+  await dotenv.load();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
-  String roomId = 'test_room_id'; // Remplacez par le roomId approprié
+  String roomId = 'test_room_id';
   FirebaseApi firebaseApi = FirebaseApi();
   await firebaseApi.initNotifications(roomId);
   await firebaseApi.initPushNotifications();
@@ -131,6 +132,9 @@ class MyApp extends StatelessWidget {
             localizationsDelegates: AppLocalizations.localizationsDelegates,
             supportedLocales: AppLocalizations.supportedLocales,
             home: const AuthScreen(),
+    /*        routes: {
+              '/test-notifications': (context) => NotificationScreen(), // Ajoutez la nouvelle route
+            },*/
           ),
         ),
       )
