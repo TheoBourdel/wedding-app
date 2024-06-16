@@ -158,9 +158,9 @@ class EstimateInfoPage extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      "Service",
-                      style: TextStyle(
+                    Text(
+                      estimate.service!.name!,
+                      style: const TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
                       ),

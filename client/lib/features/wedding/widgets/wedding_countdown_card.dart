@@ -13,12 +13,12 @@ class WeddingCountDownCard extends StatelessWidget {
         color: AppColors.pink500,
         borderRadius: BorderRadius.circular(10),
       ),
-      child: Padding(
-        padding: const EdgeInsets.only(left: 40, right: 40, top: 10, bottom: 10),
+      child: const Padding(
+        padding: EdgeInsets.only(left: 40, right: 40, top: 10, bottom: 10),
         child: Center(
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: const [
+            children: [
               Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [

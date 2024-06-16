@@ -9,8 +9,6 @@ import (
 
 	"strconv"
 
-	"fmt"
-
 	"github.com/gin-gonic/gin"
 )
 
@@ -28,8 +26,6 @@ func (ec *EstimateController) UpdateEstimate(ctx *gin.Context) {
 		ctx.JSON(400, gin.H{"error": "Invalid request body"})
 		return
 	}
-
-	fmt.Println("body", body.Content)
 
 	estimate, error := ec.EstimateService.UpdateEstimate(userId, estimateId, body)
 	if error != (dto.HttpErrorDto{}) {

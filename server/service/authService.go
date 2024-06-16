@@ -25,6 +25,11 @@ func (as *AuthService) SignUp(body model.User) (model.User, dto.HttpErrorDto) {
 		return model.User{}, dto.HttpErrorDto{Message: "Invalid role", Code: 400}
 	}
 
+	_, error := as.UserRepository.FindOneBy("email", body.Email)
+	if error == (dto.HttpErrorDto{}) {
+		return model.User{}, dto.HttpErrorDto{Message: "L'email est déjà utilisé", Code: 400}
+	}
+
 	user := model.User{
 		Firstname: body.Firstname,
 		Lastname:  body.Lastname,
@@ -33,7 +38,7 @@ func (as *AuthService) SignUp(body model.User) (model.User, dto.HttpErrorDto) {
 		Role:      body.Role,
 	}
 
-	user, error := as.UserRepository.Create(user)
+	user, error = as.UserRepository.Create(user)
 	if error != (dto.HttpErrorDto{}) {
 		return model.User{}, error
 	}
