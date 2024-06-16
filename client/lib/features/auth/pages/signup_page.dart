@@ -37,9 +37,9 @@ class _SignUpPageState extends State<SignUpPage> {
         role: selectedRole,
       );
       try {
-        final r = await authRepository.signUp(user);
-        print('test : ${r}');
-
+        await authRepository.signUp(user);
+        
+        // ignore: use_build_context_synchronously
         Navigator.pushReplacement(context,
           MaterialPageRoute(
             builder: (context) => const SignInPage()
@@ -90,7 +90,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     children: [
                        Text(
                         AppLocalizations.of(context)!.register,
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: AppColors.pink,
                           fontSize: 30,
                           fontWeight: FontWeight.bold,
@@ -145,7 +145,7 @@ class _SignUpPageState extends State<SignUpPage> {
                         ),
                         child: Text(
                           AppLocalizations.of(context)!.register,
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: Colors.white,
                             fontSize: 20,
                             fontWeight: FontWeight.w600,

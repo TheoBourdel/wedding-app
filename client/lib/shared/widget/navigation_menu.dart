@@ -1,10 +1,6 @@
 import 'package:client/features/message/pages/rooms_page.dart';
-import 'package:client/features/service/pages/services_page.dart';
-import 'package:client/features/message/pages/message_list_page.dart';
-import 'package:client/features/provider/pages/provider_info_page.dart';
 import 'package:client/features/search/pages/search_page.dart';
 import 'package:client/features/service/pages/service_info_page.dart';
-import 'package:client/features/wedding/pages/wedding_info_page.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';

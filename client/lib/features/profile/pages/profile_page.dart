@@ -1,11 +1,9 @@
 import 'package:client/features/auth/bloc/auth_bloc.dart';
 import 'package:client/features/auth/bloc/auth_event.dart';
-import 'package:client/features/auth/pages/signin_page.dart';
 import 'package:client/features/profile/pages/language_page.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});

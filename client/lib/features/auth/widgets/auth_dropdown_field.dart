@@ -30,9 +30,7 @@ class AuthDropdownField extends StatelessWidget {
           child: Text('Marié(e)'),
         ),
       ],
-      onChanged: (value) {
-        print(value);
-      },
+      onChanged: (value) {},
     );
   }
 }

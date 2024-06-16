@@ -8,7 +8,6 @@ import 'package:client/shared/widget/button.dart';
 import 'package:flutter/material.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:toastification/toastification.dart';
 
 class OrganizersPage extends StatefulWidget {
   const OrganizersPage({super.key});
@@ -68,6 +67,7 @@ class _OrganizersPageState extends State<OrganizersPage> {
       try {
         User user = await WeddingRepository().addOrganizer(organizer, weddingId);
 
+        // ignore: use_build_context_synchronously
         Navigator.pop(context);
         
         setState(() {
