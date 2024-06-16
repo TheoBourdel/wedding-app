@@ -1,5 +1,4 @@
 import 'package:client/model/service.dart';
-import 'package:client/model/user.dart';
 
 class Estimate {
   final int id;
@@ -64,10 +63,10 @@ class Estimate {
     return {
       'ID': id,
       'Price': price,
-      'CreatedAt': createdAt as String,
-      'UpdatedAt': updatedAt as String,
-      'Status': status as String,
-      'Content': content as String,
+      'CreatedAt': createdAt,
+      'UpdatedAt': updatedAt,
+      'Status': status,
+      'Content': content,
       'ClientID': clientId,
       'ProviderID': providerId,
       'ServiceID': serviceId,

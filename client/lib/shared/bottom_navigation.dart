@@ -3,7 +3,6 @@ import 'package:client/features/auth/bloc/auth_state.dart';
 import 'package:client/features/estimate/pages/estimate_page.dart';
 import 'package:client/features/profile/pages/profile_page.dart';
 import 'package:flutter/material.dart';
-import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:client/core/theme/app_colors.dart';
 import 'package:client/features/message/pages/message_list_page.dart';
