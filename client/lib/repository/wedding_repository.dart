@@ -28,8 +28,6 @@ class WeddingRepository {
   static Future<List<Wedding>> getUserWedding(int userId) async {
     try {
       final response = await get(Uri.parse('$apiUrl/userwedding/$userId'));
-
-      print(userId);
       
       if (response.statusCode < 200 || response.statusCode >= 400) {
         throw ApiException(

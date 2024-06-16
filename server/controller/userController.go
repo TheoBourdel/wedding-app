@@ -1,12 +1,15 @@
 package controller
 
 import (
+	"fmt"
 	"net/http"
 
 	_ "api/docs"
 	"api/dto"
 	"api/model"
 	"api/service"
+
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -28,6 +31,46 @@ func (uc *UserController) GetUsers(ctx *gin.Context) {
 
 	ctx.Header("Content-Type", "application/json")
 	ctx.JSON(http.StatusOK, users)
+}
+
+func (uc *UserController) CreateUserEstimate(ctx *gin.Context) {
+	var body dto.CreateEstimateDto
+	fmt.Println("CreateUserEstimate", ctx.Bind(body.ServiceID))
+
+	if ctx.Bind(&body) != nil {
+		ctx.JSON(400, gin.H{"error": "Invalid request"})
+		return
+	}
+
+	id, err := strconv.Atoi(ctx.Param("id"))
+	if err != nil {
+		ctx.JSON(400, gin.H{"error": "Invalid ID"})
+		return
+	}
+
+	estimate, error := uc.UserService.CreateEstimate(id, body)
+	if error != (dto.HttpErrorDto{}) {
+		ctx.JSON(error.Code, error)
+		return
+	}
+
+	ctx.JSON(http.StatusOK, estimate)
+}
+
+func (uc *UserController) GetUserEstimates(ctx *gin.Context) {
+	id, err := strconv.Atoi(ctx.Param("id"))
+	if err != nil {
+		ctx.JSON(400, gin.H{"error": "Invalid ID"})
+		return
+	}
+
+	estimates, error := uc.UserService.GetUserEstimates(id)
+	if error != (dto.HttpErrorDto{}) {
+		ctx.JSON(error.Code, error)
+		return
+	}
+
+	ctx.JSON(http.StatusOK, estimates)
 }
 
 func (uc *UserController) CreateUser(ctx *gin.Context) {

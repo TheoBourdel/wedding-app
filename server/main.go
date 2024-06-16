@@ -33,6 +33,7 @@ func main() {
 	route.ImageRoutes(router)
 	route.AuthRoutes(router)
 	route.MessageRoutes(router)
+	route.EstimateRoutes(router)
 
 	// ws
 	hub := ws.NewHub()

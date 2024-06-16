@@ -31,7 +31,7 @@ class _DetailsPageState extends State<DetailsPage> {
   @override
   void initState() {
     super.initState();
-    print("Service ID: ${widget.serviceData.id}");
+    print("Service ID: ${widget.serviceData.UserID}");
     _loadImages();
   }
 
@@ -78,6 +78,7 @@ class _DetailsPageState extends State<DetailsPage> {
                 secondColor,
                 extendDetails,
                 size,
+                service.id!,
               ),
               Positioned(
                 top: MediaQuery.of(context).padding.top + 10,

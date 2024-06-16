@@ -33,7 +33,7 @@ func (ur *UserRepository) Create(user model.User) (model.User, dto.HttpErrorDto)
 	return user, dto.HttpErrorDto{}
 }
 
-func (ur *UserRepository) FindOneBy(field string, value string) (model.User, dto.HttpErrorDto) {
+func (ur *UserRepository) FindOneBy(field string, value any) (model.User, dto.HttpErrorDto) {
 	var user model.User
 
 	result := config.DB.Where(field+" = ?", value).Preload("Weddings.User").First(&user)

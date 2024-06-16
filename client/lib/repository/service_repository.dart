@@ -146,4 +146,16 @@ class ServiceRepository {
      // throw Exception('Failed to load services: ${res.body}');
     }
   }
+
+  static Future<Service> getServiceById(int serviceId) async {
+    Response res = await get(
+      Uri.parse('$apiUrl/service/$serviceId'),
+    );
+
+    if (res.statusCode == 200) {
+      return Service.fromJson(jsonDecode(res.body));
+    } else {
+      throw Exception(res.body);
+    }
+  }
 }

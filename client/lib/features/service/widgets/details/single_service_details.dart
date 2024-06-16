@@ -5,7 +5,7 @@ import 'package:client/features/service/widgets/details/single_service_details_b
 import 'package:client/features/service/services_theme.dart';
 
 AnimatedPadding buildHotelDetails(name, description, price, localisation, Color defaultColor,
-    Color secondColor, bool extendDetails, Size size) {
+    Color secondColor, bool extendDetails, Size size, int ServiceID) {
   return AnimatedPadding(
     padding: EdgeInsets.only(
       top: extendDetails ? size.height * 0.3 : size.height * 0.35,
@@ -114,7 +114,7 @@ AnimatedPadding buildHotelDetails(name, description, price, localisation, Color 
             color: defaultColor,
             height: size.height * 0.01,
           ),
-          buildDetailsBottomBar(price, defaultColor, secondColor, size),
+          BuildDetailsBottomBar(price: price, defaultColor: defaultColor, secondColor: secondColor, size: size, serviceID: ServiceID),
         ],
       ),
     ),

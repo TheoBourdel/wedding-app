@@ -39,4 +39,18 @@ class User {
       weddings: json['Weddings']?.map((wedding) => Wedding.fromJson(wedding)).toList(),
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'ID': id,
+      'Email': email,
+      'Password': password,
+      'Firstname': firstName,
+      'Lastname': lastName,
+      'CreatedAt': createdAt,
+      'UpdatedAt': updatedAt,
+      'DeletedAt': deletedAt,
+      'Role': role,
+    };
+  }
 }

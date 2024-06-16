@@ -3,8 +3,13 @@ import 'package:client/features/auth/bloc/auth_bloc.dart';
 import 'package:client/features/auth/bloc/auth_event.dart';
 import 'package:client/features/auth/bloc/auth_state.dart';
 import 'package:client/features/auth/pages/signin_page.dart';
+import 'package:client/features/estimate/bloc/estimate_bloc.dart';
+import 'package:client/features/estimate/bloc/estimate_event.dart';
+import 'package:client/features/service/bloc/service_bloc.dart';
 import 'package:client/features/wedding/bloc/wedding_bloc.dart';
 import 'package:client/repository/auth_repository.dart';
+import 'package:client/repository/estimate_repository.dart';
+import 'package:client/repository/service_repository.dart';
 import 'package:client/shared/bottom_navigation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -56,13 +61,15 @@ class MyApp extends StatelessWidget {
   final AuthRepository authRepository = AuthRepository();
   final RoomRepository roomRepository = RoomRepository();
   final MessageRepository messageRepository = MessageRepository();
-
+  final EstimateRepository estimateRepository = EstimateRepository();
+  final ServiceRepository serviceRepository = ServiceRepository();
 
   @override
   Widget build(BuildContext context) {
     final localeProvider = Provider.of<LocaleProvider>(context);
 
     return BlocProvider(
+      // Laisser le AuthProvider au dessus des autres providers
       create: (context) => AuthBloc(authRepository)..add(const AppStartedEvent()),
 
       // Voir pour supprimer le MultiRepositoryProvider
@@ -91,6 +98,17 @@ class MyApp extends StatelessWidget {
             BlocProvider(
               create: (context) => MessageBloc(context.read<MessageRepository>()),
             ),
+            BlocProvider(
+              create: (context) {
+                final authState = context.read<AuthBloc>().state;
+                final userId = authState is Authenticated ? authState.userId : null;
+
+                return EstimateBloc(estimateRepository)..add(EstimatesLoadedEvent(userId: userId!));
+              }
+            ),
+            BlocProvider(
+              create: (context) => ServiceBloc(serviceRepository)
+            )
             // Mettez ici les autres blocs providers
           ],
           child: MaterialApp(

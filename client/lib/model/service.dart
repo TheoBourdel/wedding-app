@@ -46,4 +46,22 @@ class Service {
       deletedAt: json['DeletedAt'] as String?,
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'ID': id.toString(),
+      'Name': name,
+      'Description': description,
+      'ProfileImage': profileImage,
+      'Localisation': localisation,
+      'Phone': phone,
+      'Email': mail,
+      'Price': price.toString(),
+      'UserID': UserID.toString(),
+      'CategoryID': CategoryID.toString(),
+      'CreatedAt': createdAt,
+      'UpdatedAt': updatedAt,
+      'DeletedAt': deletedAt,
+    };
+  }
 }

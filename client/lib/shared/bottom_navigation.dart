@@ -1,5 +1,6 @@
 import 'package:client/features/auth/bloc/auth_bloc.dart';
 import 'package:client/features/auth/bloc/auth_state.dart';
+import 'package:client/features/estimate/pages/estimate_page.dart';
 import 'package:client/features/profile/pages/profile_page.dart';
 import 'package:flutter/material.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
@@ -48,6 +49,12 @@ class _BottomNavigationState extends State<BottomNavigation> {
         label: "Rechercher",
       ));
     }
+
+    screens.add(const EstimatePage());
+    destinations.add(const BottomNavigationBarItem(
+      icon: Icon(Iconsax.document),
+      label: "Devis",
+    ));
 
     if (role == 'provider') {
       destinations.add(const BottomNavigationBarItem(

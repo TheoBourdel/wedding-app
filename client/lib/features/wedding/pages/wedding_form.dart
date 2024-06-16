@@ -27,8 +27,6 @@ class _WeddingFormPageState extends State<WeddingFormPage> {
 
   @override
   void initState() {
-    print("initState");
-    print(widget.wedding!.budget);
     super.initState();
     if (widget.wedding != null) {
       _nameController.text = widget.wedding!.name;
