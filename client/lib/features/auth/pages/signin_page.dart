@@ -1,20 +1,13 @@
 import 'package:client/core/theme/app_colors.dart';
-import 'package:client/dto/signin_user_dto.dart';
 import 'package:client/features/auth/bloc/auth_bloc.dart';
 import 'package:client/features/auth/bloc/auth_event.dart';
-import 'package:client/features/auth/bloc/auth_state.dart';
 import 'package:client/features/auth/pages/signup_page.dart';
 import 'package:client/features/auth/widgets/auth_field.dart';
-import 'package:client/provider/user_provider.dart';
 import 'package:client/repository/auth_repository.dart';
-import 'package:client/shared/bottom_navigation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
-import 'package:jwt_decoder/jwt_decoder.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_gen/gen_l10n/app_localization.dart';
-import '../../../main.dart';
 
 class SignInPage extends StatefulWidget {
   const SignInPage({super.key});
