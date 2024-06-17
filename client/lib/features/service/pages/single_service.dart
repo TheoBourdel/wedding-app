@@ -1,23 +1,21 @@
-import 'dart:developer';
 import 'package:client/core/constant/constant.dart';
 import 'package:client/model/service.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:client/features/service/widgets/details/single_service_details.dart';
 import 'package:unicons/unicons.dart';
 import 'package:client/model/image.dart' as serviceImage;
+import '../../../core/theme/app_colors.dart';
 import '../../../repository/image_repository.dart';
-import '../widgets/details/single_service_details.dart';
 
 class DetailsPage extends StatefulWidget {
   final Size size;
   final Service serviceData;
 
   const DetailsPage({
-    Key? key,
+    super.key,
     required this.size,
     required this.serviceData,
-  }) : super(key: key);
+  });
 
   @override
   _DetailsPageState createState() => _DetailsPageState();
@@ -31,7 +29,6 @@ class _DetailsPageState extends State<DetailsPage> {
   @override
   void initState() {
     super.initState();
-    print("Service ID: ${widget.serviceData.UserID}");
     _loadImages();
   }
 
@@ -78,7 +75,6 @@ class _DetailsPageState extends State<DetailsPage> {
                 secondColor,
                 extendDetails,
                 size,
-                service.id!,
               ),
               Positioned(
                 top: MediaQuery.of(context).padding.top + 10,
@@ -87,8 +83,8 @@ class _DetailsPageState extends State<DetailsPage> {
                   onTap: () => Navigator.of(context).pop(),
                   child: Container(
                     padding: EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: defaultColor.withOpacity(0.5),
+                    decoration: const BoxDecoration(
+                      color: AppColors.pink,
                       shape: BoxShape.circle,
                     ),
                     child: Icon(
@@ -122,7 +118,6 @@ class _DetailsPageState extends State<DetailsPage> {
         itemBuilder: (context, index) {
           var img = images[index];
           var imagePath = apiUrl + (img.path!.startsWith('/') ? img.path! : '/${img.path!}');
-          print(imagePath);
           return ClipRRect(
             borderRadius: BorderRadius.circular(15),
             child: Image.network(

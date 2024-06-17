@@ -133,7 +133,7 @@ class ServiceList extends StatelessWidget {
   final int? selectedCategoryId;
   final AnimationController? animationController;
 
-  ServiceList({required this.searchQuery, required this.selectedCategoryId, this.animationController});
+  const ServiceList({super.key, required this.searchQuery, required this.selectedCategoryId, this.animationController});
 
   Future<List<Service>> getServices() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
