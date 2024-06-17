@@ -6,7 +6,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:client/dto/service_dto.dart';
-import 'package:client/dto/category_dto.dart';
 import 'package:client/repository/service_repository.dart';
 import 'package:client/repository/image_repository.dart';
 import 'package:client/dto/image_dto.dart';
@@ -23,7 +22,7 @@ import 'package:path/path.dart' as path;
 class ServiceForm extends StatefulWidget {
   final Service? currentService;
 
-  const ServiceForm({Key? key, this.currentService});
+  const ServiceForm({super.key, this.currentService});
 
   @override
   State<ServiceForm> createState() => _ServiceFormState();
@@ -134,11 +133,11 @@ class _ServiceFormState extends State<ServiceForm> {
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
-              title: Text('Erreur'),
-              content: Text('Impossible de créer ou de mettre à jour le service.'),
+              title: const Text('Erreur'),
+              content: const Text('Impossible de créer ou de mettre à jour le service.'),
               actions: <Widget>[
                 TextButton(
-                  child: Text('Fermer'),
+                  child: const Text('Fermer'),
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
@@ -149,18 +148,16 @@ class _ServiceFormState extends State<ServiceForm> {
         );
       }
     } catch (e) {
-      //remplacer par alerte de l'appli
-      print('Error processing service action: $e');
       showDialog(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text('Erreur de réseau'),
-            content: Text(
+            title: const Text('Erreur de réseau'),
+            content: const Text(
                 'Une erreur est survenue lors de la communication avec le serveur. Veuillez réessayer.'),
             actions: <Widget>[
               TextButton(
-                child: Text('Fermer'),
+                child: const Text('Fermer'),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
@@ -181,11 +178,6 @@ class _ServiceFormState extends State<ServiceForm> {
   @override
   Widget build(BuildContext context) {
 
-    @override
-    void initState() {
-      super.initState();
-    }
-
     return Scaffold(
       appBar: AppBar(
         foregroundColor: Colors.black,
@@ -193,7 +185,7 @@ class _ServiceFormState extends State<ServiceForm> {
         elevation: 0,
         centerTitle: true,
 
-        title: Text('Créer une prestation',
+        title: const Text('Créer une prestation',
           style:TextStyle(
             fontSize: 20,
           ) ,),
@@ -204,10 +196,10 @@ class _ServiceFormState extends State<ServiceForm> {
           key: _formKey,
           child: ListView(
             children: [
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               TextFormField(
                 controller: _nameController,
-                decoration: InputDecoration(labelText: 'Nom'),
+                decoration: const InputDecoration(labelText: 'Nom'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Veuillez nommer la prestation';
@@ -215,10 +207,10 @@ class _ServiceFormState extends State<ServiceForm> {
                   return null;
                 },
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               TextFormField(
                 controller: _descriptionController,
-                decoration: InputDecoration(labelText: 'Description'),
+                decoration: const InputDecoration(labelText: 'Description'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Veuillez décrire la prestation';
@@ -226,10 +218,10 @@ class _ServiceFormState extends State<ServiceForm> {
                   return null;
                 },
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               TextFormField(
                 controller: _localisationController,
-                decoration: InputDecoration(labelText: 'Adresse'),
+                decoration: const InputDecoration(labelText: 'Adresse'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Veuillez entrer une Adresse';
@@ -237,15 +229,15 @@ class _ServiceFormState extends State<ServiceForm> {
                   return null;
                 },
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               TextFormField(
                 controller: _phoneController,
-                decoration: InputDecoration(labelText: 'Phone'),
+                decoration: const InputDecoration(labelText: 'Phone'),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               TextFormField(
                 controller: _mailController,
-                decoration: InputDecoration(labelText: 'Email'),
+                decoration: const InputDecoration(labelText: 'Email'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Veuillez entrer une adresse mail';
@@ -253,10 +245,10 @@ class _ServiceFormState extends State<ServiceForm> {
                   return null;
                 },
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               TextFormField(
                 controller: _priceController,
-                decoration: InputDecoration(labelText: 'Prix d\'estimation'),
+                decoration: const InputDecoration(labelText: 'Prix d\'estimation'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Veuillez entrer une prix d\'estimation';
@@ -264,10 +256,10 @@ class _ServiceFormState extends State<ServiceForm> {
                   return null;
                 },
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               DropdownButtonFormField<int>(
                 value: selectedCategoryId,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Catégorie',
                   border: OutlineInputBorder(),
                 ),
@@ -291,8 +283,8 @@ class _ServiceFormState extends State<ServiceForm> {
               ),
               //SizedBox(height: 100),
               ListTile(
-                leading: Icon(Icons.photo_library),
-                title: Text("Sélectionner des images"),
+                leading: const Icon(Icons.photo_library),
+                title: const Text("Sélectionner des images"),
                 onTap: pickImages,
               ),
               if (_imageFiles != null)
@@ -301,7 +293,7 @@ class _ServiceFormState extends State<ServiceForm> {
                   runSpacing: 4.0,
                   children: _imageFiles!.map((file) => Image.file(File(file.path), width: 100, height: 100)).toList(),
                 ),
-              SizedBox(height: 100),
+              const SizedBox(height: 100),
               ElevatedButton(
                 onPressed: serviceAction,
                 style: ElevatedButton.styleFrom(
@@ -314,7 +306,7 @@ class _ServiceFormState extends State<ServiceForm> {
                 ),
                 child: Text(
                   widget.currentService != null ? 'Modifier' : 'Créer',
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: Colors.black,
                     fontSize: 20,
                     fontWeight: FontWeight.w600,
