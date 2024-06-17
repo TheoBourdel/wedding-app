@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:client/features/service/pages/service_form.dart';
 import 'package:client/model/user.dart';
 import 'package:client/repository/user_repository.dart';
@@ -19,17 +21,32 @@ class ProviderServicesScreen extends StatefulWidget {
 
 class _ProviderServicesScreenState extends State<ProviderServicesScreen> with TickerProviderStateMixin {
   AnimationController? animationController;
-  final UserRepository userRepository = UserRepository();
   final ScrollController _scrollController = ScrollController();
   TextEditingController searchController = TextEditingController();
   List<Category> categories = [];
   int? selectedCategoryId;
+  late Future<String> role;
 
   @override
   void initState() {
     super.initState();
     animationController = AnimationController(duration: const Duration(milliseconds: 1000), vsync: this);
     _loadCategories();
+    role = _getUserRole();
+  }
+
+  Future<String> _getUserRole() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String token = prefs.getString('token')!;
+    final int userId = JwtDecoder.decode(token)['sub'];
+    final UserRepository userRepository = UserRepository();
+    try {
+      User user = await userRepository.getUser(userId);
+      return user.role;
+    } catch (e) {
+      print("Error fetching user: $e");
+      return "Error fetching user";
+    }
   }
 
   void _loadCategories() async {
@@ -109,18 +126,29 @@ class _ProviderServicesScreenState extends State<ProviderServicesScreen> with Ti
             ),
           ],
         ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => ServiceForm()),
-            ).then((value) {
-              // Re-fetch services to update the list after adding a new service
-              setState(() {});
-            });
+        floatingActionButton: FutureBuilder<String>(
+          future: role,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Container(); // Return an empty container while waiting
+            }
+            if (snapshot.hasData && snapshot.data == "provider") {
+              return FloatingActionButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const ServiceForm()),
+                  ).then((value) {
+                    setState(() {});
+                  });
+                },
+                backgroundColor: AppColors.pink,
+                child: const Icon(Icons.add, color: Colors.white),
+              );
+            } else {
+              return Container();
+            }
           },
-          backgroundColor: AppColors.pink,
-          child: Icon(Icons.add, color: Colors.white),
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
       ),
@@ -135,18 +163,46 @@ class ServiceList extends StatelessWidget {
 
   const ServiceList({super.key, required this.searchQuery, required this.selectedCategoryId, this.animationController});
 
+  Future<String> getUserRole(userId) async {
+    final UserRepository userRepository = UserRepository();
+    try {
+      User user = await userRepository.getUser(userId);
+      return user.role;
+    } catch (e) {
+      print("Error fetching user: $e");
+      return "Error fetching user";
+    }
+  }
+
   Future<List<Service>> getServices() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final String token = prefs.getString('token')!;
     final int userId = JwtDecoder.decode(token)['sub'];
+    var role = await getUserRole(userId);
 
-    return ServiceRepository().getServices().then((services) {
-      return services.where((service) {
-        bool categoryMatch = selectedCategoryId == null || service.CategoryID == selectedCategoryId;
-        bool nameMatch = searchQuery.isEmpty || service.name!.toLowerCase().contains(searchQuery.toLowerCase());
-        return categoryMatch && nameMatch;
-      }).toList();
-    });
+    if(role == "marry") {
+      return ServiceRepository().getServices().then((services) {
+        return services.where((service) {
+          bool categoryMatch = selectedCategoryId == null ||
+              service.CategoryID == selectedCategoryId;
+          bool nameMatch = searchQuery.isEmpty ||
+              service.name!.toLowerCase().contains(searchQuery.toLowerCase());
+          return categoryMatch && nameMatch;
+        }).toList();
+      });
+    }else if(role == "provider"){
+      return ServiceRepository().getServicesByUserID(userId).then((services) {
+        return services.where((service) {
+          bool categoryMatch = selectedCategoryId == null ||
+              service.CategoryID == selectedCategoryId;
+          bool nameMatch = searchQuery.isEmpty ||
+              service.name!.toLowerCase().contains(searchQuery.toLowerCase());
+          return categoryMatch && nameMatch;
+        }).toList();
+      });
+    } else {
+      return Future.value([]);
+    }
   }
 
   @override
