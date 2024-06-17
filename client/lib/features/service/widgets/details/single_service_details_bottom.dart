@@ -28,7 +28,7 @@ class BuildDetailsBottomBar extends StatefulWidget {
 
 class _BuildDetailsBottomBar extends State<BuildDetailsBottomBar> {
 
-    final UserRepository userRepository = UserRepository();
+  final UserRepository userRepository = UserRepository();
 
   final formKey = GlobalKey<FormState>();
   final firstNameController = TextEditingController();
@@ -58,160 +58,160 @@ class _BuildDetailsBottomBar extends State<BuildDetailsBottomBar> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-    padding: EdgeInsets.only(
-      top: widget.size.height * 0.01,
-      left: widget.size.width * 0.08,
-      right: widget.size.width * 0.08,
-    ),
-    child: Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'prix d\'estimation',
-            ),
-            Row(
-              children: [
-                Text(
-                  widget.price.toString(),
-                ),
-              ],
-            ),
-          ],
-        ),
-        InkWell(
-          onTap: () => {
-            showModalBottomSheet(
-              context: context,
-              builder: (BuildContext context) {
-                return SizedBox(
-                  height: 600,
-                  width: widget.size.width,
-                  child: Center(
-                    child: Padding(
-                      padding: const EdgeInsets.all(20),
-                      child: Column(
-                        children: [
-                          const Text(
-                            'Demandez un devis',
-                            style: TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(height: 5),
-                          const Text(
-                            'Présisez votre demande pour obtenir un devis personnalisé',
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.grey,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                          const SizedBox(height: 20),
-                          Form(
-                            key: formKey,
-                            child: Column(
-                              children: [
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: Input(
-                                        hintText: 'Prénom',
-                                        controller: firstNameController,
-                                      )
-                                    ),
-                                    const SizedBox(width: 10),
-                                    Expanded(
-                                      child: Input(
-                                        hintText: 'Nom',
-                                        controller: lastNameController,
-                                      )
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 20),
-                                TextFormField(
-                                  maxLines: 6,
-                                  controller: contentController,
-                                  decoration: const InputDecoration(
-                                    hintText: 'Contenu',
-                                    labelText: 'Contenu',
-                                    labelStyle: TextStyle(
-                                      color: AppColors.pink500,
-                                    ),
-                                  ),
-                                  validator: (value) {
-                                    if (value!.isEmpty) {
-                                      return 'Le contenue est requis';
-                                    }
-                                    return null;
-                                  },
-                                ),
-                              ],
-                            )
-                          ),
-                          const SizedBox(height: 20),
-                          ElevatedButton(
-                            onPressed: () => {
-                              if (formKey.currentState!.validate()) {
-                                context.read<EstimateBloc>().add(EstimateCreateEvent(
-                                  userId: 48,
-                                  createEstimateDto: CreateEstimateDto(
-                                    firstName: firstNameController.text,
-                                    lastName: lastNameController.text,
-                                    content: contentController.text,
-                                    serviceId: widget.serviceID,
-                                  ) 
-                                )),
-                                Navigator.pop(context)
-                              }
-                            },
-                            style: ElevatedButton.styleFrom(
-                              fixedSize: const Size(double.maxFinite, 60),
-                              backgroundColor: AppColors.pink,
-                              padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 10),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(15),
-                              ),
-                            ),
-                            child: const Text(
-                              'Envoyer',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 20,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+      padding: EdgeInsets.only(
+        top: widget.size.height * 0.01,
+        left: widget.size.width * 0.08,
+        right: widget.size.width * 0.08,
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'prix d\'estimation',
+              ),
+              Row(
+                children: [
+                  Text(
+                    widget.price.toString(),
                   ),
-                );
-              }
-            )
-          },
-          child: Container(
-            width: widget.size.width * 0.35,
-            height: widget.size.height * 0.07,
-            decoration: BoxDecoration(
-              color: AppColors.pink,
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: const Align(
-              child: Text(
-                'Réserver',
-              )
-            ),
+                ],
+              ),
+            ],
           ),
-        )
-      ],
-    ),
-  );
+          InkWell(
+            onTap: () => {
+              showModalBottomSheet(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return SizedBox(
+                      height: 600,
+                      width: widget.size.width,
+                      child: Center(
+                        child: Padding(
+                          padding: const EdgeInsets.all(20),
+                          child: Column(
+                            children: [
+                              const Text(
+                                'Demandez un devis',
+                                style: TextStyle(
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(height: 5),
+                              const Text(
+                                'Présisez votre demande pour obtenir un devis personnalisé',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.grey,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                              const SizedBox(height: 20),
+                              Form(
+                                  key: formKey,
+                                  child: Column(
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Expanded(
+                                              child: Input(
+                                                hintText: 'Prénom',
+                                                controller: firstNameController,
+                                              )
+                                          ),
+                                          const SizedBox(width: 10),
+                                          Expanded(
+                                              child: Input(
+                                                hintText: 'Nom',
+                                                controller: lastNameController,
+                                              )
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 20),
+                                      TextFormField(
+                                        maxLines: 6,
+                                        controller: contentController,
+                                        decoration: const InputDecoration(
+                                          hintText: 'Contenu',
+                                          labelText: 'Contenu',
+                                          labelStyle: TextStyle(
+                                            color: AppColors.pink500,
+                                          ),
+                                        ),
+                                        validator: (value) {
+                                          if (value!.isEmpty) {
+                                            return 'Le contenue est requis';
+                                          }
+                                          return null;
+                                        },
+                                      ),
+                                    ],
+                                  )
+                              ),
+                              const SizedBox(height: 20),
+                              ElevatedButton(
+                                onPressed: () => {
+                                  if (formKey.currentState!.validate()) {
+                                    context.read<EstimateBloc>().add(EstimateCreateEvent(
+                                        userId: 48,
+                                        createEstimateDto: CreateEstimateDto(
+                                          firstName: firstNameController.text,
+                                          lastName: lastNameController.text,
+                                          content: contentController.text,
+                                          serviceId: widget.serviceID,
+                                        )
+                                    )),
+                                    Navigator.pop(context)
+                                  }
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  fixedSize: const Size(double.maxFinite, 60),
+                                  backgroundColor: AppColors.pink,
+                                  padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 10),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(15),
+                                  ),
+                                ),
+                                child: const Text(
+                                  'Envoyer',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
+                  }
+              )
+            },
+            child: Container(
+              width: widget.size.width * 0.35,
+              height: widget.size.height * 0.07,
+              decoration: BoxDecoration(
+                color: AppColors.pink,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: const Align(
+                  child: Text(
+                    'Devis',
+                  )
+              ),
+            ),
+          )
+        ],
+      ),
+    );
   }
 }
 
