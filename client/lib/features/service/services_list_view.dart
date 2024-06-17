@@ -191,8 +191,8 @@ class _ServiceListViewState extends State<ServiceListView> {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          Text('\$${widget.serviceData?.price.toString() ?? '0'}', textAlign: TextAlign.left, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 22)),
-          Text('/per service', style: TextStyle(fontSize: 14, color: Colors.grey.withOpacity(0.8))),
+          Text('${widget.serviceData?.price.toString() ?? '0'} \€', textAlign: TextAlign.left, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 22)),
+          Text('prix d\'estimation', style: TextStyle(fontSize: 14, color: Colors.grey.withOpacity(0.8))),
         ],
       ),
     );

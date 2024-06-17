@@ -44,7 +44,6 @@ class _ServiceInfoPageState extends State<ServiceInfoPage> {
     }
   }
 
-  @override
   void getService() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String token = prefs.getString('token')!;
