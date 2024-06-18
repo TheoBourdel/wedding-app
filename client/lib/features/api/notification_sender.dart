@@ -35,8 +35,8 @@ class NotificationSender {
       'message': {
         'token': targetToken,
         'notification': {
-          'title': 'Hello World',
-          'body': 'This is an FCM notification message!'
+          'title': ' test',
+          'body': 'body test'
         }
       }
     });
@@ -46,7 +46,16 @@ class NotificationSender {
     if (response.statusCode == 200) {
       print('Message sent successfully');
     } else {
-      print('Failed to send message: ${response.body}');
+      final responseBody = jsonDecode(response.body);
+      if (responseBody['error']['details'][0]['errorCode'] == 'UNREGISTERED') {
+        // Handle unregistered token, for example, remove it from your database
+        print('Token is unregistered. Removing from database.');
+        // Logique pour supprimer le token de votre base de données
+      } else {
+        print('Failed to send message: ${response.body}');
+      }
     }
+
+    httpClient.close();
   }
 }

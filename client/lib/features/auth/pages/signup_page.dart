@@ -37,15 +37,16 @@ class _SignUpPageState extends State<SignUpPage> {
         role: selectedRole,
       );
       try {
-        print('test');
-        await authRepository.signUp(user);
-        
+        final r = await authRepository.signUp(user);
+        print('test : ${r}');
+
         Navigator.pushReplacement(context,
           MaterialPageRoute(
             builder: (context) => const SignInPage()
           ),
         );
       } catch (e) {
+        print(e);
         // Show error toast
       }
     }
