@@ -9,6 +9,7 @@ class AuthRepository {
   final String _baseUrl = apiUrl;
 
   Future<User> signUp(SignUpUserDto user) async {
+    print('ooooo');
     Response res = await post(
       Uri.parse('$_baseUrl/signup'),
       body: user.toJson(),

@@ -18,32 +18,54 @@ class FirebaseApi {
   Future getUserId() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
-    Map<String, dynamic> decodedToken = JwtDecoder.decode(token!);
+    if (token == null) {
+      throw Exception("Token not found in SharedPreferences");
+    }
+    Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
     userId = decodedToken['sub'];
     return userId;
+  }
+
+  Future<void> initNotifications(String roomId) async {
+    await _firebaseMessaging.requestPermission();
+    try {
+      userId = await getUserId();
+    } catch (e) {
+      print("Failed to get user ID: $e");
+      return;
+    }
+    final fCMToken = await _firebaseMessaging.getToken();
+    if (fCMToken != null) {
+      User user = await userRepository.getUser(userId);
+      await userRepository.updateUserAndroidToken(user, fCMToken);
+      await _firebaseMessaging.subscribeToTopic('chat_$roomId');
+    } else {
+      print("Failed to get FCM token");
+    }
   }
 
   Future<void> _initializeLocalNotifications() async {
     const AndroidInitializationSettings initializationSettingsAndroid =
     AndroidInitializationSettings('@mipmap/ic_launcher');
-    const DarwinInitializationSettings initializationSettingsIOS =
-    DarwinInitializationSettings();
-    const InitializationSettings initializationSettings = InitializationSettings(
+
+    final DarwinInitializationSettings initializationSettingsIOS = DarwinInitializationSettings(
+      onDidReceiveLocalNotification: (id, title, body, payload) async {
+        // handle your logic here
+      },
+    );
+
+    final InitializationSettings initializationSettings = InitializationSettings(
       android: initializationSettingsAndroid,
       iOS: initializationSettingsIOS,
     );
 
-    await _flutterLocalNotificationsPlugin.initialize(initializationSettings);
+    await _flutterLocalNotificationsPlugin.initialize(
+      initializationSettings,
+      onDidReceiveNotificationResponse: (NotificationResponse response) async {
+        // handle your logic here
+      },
+    );
     print('Local Notifications Initialized');
-  }
-
-  Future<void> initNotifications(String roomId) async {
-    await _firebaseMessaging.requestPermission();
-    userId = await getUserId();
-    final fCMToken = await _firebaseMessaging.getToken();
-    User user = await userRepository.getUser(userId);
-    await userRepository.updateUserAndroidToken(user, fCMToken!);
-    await _firebaseMessaging.subscribeToTopic('chat_$roomId');
   }
 
   void handleMessage(RemoteMessage? message) {
@@ -68,6 +90,7 @@ class FirebaseApi {
     );
     const NotificationDetails platformChannelSpecifics = NotificationDetails(
       android: androidPlatformChannelSpecifics,
+      iOS: const DarwinNotificationDetails(), // iOS notification details
     );
 
     await _flutterLocalNotificationsPlugin.show(
@@ -80,9 +103,26 @@ class FirebaseApi {
   }
 
   Future<void> initPushNotifications() async {
-    FirebaseMessaging.instance.getInitialMessage().then(handleMessage);
-    FirebaseMessaging.onMessageOpenedApp.listen(handleMessage);
+    FirebaseMessaging messaging = FirebaseMessaging.instance;
+
+    // Request permissions for iOS
+    NotificationSettings settings = await messaging.requestPermission(
+      alert: true,
+      badge: true,
+      sound: true,
+    );
+
+    if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+      print('User granted permission');
+    } else if (settings.authorizationStatus == AuthorizationStatus.provisional) {
+      print('User granted provisional permission');
+    } else {
+      print('User declined or has not accepted permission');
+    }
+
     FirebaseMessaging.onMessage.listen(handleMessage);
+    FirebaseMessaging.onMessageOpenedApp.listen(handleMessage);
+    FirebaseMessaging.instance.getInitialMessage().then(handleMessage);
     print('Push Notifications Initialized');
   }
 
