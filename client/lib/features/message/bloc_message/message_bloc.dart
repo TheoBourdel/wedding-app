@@ -20,7 +20,8 @@ class MessageBloc extends Bloc<MessageEvent, MessageState> {
       try {
         await messageRepository.sendMessage(event.messageDto, event.token);
         print(event.token);
-        await notificationSender.sendNotification(event.token);
+
+        await notificationSender.sendNotification(event.token, event.messageDto.content);
         emit(MessageSent());
         add(FetchMessagesEvent(event.messageDto.roomId)); // Fetch messages after sending one
       } catch (e) {

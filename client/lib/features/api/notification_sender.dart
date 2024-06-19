@@ -20,7 +20,7 @@ class NotificationSender {
 
   final _scopes = ['https://www.googleapis.com/auth/cloud-platform'];
 
-  Future<void> sendNotification(String targetToken) async {
+  Future<void> sendNotification(String targetToken, String content) async {
     final httpClient = http.Client();
     final client = await clientViaServiceAccount(_credentials, _scopes);
 
@@ -35,8 +35,8 @@ class NotificationSender {
       'message': {
         'token': targetToken,
         'notification': {
-          'title': ' test',
-          'body': 'body test'
+          'title': ' Nouveau Message',
+          'body': content
         }
       }
     });
