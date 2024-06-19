@@ -70,13 +70,24 @@ class _BuildDetailsBottomBar extends State<BuildDetailsBottomBar> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
+              Text(
                 'prix d\'estimation',
+                style: GoogleFonts.poppins(
+                  color: widget.defaultColor,
+                  fontSize: widget.size.height * 0.02,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
               Row(
                 children: [
                   Text(
-                    widget.price.toString(),
+                    "${widget.price} €",
+                    style: GoogleFonts.poppins(
+                      color: widget.defaultColor,
+                      fontSize: widget.size.height * 0.035,
+                      fontWeight: FontWeight.w600,
+                      wordSpacing: -3.5,
+                    ),
                   ),
                 ],
               ),
@@ -202,9 +213,13 @@ class _BuildDetailsBottomBar extends State<BuildDetailsBottomBar> {
                 color: AppColors.pink,
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: const Align(
+              child: Align(
                   child: Text(
                     'Devis',
+                    style: GoogleFonts.lato(
+                      color: widget.secondColor,
+                      fontSize: widget.size.height * 0.02,
+                    ),
                   )
               ),
             ),

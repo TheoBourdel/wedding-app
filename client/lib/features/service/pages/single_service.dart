@@ -75,6 +75,7 @@ class _DetailsPageState extends State<DetailsPage> {
                 secondColor,
                 extendDetails,
                 size,
+                service.id!,
               ),
               Positioned(
                 top: MediaQuery.of(context).padding.top + 10,
