@@ -17,8 +17,6 @@ import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
 
-
-
 class ServiceForm extends StatefulWidget {
   final Service? currentService;
 
@@ -59,34 +57,23 @@ class _ServiceFormState extends State<ServiceForm> {
   }
 
   void pickImages() async {
-    try {
-      final List<XFile>? selectedImages = await _picker.pickMultiImage();
-      if (selectedImages != null && selectedImages.isNotEmpty) {
-        List<String> filePaths = [];
-        final directory = await getApplicationDocumentsDirectory();
-        final imageDirectory = Directory('${directory.path}/images');
-
-        if (!await imageDirectory.exists()) {
-          await imageDirectory.create(recursive: true);
-        }
-
-        for (var image in selectedImages) {
-          final imagePath = path.join(imageDirectory.path, path.basename(image.path));
-          final File newImage = await File(image.path).copy(imagePath);
-          filePaths.add(newImage.path);
-        }
-
-        setState(() {
-          _imageFiles = selectedImages;
-          _imagePaths = filePaths;
-        });
-
-        print("Images selected: ${_imagePaths}");
-      } else {
-        print("No images selected or permission denied.");
+    final List<XFile>? selectedImages = await _picker.pickMultiImage();
+    if (selectedImages != null && selectedImages.isNotEmpty) {
+      List<String> filePaths = [];
+      final directory = await getApplicationDocumentsDirectory();
+      final imageDirectory = Directory('${directory.path}/images');
+      if (!await imageDirectory.exists()) {
+        await imageDirectory.create(recursive: true);
       }
-    } catch (e) {
-      print("Failed to pick images: $e");
+      for (var image in selectedImages) {
+        final imagePath = path.join(imageDirectory.path, path.basename(image.path));
+        final File newImage = await File(image.path).copy(imagePath);
+        filePaths.add(newImage.path);
+      }
+      setState(() {
+        _imageFiles = selectedImages;
+        _imagePaths = filePaths;
+      });
     }
   }
 
@@ -101,21 +88,23 @@ class _ServiceFormState extends State<ServiceForm> {
   }
 
   void serviceAction() async {
+    if (!_formKey.currentState!.validate()) return;
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String token = prefs.getString('token')!;
     Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
     int userId = decodedToken['sub'];
 
     ServiceDto serviceDto = ServiceDto(
+      id: widget.currentService?.id,
       name: _nameController.text,
       description: _descriptionController.text,
       localisation: _localisationController.text,
-      profileImage: "/path/to/img",
       mail: _mailController.text,
       phone: _phoneController.text,
       price: int.tryParse(_priceController.text),
       UserID: userId,
       CategoryID: selectedCategoryId,
+      profileImage: "/path/to/img",
     );
 
     try {
@@ -123,41 +112,27 @@ class _ServiceFormState extends State<ServiceForm> {
       await serviceRepository.createService(serviceDto) :
       await serviceRepository.updateService(serviceDto);
 
-      if (response != null && response.id != null) {
+      if (response != null) {
         if (_imageFiles != null && _imageFiles!.isNotEmpty) {
           await serviceRepository.uploadImages(response.id!, _imageFiles!);
         }
         Navigator.pop(context, response);
-      } else {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: const Text('Erreur'),
-              content: const Text('Impossible de créer ou de mettre à jour le service.'),
-              actions: <Widget>[
-                TextButton(
-                  child: const Text('Fermer'),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ],
-            );
-          },
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Service ${widget.currentService == null ? 'créé' : 'mis à jour'} avec succès!'))
         );
+      } else {
+        throw Exception('Aucune réponse du serveur');
       }
     } catch (e) {
       showDialog(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: const Text('Erreur de réseau'),
-            content: const Text(
-                'Une erreur est survenue lors de la communication avec le serveur. Veuillez réessayer.'),
+            title: Text('Erreur lors de la ${widget.currentService == null ? 'création' : 'mise à jour'}'),
+            content: Text('Erreur: $e'),
             actions: <Widget>[
               TextButton(
-                child: const Text('Fermer'),
+                child: Text('Fermer'),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
@@ -169,26 +144,15 @@ class _ServiceFormState extends State<ServiceForm> {
     }
   }
 
-  Future<void> saveImagePaths(List<String> imagePaths, int serviceId) async {
-    for (String path in imagePaths) {
-      await ImageRepository().createImage(ImageDto(path: path, ServiceID: serviceId));
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: AppBar(
         foregroundColor: Colors.black,
         backgroundColor: Colors.white,
         elevation: 0,
         centerTitle: true,
-
-        title: const Text('Créer une prestation',
-          style:TextStyle(
-            fontSize: 20,
-          ) ,),
+        title: Text(widget.currentService == null ? 'Créer une prestation' : 'Modifier la prestation'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(20),
@@ -224,7 +188,7 @@ class _ServiceFormState extends State<ServiceForm> {
                 decoration: const InputDecoration(labelText: 'Adresse'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Veuillez entrer une Adresse';
+                    return 'Veuillez entrer une adresse';
                   }
                   return null;
                 },
@@ -232,7 +196,7 @@ class _ServiceFormState extends State<ServiceForm> {
               const SizedBox(height: 20),
               TextFormField(
                 controller: _phoneController,
-                decoration: const InputDecoration(labelText: 'Phone'),
+                decoration: const InputDecoration(labelText: 'Téléphone'),
               ),
               const SizedBox(height: 20),
               TextFormField(
@@ -240,7 +204,7 @@ class _ServiceFormState extends State<ServiceForm> {
                 decoration: const InputDecoration(labelText: 'Email'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Veuillez entrer une adresse mail';
+                    return 'Veuillez entrer une adresse email';
                   }
                   return null;
                 },
@@ -248,10 +212,10 @@ class _ServiceFormState extends State<ServiceForm> {
               const SizedBox(height: 20),
               TextFormField(
                 controller: _priceController,
-                decoration: const InputDecoration(labelText: 'Prix d\'estimation'),
+                decoration: const InputDecoration(labelText: 'Prix'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Veuillez entrer une prix d\'estimation';
+                    return 'Veuillez entrer un prix';
                   }
                   return null;
                 },
@@ -281,7 +245,6 @@ class _ServiceFormState extends State<ServiceForm> {
                   return null;
                 },
               ),
-              //SizedBox(height: 100),
               ListTile(
                 leading: const Icon(Icons.photo_library),
                 title: const Text("Sélectionner des images"),
@@ -297,7 +260,7 @@ class _ServiceFormState extends State<ServiceForm> {
               ElevatedButton(
                 onPressed: serviceAction,
                 style: ElevatedButton.styleFrom(
-                  fixedSize: const Size(double.maxFinite, 60),
+                  fixedSize: const Size(double.infinity, 60),
                   backgroundColor: AppColors.pink,
                   padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 10),
                   shape: RoundedRectangleBorder(
