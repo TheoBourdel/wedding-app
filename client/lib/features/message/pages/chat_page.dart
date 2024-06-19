@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:client/core/theme/app_colors.dart';
 import 'package:client/model/message.dart';
 import 'package:client/model/user.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +10,7 @@ import 'package:client/features/message/bloc_message/message_bloc.dart';
 import 'package:client/features/message/bloc_room/room_bloc.dart';
 import 'package:client/repository/message_repository.dart';
 import 'package:client/repository/room_repository.dart';
+import 'package:intl/intl.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 class ChatForm extends StatefulWidget {
@@ -109,16 +111,34 @@ class _ChatState extends State<ChatForm> {
                       itemBuilder: (context, index) {
                         final message = state.messages[index];
                         final isMine = message.userId == widget.userId;
+                        final messageTime = DateFormat('HH:mm').format(message.createdAt);
                         return Align(
                           alignment: isMine ? Alignment.centerRight : Alignment.centerLeft,
                           child: Container(
-                            padding: EdgeInsets.all(8.0),
+                            constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.55),
+                            padding: EdgeInsets.all(12.0),
                             margin: EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
                             decoration: BoxDecoration(
-                              color: isMine ? Colors.blueAccent : Colors.grey[300],
+                              color: isMine ? AppColors.pink500  : Colors.grey[300],
                               borderRadius: BorderRadius.circular(8.0),
                             ),
-                            child: Text(message.content),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  message.content,
+                                  style: TextStyle(color: isMine ? Colors.white : Colors.black, fontSize: 16),
+                                ),
+                                SizedBox(height: 4.0),
+                                Align(
+                                  alignment: Alignment.bottomRight,
+                                  child: Text(
+                                    messageTime,
+                                    style: TextStyle(color: isMine ? Colors.white70 : Colors.black54, fontSize: 12),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         );
                       },
@@ -135,22 +155,42 @@ class _ChatState extends State<ChatForm> {
               padding: const EdgeInsets.all(16.0),
               child: Form(
                 key: _formKey,
-                child: Column(
+                child: Row(
                   children: [
-                    TextFormField(
+                      Expanded(
+                      child: TextFormField(
                       controller: _messageController,
-                      decoration: InputDecoration(labelText: 'Message'),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter a message';
-                        }
-                        return null;
-                      },
-                    ),
-                    SizedBox(height: 20),
+                        decoration: InputDecoration(
+                          labelText: 'Message',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: AppColors.pink500),
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: AppColors.pink500, width: 2.0),
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter a message';
+                          }
+                          return null;
+                        },
+                      ),
+                      ),
+                    SizedBox(height: 8),
                     ElevatedButton(
                       onPressed: _sendMessage,
-                      child: Text('Send Message'),
+                      style: ElevatedButton.styleFrom(
+                        shape: CircleBorder(),
+                        padding: EdgeInsets.all(12.0),
+                        backgroundColor: AppColors.pink500,
+                      ),
+                      child: Icon(Icons.send, color: Colors.white),
                     ),
                   ],
                 ),

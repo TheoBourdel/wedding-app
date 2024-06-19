@@ -47,7 +47,7 @@ class _ServiceDetailPageState extends State<ServiceDetailPage> {
       body: BlocListener<RoomBloc, RoomState>(
         listener: (context, state) {
           if (state is RoomCreated) {
-            Navigator.push(
+          /*  Navigator.push(
               context,
               MaterialPageRoute(
                 builder: (context) => ChatForm(
@@ -58,7 +58,7 @@ class _ServiceDetailPageState extends State<ServiceDetailPage> {
 
                 ),
               ),
-            );
+            );*/
           } else if (state is RoomError) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text('Failed to join room: ${state.message}')),
