@@ -67,10 +67,7 @@ class _DetailsPageState extends State<DetailsPage> {
             children: [
               buildImageCarousel(size, defaultColor, secondColor),
               buildServiceDetails(
-                service.name,
-                service.description,
-                service.price,
-                service.localisation,
+                service,
                 defaultColor,
                 secondColor,
                 extendDetails,
