@@ -19,8 +19,7 @@ class ServiceDetailPage extends StatefulWidget {
 
 class _ServiceDetailPageState extends State<ServiceDetailPage> {
   int userId = 0;
-  String token = "";
-  final UserRepository userRepository = UserRepository();
+  final UserRepository userRepository = UserRepository ();
 
   @override
   void initState() {
@@ -37,12 +36,7 @@ class _ServiceDetailPageState extends State<ServiceDetailPage> {
     });
   }
 
-  Future getTokenOfOtherUser(int userId) async {
-    User user = await userRepository.getUser(userId);
-    setState(() {
-      token = user.androidToken!;
-    });
-  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +46,6 @@ class _ServiceDetailPageState extends State<ServiceDetailPage> {
       ),
       body: BlocListener<RoomBloc, RoomState>(
         listener: (context, state) {
-          print(widget.service);
           if (state is RoomCreated) {
             Navigator.push(
               context,
@@ -60,7 +53,7 @@ class _ServiceDetailPageState extends State<ServiceDetailPage> {
                 builder: (context) => ChatForm(
                   currentChat: state.room.name,
                   roomId: state.room.id.toString(),
-                  token: token,
+                  //userId: widget.service.UserID,
                   userId: userId,
 
                 ),
@@ -84,9 +77,6 @@ class _ServiceDetailPageState extends State<ServiceDetailPage> {
               Text('Price: ${widget.service.price ?? 'No Price'}', style: TextStyle(fontSize: 16)),
               SizedBox(height: 10),
               Text('Location: ${widget.service.localisation ?? 'No Location'}', style: TextStyle(fontSize: 16)),
-              SizedBox(height: 10),
-              Text('user: ${widget.service.UserID ?? 'No ser'}', style: TextStyle(fontSize: 16)),
-
               // Add more fields as needed
               SizedBox(height: 20),
               ElevatedButton(
