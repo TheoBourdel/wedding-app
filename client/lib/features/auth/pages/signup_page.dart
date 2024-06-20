@@ -46,20 +46,8 @@ class _SignUpPageState extends State<SignUpPage> {
             builder: (context) => const SignInPage()
           ),
         );
-<<<<<<< HEAD
       } catch (e) {
         print(e);
-=======
-      } catch (error) {
-        ApiException e = error as ApiException;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(e.message),
-            backgroundColor: Colors.red[400],
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
->>>>>>> 6fe03ce (hotfix(global): fix console problem)
         // Show error toast
       }
     }
