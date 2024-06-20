@@ -273,7 +273,7 @@ class _SingleServiceDetailsBottomState
                 );
               },
               child: Container(
-                width: widget.size.width * 0.35,
+                width: widget.size.width * 0.20,
                 height: widget.size.height * 0.07,
                 decoration: BoxDecoration(
                   color: AppColors.pink,
@@ -305,7 +305,7 @@ class _SingleServiceDetailsBottomState
                 }
               },
               child: Container(
-                width: widget.size.width * 0.25,
+                width: widget.size.width * 0.20,
                 height: widget.size.height * 0.07,
                 decoration: BoxDecoration(
                   color: AppColors.pink,
