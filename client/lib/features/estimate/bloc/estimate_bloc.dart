@@ -28,7 +28,6 @@ class EstimateBloc extends Bloc<EstimateEvent, EstimateState> {
 
       try {
         final List<Estimate> estimates = await EstimateRepository.getEstimates(event.userId);
-        print(estimates.first.service!.name);
         emit(state.copyWith(status: EstimateStatus.success, estimates: estimates));
       } catch (e) {
         emit(state.copyWith(status: EstimateStatus.failure, error: "Error while loading estimates"));
