@@ -112,9 +112,9 @@ class _ServiceFormState extends State<ServiceForm> {
       await serviceRepository.createService(serviceDto) :
       await serviceRepository.updateService(serviceDto);
 
-      if (response != null) {
+      if (response == null) {
         if (_imageFiles != null && _imageFiles!.isNotEmpty) {
-          await serviceRepository.uploadImages(response.id!, _imageFiles!);
+          await serviceRepository.uploadImages(response!.id!, _imageFiles!);
         }
         Navigator.pop(context, response);
         ScaffoldMessenger.of(context).showSnackBar(
