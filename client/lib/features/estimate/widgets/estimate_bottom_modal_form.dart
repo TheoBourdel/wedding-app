@@ -95,7 +95,8 @@ class EstimateBottomModalForm extends StatelessWidget {
                         userId: userId,
                       )
                     ),
-                    Navigator.pop(context)
+                    Navigator.pop(context),
+                    Navigator.pop(context),
                   }
                 },
                 style: ElevatedButton.styleFrom(

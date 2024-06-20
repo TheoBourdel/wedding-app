@@ -34,7 +34,12 @@ func (es *EstimateService) UpdateEstimate(userId int, estimateId int, body model
 		return model.Estimate{}, error
 	}
 
-	return estimate, error
+	updatedEstimate, error := es.EstimateRepository.FindOneBy("id", estimateId)
+	if error != (dto.HttpErrorDto{}) {
+		return model.Estimate{}, error
+	}
+
+	return updatedEstimate, error
 }
 
 func (es *EstimateService) DeleteEstimate(userId int, estimateId int) dto.HttpErrorDto {

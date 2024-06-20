@@ -1,3 +1,4 @@
+// ignore: depend_on_referenced_packages
 import 'package:bloc/bloc.dart';
 import 'package:client/features/service/bloc/service_event.dart';
 import 'package:client/features/service/bloc/service_state.dart';

@@ -40,7 +40,7 @@ func (ur *EstimateRepository) FindAllBy(field string, value any) ([]model.Estima
 func (ur *EstimateRepository) FindOneBy(field string, value any) (model.Estimate, dto.HttpErrorDto) {
 	var estimate model.Estimate
 
-	result := config.DB.Where(field+" = ?", value).First(&estimate)
+	result := config.DB.Preload("Provider").Preload("Client").Preload("Service").Where(field+" = ?", value).First(&estimate)
 
 	if result.RowsAffected == 0 {
 		return model.Estimate{}, dto.HttpErrorDto{Message: "Estimate not found", Code: 404}

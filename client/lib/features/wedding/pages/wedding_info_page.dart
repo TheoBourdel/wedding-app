@@ -4,9 +4,7 @@ import 'package:client/features/wedding/widgets/wedding_countdown_card.dart';
 import 'package:client/features/wedding/widgets/wedding_info_card.dart';
 import 'package:client/model/wedding.dart';
 import 'package:client/shared/widget/button.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:iconsax/iconsax.dart';
 
 class WeddingInfoPage extends StatelessWidget {

@@ -49,7 +49,6 @@ class EstimateRepository {
     if(res.statusCode == 200) {
       return Estimate.fromJson(jsonDecode(res.body));
     } else {
-      print(res.body);
       throw Exception(res.body);
     }
   }

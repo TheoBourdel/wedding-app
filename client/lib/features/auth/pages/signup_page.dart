@@ -5,6 +5,7 @@ import 'package:client/repository/auth_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:client/features/auth/pages/signin_page.dart';
 import 'package:flutter_gen/gen_l10n/app_localization.dart';
+import 'package:client/core/error/failure.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -45,8 +46,20 @@ class _SignUpPageState extends State<SignUpPage> {
             builder: (context) => const SignInPage()
           ),
         );
+<<<<<<< HEAD
       } catch (e) {
         print(e);
+=======
+      } catch (error) {
+        ApiException e = error as ApiException;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(e.message),
+            backgroundColor: Colors.red[400],
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+>>>>>>> 6fe03ce (hotfix(global): fix console problem)
         // Show error toast
       }
     }
