@@ -14,8 +14,9 @@ class EstimatePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final authState = context.read<AuthBloc>().state;
-      final userId = authState is Authenticated ? authState.userId : null;
+    final userId = authState is Authenticated ? authState.userId : null;
     context.read<EstimateBloc>().add(EstimatesLoadedEvent(userId: userId!));
+    
     return BlocBuilder<EstimateBloc, EstimateState>(
       builder:(context, state) {
         if(state.status == EstimateStatus.loading) {

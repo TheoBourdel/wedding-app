@@ -21,13 +21,13 @@ class EstimateBottomModalForm extends StatelessWidget {
     contentController.text = estimate.content;
     priceController.text = estimate.price.toString();
 
-    return Container(
-      height: 800,
+    return SingleChildScrollView(
       padding: const EdgeInsets.all(20),
       child: Center(
         child: Padding(
           padding: const EdgeInsets.all(15),
           child: Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
               Text(
                 '$title un devis',
@@ -79,11 +79,11 @@ class EstimateBottomModalForm extends StatelessWidget {
                       },
                     ),
                   ],
-                )
+                ),
               ),
               const SizedBox(height: 20),
               ElevatedButton(
-                onPressed: () => {
+                onPressed: () {
                   if (formKey.currentState!.validate()) {
                     context.read<EstimateBloc>().add(
                       EstimateUpdateEvent(
@@ -93,10 +93,10 @@ class EstimateBottomModalForm extends StatelessWidget {
                           status: 'pending',
                         ),
                         userId: userId,
-                      )
-                    ),
-                    Navigator.pop(context),
-                    Navigator.pop(context),
+                      ),
+                    );
+                    Navigator.pop(context);
+                    Navigator.pop(context);
                   }
                 },
                 style: ElevatedButton.styleFrom(
