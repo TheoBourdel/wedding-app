@@ -83,7 +83,7 @@ class _DetailsPageState extends State<DetailsPage> {
                 child: InkWell(
                   onTap: () => Navigator.of(context).pop(),
                   child: Container(
-                    padding: EdgeInsets.all(8),
+                    padding: const EdgeInsets.all(8),
                     decoration: const BoxDecoration(
                       color: AppColors.pink,
                       shape: BoxShape.circle,
@@ -97,17 +97,17 @@ class _DetailsPageState extends State<DetailsPage> {
                 ),
               ),
               Positioned(
-                top: MediaQuery.of(context).padding.top + 50,
+                top: MediaQuery.of(context).padding.top + 10,
                 right: 10,
                 child: InkWell(
                   onTap: _openEditForm,
                   child: Container(
-                    padding: EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: Colors.blue,
+                    padding: const EdgeInsets.all(8),
+                    decoration: const BoxDecoration(
+                      color: AppColors.pink,
                       shape: BoxShape.circle,
                     ),
-                    child: Icon(
+                    child: const Icon(
                       UniconsLine.edit,
                       color: Colors.white,
                       size: 24,
