@@ -34,7 +34,7 @@ class ServiceRepository {
         body: json.encode(service),
       );
 
-      if (res.statusCode == 201) {
+      if (res.statusCode == 204) {
         return Service.fromJson(jsonDecode(res.body));
       } else {
         throw Exception(res.body);
