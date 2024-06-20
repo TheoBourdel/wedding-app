@@ -57,6 +57,9 @@ class _BuildDetailsBottomBar extends State<BuildDetailsBottomBar> {
 
   @override
   Widget build(BuildContext context) {
+    final authState = context.read<AuthBloc>().state;
+    final userId = authState is Authenticated ? authState.userId : null;
+
     return Padding(
     padding: EdgeInsets.only(
       top: widget.size.height * 0.01,
@@ -159,7 +162,7 @@ class _BuildDetailsBottomBar extends State<BuildDetailsBottomBar> {
                             onPressed: () => {
                               if (formKey.currentState!.validate()) {
                                 context.read<EstimateBloc>().add(EstimateCreateEvent(
-                                  userId: 48,
+                                  userId: userId!,
                                   createEstimateDto: CreateEstimateDto(
                                     firstName: firstNameController.text,
                                     lastName: lastNameController.text,

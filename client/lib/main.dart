@@ -5,10 +5,12 @@ import 'package:client/features/auth/bloc/auth_state.dart';
 import 'package:client/features/auth/pages/signin_page.dart';
 import 'package:client/features/estimate/bloc/estimate_bloc.dart';
 import 'package:client/features/estimate/bloc/estimate_event.dart';
+import 'package:client/features/organizer/bloc/organizer_bloc.dart';
 import 'package:client/features/service/bloc/service_bloc.dart';
 import 'package:client/features/wedding/bloc/wedding_bloc.dart';
 import 'package:client/repository/auth_repository.dart';
 import 'package:client/repository/estimate_repository.dart';
+import 'package:client/repository/organizer_repository.dart';
 import 'package:client/repository/service_repository.dart';
 import 'package:client/shared/bottom_navigation.dart';
 import 'package:flutter/material.dart';
@@ -63,6 +65,7 @@ class MyApp extends StatelessWidget {
   final MessageRepository messageRepository = MessageRepository();
   final EstimateRepository estimateRepository = EstimateRepository();
   final ServiceRepository serviceRepository = ServiceRepository();
+  final OrganizerRepository organizerRepository = OrganizerRepository();
 
   @override
   Widget build(BuildContext context) {
@@ -102,12 +105,15 @@ class MyApp extends StatelessWidget {
               create: (context) {
                 final authState = context.read<AuthBloc>().state;
                 final userId = authState is Authenticated ? authState.userId : null;
-
+              
                 return EstimateBloc(estimateRepository)..add(EstimatesLoadedEvent(userId: userId!));
               }
             ),
             BlocProvider(
               create: (context) => ServiceBloc(serviceRepository)
+            ),
+            BlocProvider(
+              create: (context) => OrganizerBloc(organizerRepository)
             )
             // Mettez ici les autres blocs providers
           ],

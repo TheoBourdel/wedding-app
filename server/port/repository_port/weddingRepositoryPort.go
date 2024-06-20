@@ -12,4 +12,5 @@ type WeddingRepositoryInterface interface {
 	Delete(id uint64) error
 	Update(id uint64, wedding model.Wedding) error
 	FindByUserID(id uint64, wedding model.Wedding) error
+	RemoveUserFromWedding(weddingID uint64, userID uint64) dto.HttpErrorDto
 }

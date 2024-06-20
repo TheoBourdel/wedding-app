@@ -86,3 +86,25 @@ func (wr *WeddingRepository) FindByUserID(userID uint64) (model.Wedding, dto.Htt
 
 	return wedding, dto.HttpErrorDto{}
 }
+
+func (wr *WeddingRepository) RemoveUserFromWedding(userID int, weddingID int) dto.HttpErrorDto {
+	var wedding model.Wedding
+	// Find wedding
+	result := config.DB.Where("id"+" = ?", weddingID).First(&wedding)
+	if result.RowsAffected == 0 {
+		return dto.HttpErrorDto{Message: "Wedding not found", Code: 404}
+	}
+
+	var user model.User
+	if err := config.DB.First(&user, userID).Error; err != nil {
+		fmt.Println("Error while finding user:", err)
+		return dto.HttpErrorDto{Message: "Error while finding user", Code: 500}
+	}
+
+	if err := config.DB.Model(&wedding).Association("organizers").Delete(&user); err != nil {
+		fmt.Println("Error while removing user from wedding:", err)
+		return dto.HttpErrorDto{Message: "Error while removing user from wedding", Code: 500}
+	}
+
+	return dto.HttpErrorDto{}
+}

@@ -19,6 +19,6 @@ type User struct {
 	Email     string `json:"Email"`
 	Password  string
 	Role      Role
-	Weddings  []Wedding  `gorm:"many2many:organizer;"`
+	Weddings  []Wedding  `gorm:"many2many:organizers;"`
 	Estimates []Estimate `gorm:"foreignKey:ClientID"`
 }

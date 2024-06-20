@@ -13,5 +13,5 @@ type Wedding struct {
 	Phone        string
 	Email        string
 	Budget       float64
-	User         []User `gorm:"many2many:organizer;"`
+	User         []User `gorm:"many2many:organizers;"`
 }

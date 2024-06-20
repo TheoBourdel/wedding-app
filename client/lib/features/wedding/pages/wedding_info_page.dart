@@ -1,4 +1,4 @@
-import 'package:client/features/organizer/pages/organizers_page.dart';
+import 'package:client/features/organizer/pages/organizer_page.dart';
 import 'package:client/features/wedding/pages/wedding_form.dart';
 import 'package:client/features/wedding/widgets/wedding_countdown_card.dart';
 import 'package:client/features/wedding/widgets/wedding_info_card.dart';
@@ -95,7 +95,7 @@ class WeddingInfoPage extends StatelessWidget {
                           child: GestureDetector(
                             onTap: () {
                               Navigator.push(context, MaterialPageRoute(
-                                builder: (context) => const OrganizersPage(),
+                                builder: (context) => OrganizerPage(weddingId: wedding.id),
                               ));
                             },
                             child: const WeddingInfoCard(title: "Organisateurs", value: "0", icon: Iconsax.profile_2user),

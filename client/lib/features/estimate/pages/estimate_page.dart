@@ -11,7 +11,7 @@ class EstimatePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<EstimateBloc, EstimateState>(
-      builder:(context, state) {
+      builder: (context, state) {
         if(state.status == EstimateStatus.loading) {
           return const Center(
             child: CircularProgressIndicator(),

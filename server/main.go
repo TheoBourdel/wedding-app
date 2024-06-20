@@ -34,6 +34,7 @@ func main() {
 	route.AuthRoutes(router)
 	route.MessageRoutes(router)
 	route.EstimateRoutes(router)
+	route.OrganizerRoutes(router)
 
 	// ws
 	hub := ws.NewHub()
