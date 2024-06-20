@@ -14,12 +14,12 @@ import '../services_theme.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class ProviderServicesScreen extends StatefulWidget {
+class ServicesScreen extends StatefulWidget {
   @override
-  _ProviderServicesScreenState createState() => _ProviderServicesScreenState();
+  _ServicesScreenState createState() => _ServicesScreenState();
 }
 
-class _ProviderServicesScreenState extends State<ProviderServicesScreen> with TickerProviderStateMixin {
+class _ServicesScreenState extends State<ServicesScreen> with TickerProviderStateMixin {
   AnimationController? animationController;
   final ScrollController _scrollController = ScrollController();
   TextEditingController searchController = TextEditingController();

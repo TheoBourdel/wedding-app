@@ -43,7 +43,7 @@ class _BottomNavigationState extends State<BottomNavigation> {
 
 
     if (role == 'marry') {
-      screens.add(ProviderServicesScreen());
+      screens.add(ServicesScreen());
       destinations.add(const BottomNavigationBarItem(
         icon: Icon(Iconsax.search_normal_1),
         label: "Rechercher",
@@ -61,7 +61,7 @@ class _BottomNavigationState extends State<BottomNavigation> {
         icon: Icon(Iconsax.briefcase),
         label: "Prestations",
       ));
-      screens.add(ProviderServicesScreen());
+      screens.add(ServicesScreen());
 
     } else if (role == 'marry') {
       destinations.add(const BottomNavigationBarItem(
