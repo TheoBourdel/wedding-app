@@ -10,9 +10,9 @@ import 'service_form.dart';
 
 class DetailsPage extends StatefulWidget {
   final Size size;
-  final Service serviceData;
+  Service serviceData;
 
-  const DetailsPage({
+  DetailsPage({
     super.key,
     required this.size,
     required this.serviceData,
@@ -26,16 +26,18 @@ class _DetailsPageState extends State<DetailsPage> {
   bool extendDetails = true;
   List<serviceImage.Image> images = [];
   bool _isImagesLoaded = false;
+  late Service localServiceData;
 
   @override
   void initState() {
     super.initState();
     _loadImages();
+    localServiceData = widget.serviceData;;
   }
 
   void _loadImages() async {
     if (!_isImagesLoaded) {
-      var serviceId = widget.serviceData.id;
+      var serviceId = localServiceData.id;
       if (serviceId != null) {
         List<serviceImage.Image> loadedImages = await ImageRepository().getServiceImages(serviceId);
         setState(() {
@@ -53,8 +55,7 @@ class _DetailsPageState extends State<DetailsPage> {
     bool isDarkMode = brightness == Brightness.dark;
     Color defaultColor = isDarkMode ? Colors.white : Colors.black;
     Color secondColor = isDarkMode ? Colors.black : Colors.white;
-
-    Service service = widget.serviceData;
+    Service service = localServiceData;
     return Scaffold(
       body: Center(
         child: Container(
@@ -149,12 +150,20 @@ class _DetailsPageState extends State<DetailsPage> {
     );
   }
 
-  void _openEditForm() {
-    Navigator.push(
+  void _openEditForm() async {
+    final updatedService = await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => ServiceForm(currentService: widget.serviceData),
+        builder: (context) => ServiceForm(currentService: localServiceData),
       ),
     );
+
+    if (updatedService != null) {
+      setState(() {
+        localServiceData = updatedService;
+        _isImagesLoaded = false;
+        _loadImages();
+      });
+    }
   }
 }
