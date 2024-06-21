@@ -108,11 +108,11 @@ class _ServiceFormState extends State<ServiceForm> {
     );
 
     try {
-      Service? response = widget.currentService == null ?
-      await serviceRepository.createService(serviceDto) :
-      await serviceRepository.updateService(serviceDto);
+      Service? response = widget.currentService == null
+          ? await serviceRepository.createService(serviceDto)
+          : await serviceRepository.updateService(serviceDto);
 
-      if (response == null) {
+      if (response != null) {
         if (_imageFiles != null && _imageFiles!.isNotEmpty) {
           await serviceRepository.uploadImages(response!.id!, _imageFiles!);
         }
@@ -132,7 +132,7 @@ class _ServiceFormState extends State<ServiceForm> {
             content: Text('Erreur: $e'),
             actions: <Widget>[
               TextButton(
-                child: Text('Fermer'),
+                child: const Text('Fermer'),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
@@ -143,6 +143,7 @@ class _ServiceFormState extends State<ServiceForm> {
       );
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
