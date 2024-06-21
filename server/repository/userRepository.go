@@ -58,3 +58,20 @@ func (ur *UserRepository) FindAllByWeddingID(weddingID uint) ([]model.User, dto.
 
 	return users, dto.HttpErrorDto{}
 }
+
+func (ur *UserRepository) UpdateFirebaseToken(userID uint, newToken string) (model.User, dto.HttpErrorDto) {
+	var user model.User
+
+	result := config.DB.First(&user, userID)
+	if result.Error != nil {
+		return model.User{}, dto.HttpErrorDto{Message: "User not found", Code: 404}
+	}
+
+	user.AndroidToken = newToken
+	saveResult := config.DB.Save(&user)
+	if saveResult.Error != nil {
+		return model.User{}, dto.HttpErrorDto{Message: "Error while updating token", Code: 500}
+	}
+
+	return user, dto.HttpErrorDto{}
+}

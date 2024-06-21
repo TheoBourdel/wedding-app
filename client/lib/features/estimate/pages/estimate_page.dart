@@ -1,4 +1,7 @@
+import 'package:client/features/auth/bloc/auth_bloc.dart';
+import 'package:client/features/auth/bloc/auth_state.dart';
 import 'package:client/features/estimate/bloc/estimate_bloc.dart';
+import 'package:client/features/estimate/bloc/estimate_event.dart';
 import 'package:client/features/estimate/bloc/estimate_state.dart';
 import 'package:client/features/estimate/pages/estimate_list_page.dart';
 import 'package:client/features/estimate/pages/no_estimate_page.dart';
@@ -10,6 +13,10 @@ class EstimatePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final authState = context.read<AuthBloc>().state;
+    final userId = authState is Authenticated ? authState.userId : null;
+    context.read<EstimateBloc>().add(EstimatesLoadedEvent(userId: userId!));
+    
     return BlocBuilder<EstimateBloc, EstimateState>(
       builder: (context, state) {
         if(state.status == EstimateStatus.loading) {

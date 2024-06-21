@@ -37,13 +37,9 @@ class RoomRepository {
   }
 
   Future<Message> joinRoom(String roomId, int userId) {
-
-    print('test');
     final url = '$_baseWsUrl/ws/joinRoom/$roomId?userId=$userId';
     channel = WebSocketChannel.connect(Uri.parse(url));
-
     final completer = Completer<Message>();
-
     channel?.stream.listen((message) {
       final messageObj = Message.fromJson(json.decode(message));
       _messageController.add(messageObj);

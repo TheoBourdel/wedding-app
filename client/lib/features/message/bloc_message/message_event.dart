@@ -10,11 +10,12 @@ abstract class MessageEvent extends Equatable {
 
 class SendMessageEvent extends MessageEvent {
   final MessageDto messageDto;
+  final String token;
 
-  SendMessageEvent({required this.messageDto});
+  SendMessageEvent({required this.messageDto, required this.token});
 
   @override
-  List<Object> get props => [messageDto];
+  List<Object> get props => [messageDto, token];
 }
 
 class ReceiveMessageEvent extends MessageEvent {

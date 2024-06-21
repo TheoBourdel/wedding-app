@@ -44,7 +44,6 @@ class _ServiceInfoPageState extends State<ServiceInfoPage> {
     }
   }
 
-  @override
   void getService() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String token = prefs.getString('token')!;
@@ -115,7 +114,7 @@ class _ServiceInfoPageState extends State<ServiceInfoPage> {
 
                                 child: Text(
                                   _service?.description ?? 'No service name available',
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     fontSize: 24,
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -128,18 +127,18 @@ class _ServiceInfoPageState extends State<ServiceInfoPage> {
                         Row(
                             children: [
                               Expanded(
-                                child: Container(
+                                child: SizedBox(
                                   width: double.infinity,
                                   height: 200,
                                   child: Card(
                                     elevation: 9,
-                                    margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                                    margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
                                     child: Padding(
-                                      padding: EdgeInsets.all(20),
+                                      padding: const EdgeInsets.all(20),
 
                                       child: Text(
                                         _service?.price?.toString()  ?? 'No description available',
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                           fontSize: 24,
                                           fontWeight: FontWeight.bold,
                                         ),

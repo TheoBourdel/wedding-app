@@ -4,8 +4,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:client/features/service/widgets/details/single_service_details_bottom.dart';
 import 'package:client/features/service/services_theme.dart';
 
-AnimatedPadding buildHotelDetails(name, description, price, localisation, Color defaultColor,
-    Color secondColor, bool extendDetails, Size size, int ServiceID) {
+AnimatedPadding buildServiceDetails(service, Color defaultColor,
+    Color secondColor, bool extendDetails, Size size,int ServiceID) {
   return AnimatedPadding(
     padding: EdgeInsets.only(
       top: extendDetails ? size.height * 0.3 : size.height * 0.35,
@@ -46,9 +46,13 @@ AnimatedPadding buildHotelDetails(name, description, price, localisation, Color 
                                 fit: BoxFit.scaleDown,
                                 alignment: Alignment.centerLeft,
                                 child: Text(
-                                  name,
+                                  service?.name,
                                   maxLines: 1,
-                                  
+                                  style: GoogleFonts.lato(
+                                    color: defaultColor,
+                                    fontSize: size.height * 0.035,
+                                    fontWeight: FontWeight.w600,
+                                  ),
                                 ),
                               ),
                             ),
@@ -65,8 +69,12 @@ AnimatedPadding buildHotelDetails(name, description, price, localisation, Color 
                                     left: size.width * 0.015,
                                   ),
                                   child: Text(
-                                    localisation,
-                                    
+                                    service?.localisation,
+                                    style: GoogleFonts.lato(
+                                      color: defaultColor,
+                                      fontSize: size.height * 0.02,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
                                 ),
                               ],
@@ -82,7 +90,12 @@ AnimatedPadding buildHotelDetails(name, description, price, localisation, Color 
                             ),
                             Text(
                               "5",
-                              
+                              style: GoogleFonts.lato(
+                                color: defaultColor.withOpacity(0.5),
+                                fontSize: size.height * 0.025,
+                                fontWeight: FontWeight.w600,
+                                wordSpacing: -3,
+                              ),
                             ),
                           ],
                         ),
@@ -100,8 +113,12 @@ AnimatedPadding buildHotelDetails(name, description, price, localisation, Color 
                       child: SingleChildScrollView(
                         padding: EdgeInsets.zero,
                         child: Text(
-                          description,
-                          
+                          service?.description,
+                          style: GoogleFonts.poppins(
+                            color: defaultColor.withOpacity(0.9),
+                            fontSize: size.height * 0.018,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                       ),
                     ),
@@ -114,7 +131,14 @@ AnimatedPadding buildHotelDetails(name, description, price, localisation, Color 
             color: defaultColor,
             height: size.height * 0.01,
           ),
-          BuildDetailsBottomBar(price: price, defaultColor: defaultColor, secondColor: secondColor, size: size, serviceID: ServiceID),
+          SingleServiceDetailsBottom(
+            price: service.price,
+            defaultColor: defaultColor,
+            secondColor: secondColor,
+            size: size,
+            service: service,
+            serviceID: ServiceID
+          ),
         ],
       ),
     ),

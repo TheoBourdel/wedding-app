@@ -8,4 +8,5 @@ type UserControllerInterface interface {
 	GetUser(c *gin.Context)
 	CreateUserEstimate(c *gin.Context)
 	GetUserEstimates(c *gin.Context)
+	UpdateUserFirebaseToken(c *gin.Context)
 }

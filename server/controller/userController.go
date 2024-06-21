@@ -95,3 +95,28 @@ func (uc *UserController) GetUser(ctx *gin.Context) {
 	ctx.Header("Content-Type", "application/json")
 	ctx.JSON(http.StatusOK, user)
 }
+
+func (uc *UserController) UpdateUserFirebaseToken(ctx *gin.Context) {
+	id := ctx.Param("id")
+	userID, err := strconv.ParseUint(id, 10, 32)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
+		return
+	}
+
+	var body struct {
+		Token string `json:"token"`
+	}
+	if err := ctx.BindJSON(&body); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body"})
+		return
+	}
+
+	user, updateErr := uc.UserService.UpdateUserFirebaseToken(uint(userID), body.Token)
+	if updateErr != (dto.HttpErrorDto{}) {
+		ctx.JSON(updateErr.Code, updateErr)
+		return
+	}
+
+	ctx.JSON(http.StatusOK, user)
+}
