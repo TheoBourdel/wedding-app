@@ -37,7 +37,7 @@ class _DetailsPageState extends State<DetailsPage> {
 
   void _loadImages() async {
     if (!_isImagesLoaded) {
-      var serviceId = localServiceData.id;
+      var serviceId = widget.serviceData.id;
       if (serviceId != null) {
         List<serviceImage.Image> loadedImages = await ImageRepository().getServiceImages(serviceId);
         setState(() {

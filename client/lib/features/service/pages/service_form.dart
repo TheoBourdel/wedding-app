@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:client/core/theme/app_colors.dart';
 import 'package:client/model/service.dart';
 import 'package:client/model/category.dart';
@@ -16,6 +18,8 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
+import '../../../core/constant/constant.dart';
+import 'package:client/model/image.dart' as serviceImage;
 
 class ServiceForm extends StatefulWidget {
   final Service? currentService;
@@ -43,6 +47,7 @@ class _ServiceFormState extends State<ServiceForm> {
   final ImagePicker _picker = ImagePicker();
   List<XFile>? _imageFiles;
   List<String>? _imagePaths;
+  List<serviceImage.Image> existingImages = [];
 
   @override
   void initState() {
@@ -54,6 +59,7 @@ class _ServiceFormState extends State<ServiceForm> {
     _mailController = TextEditingController(text: widget.currentService?.mail ?? '');
     _priceController = TextEditingController(text: widget.currentService?.price.toString() ?? '');
     _loadCategories();
+    _loadExistingImages();
   }
 
   void pickImages() async {
@@ -74,6 +80,31 @@ class _ServiceFormState extends State<ServiceForm> {
         _imageFiles = selectedImages;
         _imagePaths = filePaths;
       });
+    }
+  }
+
+  void _loadExistingImages() async {
+    if (widget.currentService != null) {
+      var serviceId = widget.currentService?.id;
+      if (serviceId != null) {
+        existingImages = await ImageRepository().getServiceImages(serviceId);
+        setState(() {});
+      }
+    }
+  }
+
+  void _removeImage(serviceImage.Image image) async {
+    if (image.id != null) {
+      try {
+        await ImageRepository().deleteImage(image.id!);
+        setState(() {
+          existingImages.remove(image);
+        });
+      } catch (e) {
+        print('Erreur lors de la suppression de l\'image: $e');
+      }
+    } else {
+      print('Erreur: ID de l\'image est nul');
     }
   }
 
@@ -251,6 +282,35 @@ class _ServiceFormState extends State<ServiceForm> {
                 title: const Text("Sélectionner des images"),
                 onTap: pickImages,
               ),
+              if (existingImages.isNotEmpty)
+                Wrap(
+                  spacing: 8.0,
+                  runSpacing: 4.0,
+                  children: existingImages.map((image) {
+                    var imagePath = apiUrl + (image.path!.startsWith('/') ? image.path! : '/${image.path!}');
+                    return Stack(
+                      children: [
+                        Image.network(
+                          imagePath,
+                          width: 100,
+                          height: 100,
+                          fit: BoxFit.cover,
+                        ),
+                        Positioned(
+                          top: 0,
+                          right: 0,
+                          child: GestureDetector(
+                            onTap: () => _removeImage(image),
+                            child: Container(
+                              color: Colors.red,
+                              child: Icon(Icons.close, color: Colors.white),
+                            ),
+                          ),
+                        ),
+                      ],
+                    );
+                  }).toList(),
+                ),
               if (_imageFiles != null)
                 Wrap(
                   spacing: 8.0,
