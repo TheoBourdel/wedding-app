@@ -2,11 +2,15 @@ import 'package:client/core/constant/constant.dart';
 import 'package:client/model/service.dart';
 import 'package:flutter/material.dart';
 import 'package:client/features/service/widgets/details/single_service_details.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:unicons/unicons.dart';
 import 'package:client/model/image.dart' as serviceImage;
 import '../../../core/theme/app_colors.dart';
 import '../../../repository/image_repository.dart';
+import '../../message/bloc_room/room_bloc.dart';
 import 'service_form.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class DetailsPage extends StatefulWidget {
   final Size size;
@@ -27,12 +31,16 @@ class _DetailsPageState extends State<DetailsPage> {
   List<serviceImage.Image> images = [];
   bool _isImagesLoaded = false;
   late Service localServiceData;
+  late Future<String> role;
+  late Future<int> userId;
 
   @override
   void initState() {
     super.initState();
     _loadImages();
-    localServiceData = widget.serviceData;;
+    localServiceData = widget.serviceData;
+    role = _getUserRole();
+    userId = _getUserId();
   }
 
   void _loadImages() async {
@@ -46,6 +54,24 @@ class _DetailsPageState extends State<DetailsPage> {
         });
       }
     }
+  }
+
+  Future<String> _getUserRole() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String token = prefs.getString('token')!;
+    final Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
+    print("le rolee");
+    print(decodedToken["role"]);
+    return decodedToken['role'] ?? 'unknown';
+  }
+
+  Future<int> _getUserId() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String token = prefs.getString('token')!;
+    final Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
+    print("le suub");
+    print(decodedToken["sub"]);
+    return decodedToken['sub'] ?? 'unknown';
   }
 
   @override
@@ -94,24 +120,79 @@ class _DetailsPageState extends State<DetailsPage> {
                   ),
                 ),
               ),
-              Positioned(
-                top: MediaQuery.of(context).padding.top + 10,
-                right: 10,
-                child: InkWell(
-                  onTap: _openEditForm,
-                  child: Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: const BoxDecoration(
-                      color: AppColors.pink,
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(
-                      UniconsLine.edit,
-                      color: Colors.white,
-                      size: 24,
-                    ),
-                  ),
-                ),
+              FutureBuilder<String>(
+                future: role,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Container();
+                  }
+                  if (snapshot.hasData) {
+                    List<Widget> actionButtons = [];
+                    if (snapshot.data == "provider") {
+                      actionButtons.add(
+                        Positioned(
+                          top: MediaQuery.of(context).padding.top + 10,
+                          right: 10,
+                          child: InkWell(
+                            onTap: _openEditForm,
+                            child: Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: const BoxDecoration(
+                                color: AppColors.pink,
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Icon(
+                                UniconsLine.edit,
+                                color: Colors.white,
+                                size: 24,
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
+                    }
+                    if (snapshot.data == "marry") {
+                      actionButtons.add(
+                        Positioned(
+                          top: MediaQuery.of(context).padding.top + 10,
+                          right: 10,
+                          child: InkWell(
+                            onTap: () {
+                              userId.then((id) {
+                                if (id != 0) {
+                                  BlocProvider.of<RoomBloc>(context).add(CreateRoomEvent(
+                                    widget.serviceData.name ?? 'No Name',
+                                    userId: id,
+                                    otherUser: widget.serviceData.UserID,
+                                  ));
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text('User ID is not available')),
+                                  );
+                                }
+                              });
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: const BoxDecoration(
+                                color: AppColors.pink,
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Icon(
+                                UniconsLine.message,
+                                color: Colors.white,
+                                size: 24,
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
+                    }
+                    return Stack(children: actionButtons);
+                  } else {
+                    return Container();
+                  }
+                },
               ),
             ],
           ),
