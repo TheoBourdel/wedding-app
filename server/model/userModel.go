@@ -20,6 +20,6 @@ type User struct {
 	Password     string
 	AndroidToken string
 	Role         Role
-	Weddings     []Wedding  `gorm:"many2many:organizer;"`
+	Weddings     []Wedding  `gorm:"many2many:organizers;"`
 	Estimates    []Estimate `gorm:"foreignKey:ClientID"`
 }

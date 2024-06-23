@@ -51,7 +51,7 @@ func (ur *UserRepository) FindOneBy(field string, value any) (model.User, dto.Ht
 func (ur *UserRepository) FindAllByWeddingID(weddingID uint) ([]model.User, dto.HttpErrorDto) {
 	var users []model.User
 
-	result := config.DB.Joins("JOIN organizer ON users.id = organizer.user_id").Where("organizer.wedding_id = ?", weddingID).Find(&users)
+	result := config.DB.Joins("JOIN organizers ON users.id = organizers.user_id").Where("organizers.wedding_id = ?", weddingID).Find(&users)
 	if result.Error != nil {
 		return []model.User{}, dto.HttpErrorDto{Message: "Error while fetching users", Code: 500}
 	}

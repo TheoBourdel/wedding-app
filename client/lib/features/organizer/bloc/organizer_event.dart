@@ -14,3 +14,10 @@ final class OrganizerLoadEvent extends OrganizerEvent {
 
   OrganizerLoadEvent({required this.weddingId});
 }
+
+final class OrganizerDeleteEvent extends OrganizerEvent {
+  final int weddingId;
+  final int userId;
+
+  OrganizerDeleteEvent({required this.weddingId, required this.userId});
+}

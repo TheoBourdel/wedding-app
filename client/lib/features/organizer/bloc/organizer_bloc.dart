@@ -32,5 +32,19 @@ class OrganizerBloc extends Bloc<OrganizerEvent, OrganizerState> {
         emit(state.copyWith(status: OrganizerStatus.failure, error: "Error while creating organizer"));
       }
     });
+
+    on<OrganizerDeleteEvent>((event, emit) async {
+      emit(state.copyWith(status: OrganizerStatus.loading));
+
+      try {
+        await OrganizerRepository.deleteOrganizer(event.weddingId, event.userId);
+        final currentState = state;
+        final updatedOrganizers = currentState.organizers.where((organizer) => organizer.id != event.userId).toList();
+        
+        emit(state.copyWith(status: OrganizerStatus.success, organizers: updatedOrganizers));
+      } catch (e) {
+        emit(state.copyWith(status: OrganizerStatus.failure, error: "Error while deleting organizer"));
+      }
+    });
   }
 }

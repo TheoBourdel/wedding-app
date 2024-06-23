@@ -25,7 +25,7 @@ class OrganizerListPage extends StatelessWidget {
           padding: const EdgeInsets.all(20),
           itemCount: organizers.length,
           itemBuilder: (context, index) {
-            return OrganizerCard(organizer: organizers[index]);
+            return OrganizerCard(organizer: organizers[index], weddingId: weddingId);
           },
         ),
       ),

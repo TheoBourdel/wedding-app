@@ -101,9 +101,15 @@ func (wr *WeddingRepository) RemoveUserFromWedding(userID int, weddingID int) dt
 		return dto.HttpErrorDto{Message: "Error while finding user", Code: 500}
 	}
 
-	if err := config.DB.Model(&wedding).Association("organizers").Delete(&user); err != nil {
-		fmt.Println("Error while removing user from wedding:", err)
-		return dto.HttpErrorDto{Message: "Error while removing user from wedding", Code: 500}
+	var organizer model.Organizer
+	organizer.UserID = int(user.ID)
+	organizer.WeddingID = int(wedding.ID)
+
+	// delete organizer
+	result = config.DB.Delete(&model.Organizer{}, userID, weddingID)
+	if result.Error != nil {
+		fmt.Println("Error while deleting organizer:", result)
+		return dto.HttpErrorDto{Message: "Error while deleting organizer", Code: 500}
 	}
 
 	return dto.HttpErrorDto{}

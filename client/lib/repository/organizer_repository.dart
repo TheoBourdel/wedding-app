@@ -33,4 +33,14 @@ class OrganizerRepository {
       throw Exception(res.body);
     }
   }
+
+  static Future<void> deleteOrganizer(int weddingId, int userId) async {
+    Response res = await delete(
+      Uri.parse('$apiUrl/wedding/$weddingId/organizer/$userId'),
+    );
+    print(res.body);
+    if(res.statusCode != 204) {
+      throw Exception(res.body);
+    }
+  }
 }

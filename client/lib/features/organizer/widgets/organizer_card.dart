@@ -1,12 +1,16 @@
 import 'package:client/core/theme/app_colors.dart';
+import 'package:client/features/organizer/bloc/organizer_bloc.dart';
+import 'package:client/features/organizer/bloc/organizer_event.dart';
 import 'package:client/model/user.dart';
 import 'package:flutter/material.dart';
 // ignore: library_prefixes
 import 'package:client/shared/widget/badge.dart' as CustomBadge;
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class OrganizerCard extends StatelessWidget {
   final User organizer;
-  const OrganizerCard({super.key, required this.organizer});
+  final int weddingId;
+  const OrganizerCard({super.key, required this.organizer, required this.weddingId});
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +33,12 @@ class OrganizerCard extends StatelessWidget {
       trailing: IconButton(
         icon: const Icon(Icons.delete),
         onPressed: () {
-          // Add delete functionality here
+          context.read<OrganizerBloc>().add(
+            OrganizerDeleteEvent(
+              weddingId: weddingId,
+              userId: organizer.id
+            )
+          );
         },
       ),
     );
