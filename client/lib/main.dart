@@ -1,4 +1,4 @@
-import 'package:client/core/theme/theme.dart';
+import                   'package:client/core/theme/theme.dart';
 import 'package:client/features/auth/pages/signin_page.dart';
 import 'package:client/features/wedding/pages/wedding_form.dart';
 import 'package:client/features/wedding/pages/wedding_page.dart';
@@ -17,6 +17,7 @@ import 'package:client/shared/widget/navigation_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:client/screens/main_screen.dart';
 
 
 class LocaleProvider with ChangeNotifier {
@@ -87,7 +88,7 @@ class MyApp extends StatelessWidget {
             supportedLocales: AppLocalizations.supportedLocales,
             title: 'Weddy',
             theme: AppTheme.lightTheme,
-            home: page,
+            home: MainScreen(),
           )
         )
       ),

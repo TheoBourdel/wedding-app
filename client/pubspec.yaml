@@ -81,6 +81,8 @@ dependencies:
   # Cached network images
   cached_network_image: ^3.2.0
   dartz: ^0.10.1
+  fl_chart: ^0.62.0
+  flutter_svg: ^2.0.5
 
 dev_dependencies:
   flutter_test:
@@ -112,6 +114,7 @@ flutter:
   assets:
     - assets/images/
     - assets/lang/
+    - assets/icons/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

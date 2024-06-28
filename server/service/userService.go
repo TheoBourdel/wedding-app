@@ -4,15 +4,16 @@ import (
 	"api/dto"
 	"api/model"
 	"api/repository"
+	"fmt"
 )
 
 type UserService struct {
 	UserRepository repository.UserRepository
 }
 
-func (us *UserService) FindAll() []model.User {
-	users := us.UserRepository.FindAll()
 
+func (us *UserService) FindAll(page int, pageSize int, query string) []model.User {
+	users := us.UserRepository.FindAll(page, pageSize, query)
 	return users
 }
 
@@ -32,4 +33,13 @@ func (us *UserService) GetUser(id string) (model.User, dto.HttpErrorDto) {
 	}
 
 	return user, dto.HttpErrorDto{}
+}
+
+
+func (us *UserService) DeleteUserByID(id int) error {
+	err := us.UserRepository.DeleteByID(id)
+	if err != nil {
+		return fmt.Errorf("failed to delete user: %v", err)
+	}
+	return nil
 }

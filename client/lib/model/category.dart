@@ -1,25 +1,31 @@
 class Category {
-  final int? id;
+  final int id;
   final String name;
-  final String? createdAt;
-  final String? updatedAt;
-  final String? deletedAt;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  final DateTime? deletedAt;
 
   Category({
-    this.id,
+    required this.id,
     required this.name,
-    this.createdAt,
-    this.updatedAt,
+    required this.createdAt,
+    required this.updatedAt,
     this.deletedAt,
   });
 
   factory Category.fromJson(Map<String, dynamic> json) {
     return Category(
-      id: json['ID'] as int?,
-      name: json['Name'] as String,
-      createdAt: json['CreatedAt'] as String?,
-      updatedAt: json['UpdatedAt'] as String?,
-      deletedAt: json['DeletedAt'] as String?,
+      id: json['id'],
+      name: json['name'],
+      createdAt: DateTime.parse(json['created_at']),
+      updatedAt: DateTime.parse(json['updated_at']),
+      deletedAt: json['deleted_at'] != null ? DateTime.parse(json['deleted_at']) : null,
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+    };
   }
 }

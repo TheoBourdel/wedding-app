@@ -6,4 +6,5 @@ type UserControllerInterface interface {
 	GetUsers(c *gin.Context)
 	CreateUser(c *gin.Context)
 	GetUser(c *gin.Context)
+	DeleteUser(ctx *gin.Context)
 }

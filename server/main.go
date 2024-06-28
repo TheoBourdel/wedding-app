@@ -4,9 +4,10 @@ import (
 	"api/config"
 	"api/route"
 	"api/ws"
+	"time"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-
 	_ "api/docs"
 
 	swaggerFiles "github.com/swaggo/files"
@@ -26,6 +27,18 @@ func init() {
 func main() {
 	// Create a new router
 	router := gin.Default()
+
+	// Configure CORS middleware
+	router.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"http://localhost:62622", "http://127.0.0.1:62622", "http://127.0.0.1:8080"}, // Ajoutez vos origines autorisées ici
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+		MaxAge:           12 * time.Hour,
+	}))
+
+	// Define routes
 	route.UserRoutes(router)
 	route.WeddingRoutes(router)
 	route.ServiceRoutes(router)
@@ -33,8 +46,10 @@ func main() {
 	route.ImageRoutes(router)
 	route.AuthRoutes(router)
 	route.MessageRoutes(router)
+	route.StatisticsRoutes(router)
+	route.HistoryRoutes(router)
 
-	// ws
+	// WebSocket
 	hub := ws.NewHub()
 	hub.LoadRoomsFromDB()
 	handler := ws.NewHandler(hub)
@@ -44,6 +59,8 @@ func main() {
 	// Swagger
 	router.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
-	// Run the server
-	router.Run(":8080")
+	// Run the server on port 8080
+	if err := router.Run("0.0.0.0:8080"); err != nil {
+		panic(err) // Log the error if the server fails to start
+	}
 }
