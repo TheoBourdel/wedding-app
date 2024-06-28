@@ -18,7 +18,6 @@ func (hc *HistoryController) GetWeddingsByYear(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid year parameter"})
 		return
 	}
-
 	weddings, err := hc.HistoryService.WeddingsByYear(year)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})

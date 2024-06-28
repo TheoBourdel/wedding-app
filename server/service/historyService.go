@@ -2,6 +2,8 @@ package service
 
 import (
 	"gorm.io/gorm"
+	"log"
+	"fmt"
 )
 
 type HistoryService struct {
@@ -14,13 +16,22 @@ type WeddingDetail struct {
 }
 
 func (s *HistoryService) WeddingsByYear(year int) ([]WeddingDetail, error) {
+	if s.DB == nil {
+    	return nil, fmt.Errorf("database connection is nil")
+    }
+
 	var weddings []WeddingDetail
 
 	err := s.DB.Table("weddings").
 		Select("name, budget").
 		Where("EXTRACT(YEAR FROM created_at) = ?", year).
 		Scan(&weddings).Error
+    if err != nil {
+    		log.Printf("Error fetching weddings: %v", err) // Ajoutez cette ligne pour logguer l'erreur
+    		return nil, err
+    }
 
+    log.Printf("Fetched weddings: %v", weddings)
 	if err != nil {
 		return nil, err
 	}

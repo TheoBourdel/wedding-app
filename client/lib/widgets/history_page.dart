@@ -13,7 +13,7 @@ class HistoryPage extends StatelessWidget {
         title: Text('Historique des Mariages - $year'),
       ),
       body: FutureBuilder<List<Map<String, dynamic>>>(
-        future: HistoryService().fetchWeddingsByYear(year), // Assurez-vous d'avoir cette méthode
+        future: HistoryService().fetchWeddingsByYear(year),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
