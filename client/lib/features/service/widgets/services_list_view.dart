@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:client/features/service/services_theme.dart';
+import 'package:client/features/service/widgets/services_theme.dart';
 import 'package:client/model/service.dart';
 import 'package:client/repository/image_repository.dart';
 import 'package:client/model/image.dart' as serviceImage;
 import 'package:client/core/constant/constant.dart';
-import 'package:client/features/service/pages/single_service.dart';
+import 'package:client/features/service/pages/single_service_page.dart';
 
 class ServiceListView extends StatefulWidget {
   final VoidCallback? callback;

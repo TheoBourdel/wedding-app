@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:client/features/service/pages/service_form.dart';
+import 'package:client/features/service/widgets/service_form.dart';
 import 'package:client/model/user.dart';
 import 'package:client/repository/user_repository.dart';
 import 'package:flutter/material.dart';
@@ -9,8 +9,8 @@ import 'package:client/model/service.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../model/category.dart';
 import '../../../repository/category_repository.dart';
-import '../services_list_view.dart';
-import '../services_theme.dart';
+import '../widgets/services_list_view.dart';
+import '../widgets/services_theme.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

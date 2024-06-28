@@ -8,7 +8,7 @@ import 'package:client/model/image.dart' as serviceImage;
 import '../../../core/theme/app_colors.dart';
 import '../../../repository/image_repository.dart';
 import '../../message/bloc_room/room_bloc.dart';
-import 'service_form.dart';
+import '../widgets/service_form.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
