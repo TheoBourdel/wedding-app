@@ -1,4 +1,4 @@
-import 'package:client/features/service/widgets/service_detail.dart';
+import 'package:client/features/service/widgets/details/service_detail.dart';
 import 'package:flutter/material.dart';
 import 'package:client/model/service.dart';
 
