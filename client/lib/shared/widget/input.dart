@@ -1,3 +1,4 @@
+import 'package:client/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class Input extends StatelessWidget {
@@ -19,6 +20,15 @@ class Input extends StatelessWidget {
       obscureText: isObscureText,
       decoration: InputDecoration(
         hintText: hintText,
+        labelText: hintText,
+        labelStyle: const TextStyle(
+          color: AppColors.pink500,
+        ),
+        errorStyle: TextStyle(
+          color: Colors.red[200],
+          fontWeight: FontWeight.bold,
+        ),
+
       ),
       validator: (value) {
         if (value!.isEmpty) {

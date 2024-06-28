@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:client/features/service/services_theme.dart';
+import 'package:client/features/service/widgets/services_theme.dart';
 import 'package:client/model/service.dart';
 import 'package:client/repository/image_repository.dart';
 import 'package:client/model/image.dart' as serviceImage;
 import 'package:client/core/constant/constant.dart';
+import 'package:client/features/service/pages/single_service_page.dart';
 
 class ServiceListView extends StatefulWidget {
   final VoidCallback? callback;
@@ -32,7 +33,8 @@ class _ServiceListViewState extends State<ServiceListView> {
   @override
   void didUpdateWidget(covariant ServiceListView oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.serviceData?.id != oldWidget.serviceData?.id) {
+    if (widget.serviceData != oldWidget.serviceData) {
+      _isImagesLoaded = false;
       _loadImages();
     }
   }
@@ -68,8 +70,16 @@ class _ServiceListViewState extends State<ServiceListView> {
             child: Padding(
               padding: const EdgeInsets.only(left: 24, right: 24, top: 8, bottom: 16),
               child: InkWell(
-                splashColor: Colors.transparent,
-                onTap: widget.callback,
+                onTap: () {
+                  if (widget.serviceData?.id != null) {
+                    Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => DetailsPage(
+                        size: MediaQuery.of(context).size,
+                        serviceData: widget.serviceData!,
+                      ),
+                    ));
+                  }
+                },
                 child: serviceCard(context),
               ),
             ),
@@ -101,7 +111,7 @@ class _ServiceListViewState extends State<ServiceListView> {
   }
 
   Widget serviceCardContent() {
-    String defaultImage = 'assets/images/hotel.jpg';
+    String defaultImage = apiUrl +'/uploads/presta.jpg';
 
     String imagePath = (images.isNotEmpty && (images[0].path?.isNotEmpty ?? false))
         ? apiUrl + (images[0].path!.startsWith('/') ? images[0].path! : '/${images[0].path!}')
@@ -181,8 +191,8 @@ class _ServiceListViewState extends State<ServiceListView> {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          Text('\$${widget.serviceData?.price.toString() ?? '0'}', textAlign: TextAlign.left, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 22)),
-          Text('/per service', style: TextStyle(fontSize: 14, color: Colors.grey.withOpacity(0.8))),
+          Text('${widget.serviceData?.price.toString() ?? '0'} \€', textAlign: TextAlign.left, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 22)),
+          Text('prix d\'estimation', style: TextStyle(fontSize: 14, color: Colors.grey.withOpacity(0.8))),
         ],
       ),
     );

@@ -8,7 +8,6 @@ import 'package:client/shared/widget/button.dart';
 import 'package:flutter/material.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:toastification/toastification.dart';
 
 class OrganizersPage extends StatefulWidget {
   const OrganizersPage({super.key});
@@ -68,6 +67,7 @@ class _OrganizersPageState extends State<OrganizersPage> {
       try {
         User user = await WeddingRepository().addOrganizer(organizer, weddingId);
 
+        // ignore: use_build_context_synchronously
         Navigator.pop(context);
         
         setState(() {
@@ -107,86 +107,88 @@ class _OrganizersPageState extends State<OrganizersPage> {
             showModalBottomSheet(
               context: context, 
               builder: (BuildContext context) {
-                return SizedBox(
-                  height: 400,
-                  child: Center(
-                    child: Padding(
-                      padding: const EdgeInsets.all(20),
-                      child: Column(
-                        children: [
-                          const Text(
-                            'Invite un organisateur',
-                            style: TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(height: 5),
-                          const Text(
-                            'Invite une personne à rejoindre ton équipe d\'organisation.',
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.grey,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                          const SizedBox(height: 20),
-                          Form(
-                            key: formKey,
-                            child: Column(
-                              children: [
-                                TextFormField(
-                                  controller: emailController,
-                                  decoration: const InputDecoration(
-                                    hintText: 'Email',
-                                  ),
-                                  validator: (value) {
-                                    if (value!.isEmpty) {
-                                      return 'Le mail est requis';
-                                    }
-                                    return null;
-                                  },
-                                ),
-                                const SizedBox(height: 20),
-                                TextFormField(
-                                  controller: nameController,
-                                  decoration: const InputDecoration(
-                                    hintText: 'Nom',
-                                  ),
-                                  validator: (value) {
-                                    if (value!.isEmpty) {
-                                      return 'Le nom est requis';
-                                    }
-                                    return null;
-                                  },
-                                ),
-                              ],
-                            )
-                          ),
-                          const SizedBox(height: 20),
-                          ElevatedButton(
-                            onPressed: handleInviteOrganizer,
-                            style: ElevatedButton.styleFrom(
-                              fixedSize: const Size(double.maxFinite, 60),
-                              backgroundColor: AppColors.pink,
-                              padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 10),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(15),
-                              ),
-                            ),
-                            child: const Text(
-                              'Envoyer',
+                return Wrap(
+                  children: [
+                    Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(20),
+                        child: Column(
+                          children: [
+                            const Text(
+                              'Invite un organisateur',
                               style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 20,
-                                fontWeight: FontWeight.w600,
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
-                          ),
-                        ],
+                            const SizedBox(height: 5),
+                            const Text(
+                              'Invite une personne à rejoindre ton équipe d\'organisation.',
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.grey,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                            const SizedBox(height: 20),
+                            Form(
+                              key: formKey,
+                              child: Column(
+                                children: [
+                                  TextFormField(
+                                    controller: emailController,
+                                    decoration: const InputDecoration(
+                                      hintText: 'Email',
+                                    ),
+                                    validator: (value) {
+                                      if (value!.isEmpty) {
+                                        return 'Le mail est requis';
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                  const SizedBox(height: 20),
+                                  TextFormField(
+                                    controller: nameController,
+                                    decoration: const InputDecoration(
+                                      hintText: 'Nom',
+                                    ),
+                                    validator: (value) {
+                                      if (value!.isEmpty) {
+                                        return 'Le nom est requis';
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                ],
+                              )
+                            ),
+                            const SizedBox(height: 20),
+                            ElevatedButton(
+                              onPressed: handleInviteOrganizer,
+                              style: ElevatedButton.styleFrom(
+                                fixedSize: const Size(double.maxFinite, 60),
+                                backgroundColor: AppColors.pink,
+                                padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 10),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(15),
+                                ),
+                              ),
+                              child: const Text(
+                                'Envoyer',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 20),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
+                  ]
                 );
               }
             )

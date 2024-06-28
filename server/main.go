@@ -48,6 +48,7 @@ func main() {
 	route.MessageRoutes(router)
 	route.StatisticsRoutes(router)
 	route.HistoryRoutes(router)
+	route.EstimateRoutes(router)
 
 	// WebSocket
 	hub := ws.NewHub()

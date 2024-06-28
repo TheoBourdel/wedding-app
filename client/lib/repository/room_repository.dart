@@ -16,7 +16,13 @@ class RoomRepository {
   final StreamController<Message> _messageController = StreamController<Message>.broadcast();
   Stream<Message> get messageStream => _messageController.stream;
 
-  Future<Room> createRoom(RoomDto roomDto) async {
+  Future<Room> createRoom(RoomDto roomDto, int userId, int otherUser) async {
+    roomDto = RoomDto(
+      id: roomDto.id,
+      name: roomDto.name,
+      userIds: [userId, otherUser],
+    );
+
     final res = await http.post(
       Uri.parse('$_baseUrl/ws/createRoom'),
       headers: {'Content-Type': 'application/json'},
@@ -33,9 +39,7 @@ class RoomRepository {
   Future<Message> joinRoom(String roomId, int userId) {
     final url = '$_baseWsUrl/ws/joinRoom/$roomId?userId=$userId';
     channel = WebSocketChannel.connect(Uri.parse(url));
-
     final completer = Completer<Message>();
-
     channel?.stream.listen((message) {
       final messageObj = Message.fromJson(json.decode(message));
       _messageController.add(messageObj);
@@ -57,17 +61,20 @@ class RoomRepository {
   }
 
   void closeConnection() {
-   // _messageController.close();
     channel?.sink.close();
   }
 
   Future<List<RoomWithUsers>> fetchRooms(int userId) async {
     final response = await http.get(Uri.parse('$_baseUrl/ws/users/$userId/rooms'));
     if (response.statusCode == 200) {
-      List<dynamic> data = json.decode(response.body);
-      return data.map((json) => RoomWithUsers.fromJson(json)).toList();
+      if (response.body == "null") {
+        return [];
+      } else {
+        List<dynamic> data = json.decode(response.body);
+        return data.map((json) => RoomWithUsers.fromJson(json)).toList();
+      }
     } else {
-      throw Exception('Failed to load users');
+      return [];
     }
   }
 

@@ -53,13 +53,13 @@ class ImageRepository {
     }
   }
 
-  Future deleteImage(int id) async {
+  Future<String> deleteImage(int id) async {
     final res = await delete(
       Uri.parse('$_baseUrl/image/$id'),
     );
 
-    if (res.statusCode == 200) {
-      return;
+    if (res.statusCode == 204) {
+      return "deleted image";
     } else {
       throw Exception(res.body);
     }
@@ -72,6 +72,18 @@ class ImageRepository {
       return body.map((data) => Image.fromJson(data)).toList();
     } else {
       throw Exception('Failed to load images: ${response.body}');
+    }
+  }
+
+  static Future<Image> getImageById(int id) async {
+    Response res = await get(
+      Uri.parse('$apiUrl/image/$id'),
+    );
+
+    if (res.statusCode == 200) {
+      return Image.fromJson(jsonDecode(res.body));
+    } else {
+      throw Exception(res.body);
     }
   }
 

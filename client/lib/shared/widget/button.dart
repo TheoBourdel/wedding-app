@@ -15,7 +15,7 @@ class Button extends StatelessWidget {
       style: ElevatedButton.styleFrom(
         fixedSize: const Size(double.maxFinite, 60),
         //primary: isOutlined ? Colors.white : AppColors.pink,
-        backgroundColor: isOutlined ? Colors.white : AppColors.pink,
+        backgroundColor: isOutlined ? Colors.transparent : AppColors.pink,
         padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 10),
         elevation: 0,
         shape: RoundedRectangleBorder(

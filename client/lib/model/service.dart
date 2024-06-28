@@ -7,7 +7,7 @@ class Service {
   final String? phone;
   final String? mail;
   final int? price;
-  final int? UserID;
+  final int UserID;
   final int? CategoryID;
   final String? createdAt;
   final String? updatedAt;
@@ -37,13 +37,31 @@ class Service {
       profileImage: json['ProfileImage'] as String?,
       localisation: json['Localisation'] as String?,
       phone: json['Phone'] as String?,
-      mail: json['Email'] as String?,
+      mail: json['Mail'] as String?,
       price: json['Price'] as int?,
-      UserID: json['UserID'] as int?,
+      UserID: json['UserID'] as int,
       CategoryID: json['CategoryID'] as int?,
       createdAt: json['CreatedAt'] as String?,
       updatedAt: json['UpdatedAt'] as String?,
       deletedAt: json['DeletedAt'] as String?,
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'ID': id.toString(),
+      'Name': name,
+      'Description': description,
+      'ProfileImage': profileImage,
+      'Localisation': localisation,
+      'Phone': phone,
+      'Mail': mail,
+      'Price': price.toString(),
+      'UserID': UserID.toString(),
+      'CategoryID': CategoryID.toString(),
+      'CreatedAt': createdAt,
+      'UpdatedAt': updatedAt,
+      'DeletedAt': deletedAt,
+    };
   }
 }

@@ -20,7 +20,7 @@ final class WeddingCreated extends WeddingEvent {
 
 // UPDATE
 final class WeddingUpdated extends WeddingEvent {
-  final WeddingDto weddingDto;
+  final Wedding wedding;
 
-  WeddingUpdated({required this.weddingDto});
+  WeddingUpdated({required this.wedding});
 }

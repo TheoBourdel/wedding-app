@@ -16,8 +16,9 @@ type RoomRes struct {
 }
 
 type CreateRoomReq struct {
-	ID   string `json:"id"`
-	Name string `json:"name"`
+	ID      string `json:"id"`
+	Name    string `json:"name"`
+	UserIDs []uint `json:"user_ids"`
 }
 
 type SessionChatRes struct {

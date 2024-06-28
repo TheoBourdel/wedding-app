@@ -7,4 +7,7 @@ type UserControllerInterface interface {
 	CreateUser(c *gin.Context)
 	GetUser(c *gin.Context)
 	DeleteUser(ctx *gin.Context)
+	CreateUserEstimate(c *gin.Context)
+	GetUserEstimates(c *gin.Context)
+	UpdateUserFirebaseToken(c *gin.Context)
 }

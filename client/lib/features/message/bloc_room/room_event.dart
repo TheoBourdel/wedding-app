@@ -19,11 +19,14 @@ class FetchRoomsEvent extends RoomEvent {
 
 class CreateRoomEvent extends RoomEvent {
   final String roomName;
+  final int userId;
+  final int otherUser;
 
-  const CreateRoomEvent(this.roomName);
+
+  const CreateRoomEvent(this.roomName, {required this.userId, required this.otherUser});
 
   @override
-  List<Object> get props => [roomName];
+  List<Object> get props => [roomName, userId];
 }
 
 class JoinRoomEvent extends RoomEvent {

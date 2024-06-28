@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:client/core/theme/app_colors.dart';
 import 'package:client/model/service.dart';
 import 'package:client/model/category.dart';
@@ -6,7 +8,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:client/dto/service_dto.dart';
-import 'package:client/dto/category_dto.dart';
 import 'package:client/repository/service_repository.dart';
 import 'package:client/repository/image_repository.dart';
 import 'package:client/dto/image_dto.dart';
@@ -17,13 +18,13 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
-
-
+import '../../../core/constant/constant.dart';
+import 'package:client/model/image.dart' as serviceImage;
 
 class ServiceForm extends StatefulWidget {
   final Service? currentService;
 
-  const ServiceForm({Key? key, this.currentService});
+  const ServiceForm({super.key, this.currentService});
 
   @override
   State<ServiceForm> createState() => _ServiceFormState();
@@ -46,6 +47,7 @@ class _ServiceFormState extends State<ServiceForm> {
   final ImagePicker _picker = ImagePicker();
   List<XFile>? _imageFiles;
   List<String>? _imagePaths;
+  List<serviceImage.Image> existingImages = [];
 
   @override
   void initState() {
@@ -57,37 +59,52 @@ class _ServiceFormState extends State<ServiceForm> {
     _mailController = TextEditingController(text: widget.currentService?.mail ?? '');
     _priceController = TextEditingController(text: widget.currentService?.price.toString() ?? '');
     _loadCategories();
+    _loadExistingImages();
   }
 
   void pickImages() async {
-    try {
-      final List<XFile>? selectedImages = await _picker.pickMultiImage();
-      if (selectedImages != null && selectedImages.isNotEmpty) {
-        List<String> filePaths = [];
-        final directory = await getApplicationDocumentsDirectory();
-        final imageDirectory = Directory('${directory.path}/images');
-
-        if (!await imageDirectory.exists()) {
-          await imageDirectory.create(recursive: true);
-        }
-
-        for (var image in selectedImages) {
-          final imagePath = path.join(imageDirectory.path, path.basename(image.path));
-          final File newImage = await File(image.path).copy(imagePath);
-          filePaths.add(newImage.path);
-        }
-
-        setState(() {
-          _imageFiles = selectedImages;
-          _imagePaths = filePaths;
-        });
-
-        print("Images selected: ${_imagePaths}");
-      } else {
-        print("No images selected or permission denied.");
+    final List<XFile>? selectedImages = await _picker.pickMultiImage();
+    if (selectedImages != null && selectedImages.isNotEmpty) {
+      List<String> filePaths = [];
+      final directory = await getApplicationDocumentsDirectory();
+      final imageDirectory = Directory('${directory.path}/images');
+      if (!await imageDirectory.exists()) {
+        await imageDirectory.create(recursive: true);
       }
-    } catch (e) {
-      print("Failed to pick images: $e");
+      for (var image in selectedImages) {
+        final imagePath = path.join(imageDirectory.path, path.basename(image.path));
+        final File newImage = await File(image.path).copy(imagePath);
+        filePaths.add(newImage.path);
+      }
+      setState(() {
+        _imageFiles = selectedImages;
+        _imagePaths = filePaths;
+      });
+    }
+  }
+
+  void _loadExistingImages() async {
+    if (widget.currentService != null) {
+      var serviceId = widget.currentService?.id;
+      if (serviceId != null) {
+        existingImages = await ImageRepository().getServiceImages(serviceId);
+        setState(() {});
+      }
+    }
+  }
+
+  void _removeImage(serviceImage.Image image) async {
+    if (image.id != null) {
+      try {
+        await ImageRepository().deleteImage(image.id!);
+        setState(() {
+          existingImages.remove(image);
+        });
+      } catch (e) {
+        print('Erreur lors de la suppression de l\'image: $e');
+      }
+    } else {
+      print('Erreur: ID de l\'image est nul');
     }
   }
 
@@ -102,67 +119,51 @@ class _ServiceFormState extends State<ServiceForm> {
   }
 
   void serviceAction() async {
+    if (!_formKey.currentState!.validate()) return;
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String token = prefs.getString('token')!;
     Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
     int userId = decodedToken['sub'];
 
     ServiceDto serviceDto = ServiceDto(
+      id: widget.currentService?.id,
       name: _nameController.text,
       description: _descriptionController.text,
       localisation: _localisationController.text,
-      profileImage: "/path/to/img",
       mail: _mailController.text,
       phone: _phoneController.text,
       price: int.tryParse(_priceController.text),
       UserID: userId,
       CategoryID: selectedCategoryId,
+      profileImage: "/path/to/img",
     );
 
     try {
-      Service? response = widget.currentService == null ?
-      await serviceRepository.createService(serviceDto) :
-      await serviceRepository.updateService(serviceDto);
+      Service? response = widget.currentService == null
+          ? await serviceRepository.createService(serviceDto)
+          : await serviceRepository.updateService(serviceDto);
 
-      print("hors if");
-      if (response != null && response.id != null) {
-        print("dans if");
+      if (response != null) {
         if (_imageFiles != null && _imageFiles!.isNotEmpty) {
-          await serviceRepository.uploadImages(response.id!, _imageFiles!);
+          await serviceRepository.uploadImages(response!.id!, _imageFiles!);
         }
         Navigator.pop(context, response);
-      } else {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: Text('Erreur'),
-              content: Text('Impossible de créer ou de mettre à jour le service.'),
-              actions: <Widget>[
-                TextButton(
-                  child: Text('Fermer'),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ],
-            );
-          },
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Service ${widget.currentService == null ? 'créé' : 'mis à jour'} avec succès!'))
         );
+      } else {
+        throw Exception('Aucune réponse du serveur');
       }
     } catch (e) {
-      //remplacer par alerte de l'appli
-      print('Error processing service action: $e');
       showDialog(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text('Erreur de réseau'),
-            content: Text(
-                'Une erreur est survenue lors de la communication avec le serveur. Veuillez réessayer.'),
+            title: Text('Erreur lors de la ${widget.currentService == null ? 'création' : 'mise à jour'}'),
+            content: Text('Erreur: $e'),
             actions: <Widget>[
               TextButton(
-                child: Text('Fermer'),
+                child: const Text('Fermer'),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
@@ -174,31 +175,16 @@ class _ServiceFormState extends State<ServiceForm> {
     }
   }
 
-  Future<void> saveImagePaths(List<String> imagePaths, int serviceId) async {
-    for (String path in imagePaths) {
-      await ImageRepository().createImage(ImageDto(path: path, ServiceID: serviceId));
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
-
-    @override
-    void initState() {
-      super.initState();
-    }
-
     return Scaffold(
       appBar: AppBar(
         foregroundColor: Colors.black,
         backgroundColor: Colors.white,
         elevation: 0,
         centerTitle: true,
-
-        title: Text('Créer une prestation',
-          style:TextStyle(
-            fontSize: 20,
-          ) ,),
+        title: Text(widget.currentService == null ? 'Créer une prestation' : 'Modifier la prestation'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(20),
@@ -206,10 +192,10 @@ class _ServiceFormState extends State<ServiceForm> {
           key: _formKey,
           child: ListView(
             children: [
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               TextFormField(
                 controller: _nameController,
-                decoration: InputDecoration(labelText: 'Nom'),
+                decoration: const InputDecoration(labelText: 'Nom'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Veuillez nommer la prestation';
@@ -217,10 +203,10 @@ class _ServiceFormState extends State<ServiceForm> {
                   return null;
                 },
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               TextFormField(
                 controller: _descriptionController,
-                decoration: InputDecoration(labelText: 'Description'),
+                decoration: const InputDecoration(labelText: 'Description'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Veuillez décrire la prestation';
@@ -228,48 +214,48 @@ class _ServiceFormState extends State<ServiceForm> {
                   return null;
                 },
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               TextFormField(
                 controller: _localisationController,
-                decoration: InputDecoration(labelText: 'Adresse'),
+                decoration: const InputDecoration(labelText: 'Adresse'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Veuillez entrer une Adresse';
+                    return 'Veuillez entrer une adresse';
                   }
                   return null;
                 },
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               TextFormField(
                 controller: _phoneController,
-                decoration: InputDecoration(labelText: 'Phone'),
+                decoration: const InputDecoration(labelText: 'Téléphone'),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               TextFormField(
                 controller: _mailController,
-                decoration: InputDecoration(labelText: 'Email'),
+                decoration: const InputDecoration(labelText: 'Email'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Veuillez entrer une adresse mail';
+                    return 'Veuillez entrer une adresse email';
                   }
                   return null;
                 },
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               TextFormField(
                 controller: _priceController,
-                decoration: InputDecoration(labelText: 'Prix d\'estimation'),
+                decoration: const InputDecoration(labelText: 'Prix'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Veuillez entrer une prix d\'estimation';
+                    return 'Veuillez entrer un prix';
                   }
                   return null;
                 },
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               DropdownButtonFormField<int>(
                 value: selectedCategoryId,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Catégorie',
                   border: OutlineInputBorder(),
                 ),
@@ -291,23 +277,51 @@ class _ServiceFormState extends State<ServiceForm> {
                   return null;
                 },
               ),
-              //SizedBox(height: 100),
               ListTile(
-                leading: Icon(Icons.photo_library),
-                title: Text("Sélectionner des images"),
+                leading: const Icon(Icons.photo_library),
+                title: const Text("Sélectionner des images"),
                 onTap: pickImages,
               ),
+              if (existingImages.isNotEmpty)
+                Wrap(
+                  spacing: 8.0,
+                  runSpacing: 4.0,
+                  children: existingImages.map((image) {
+                    var imagePath = apiUrl + (image.path!.startsWith('/') ? image.path! : '/${image.path!}');
+                    return Stack(
+                      children: [
+                        Image.network(
+                          imagePath,
+                          width: 100,
+                          height: 100,
+                          fit: BoxFit.cover,
+                        ),
+                        Positioned(
+                          top: 0,
+                          right: 0,
+                          child: GestureDetector(
+                            onTap: () => _removeImage(image),
+                            child: Container(
+                              color: Colors.red,
+                              child: Icon(Icons.close, color: Colors.white),
+                            ),
+                          ),
+                        ),
+                      ],
+                    );
+                  }).toList(),
+                ),
               if (_imageFiles != null)
                 Wrap(
                   spacing: 8.0,
                   runSpacing: 4.0,
                   children: _imageFiles!.map((file) => Image.file(File(file.path), width: 100, height: 100)).toList(),
                 ),
-              SizedBox(height: 100),
+              const SizedBox(height: 100),
               ElevatedButton(
                 onPressed: serviceAction,
                 style: ElevatedButton.styleFrom(
-                  fixedSize: const Size(double.maxFinite, 60),
+                  fixedSize: const Size(double.infinity, 60),
                   backgroundColor: AppColors.pink,
                   padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 10),
                   shape: RoundedRectangleBorder(
@@ -316,7 +330,7 @@ class _ServiceFormState extends State<ServiceForm> {
                 ),
                 child: Text(
                   widget.currentService != null ? 'Modifier' : 'Créer',
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: Colors.black,
                     fontSize: 20,
                     fontWeight: FontWeight.w600,

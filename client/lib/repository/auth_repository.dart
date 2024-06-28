@@ -1,4 +1,5 @@
 import 'package:client/core/constant/constant.dart';
+import 'package:client/core/error/failure.dart';
 import 'package:client/dto/signin_user_dto.dart';
 import 'package:client/dto/signup_user_dto.dart';
 import 'package:client/model/user.dart';
@@ -9,6 +10,7 @@ class AuthRepository {
   final String _baseUrl = apiUrl;
 
   Future<User> signUp(SignUpUserDto user) async {
+    print('ooooo');
     Response res = await post(
       Uri.parse('$_baseUrl/signup'),
       body: user.toJson(),
@@ -17,13 +19,15 @@ class AuthRepository {
     if (res.statusCode == 200) {
       return User.fromJson(jsonDecode(res.body));
     } else {
-      throw Exception(res.body);
+      var errorResponse = jsonDecode(res.body);
+      var errorMessage = errorResponse['error'] ?? 'An unknown error occurred';
+      throw ApiException(message: errorMessage, statusCode: res.statusCode);
     }
   }
 
-  Future<String> signIn(SignInUserDto user) async {
+  static Future<String> signIn(SignInUserDto user) async {
     Response res = await post(
-      Uri.parse('$_baseUrl/signin'),
+      Uri.parse('$apiUrl/signin'),
       body: user.toJson(),
     );
 

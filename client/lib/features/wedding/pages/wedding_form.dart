@@ -1,4 +1,6 @@
 import 'package:client/dto/wedding_dto.dart';
+import 'package:client/features/auth/bloc/auth_bloc.dart';
+import 'package:client/features/auth/bloc/auth_state.dart';
 import 'package:client/features/wedding/bloc/wedding_bloc.dart';
 import 'package:client/model/wedding.dart';
 import 'package:client/provider/user_provider.dart';
@@ -52,11 +54,8 @@ class _WeddingFormPageState extends State<WeddingFormPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => WeddingBloc(),
-      child: BlocBuilder<WeddingBloc, WeddingState>(
+    return BlocBuilder<WeddingBloc, WeddingState>(
         builder: (context, state) {
-          
           return Scaffold(
         appBar: AppBar(
           title: Text("${widget.title} un mariage"),
@@ -93,6 +92,8 @@ class _WeddingFormPageState extends State<WeddingFormPage> {
                         text: widget.title,
                         onPressed: () {
                           if (widget.title == "Créer") {
+                            final authState = context.read<AuthBloc>().state;
+                            final userId = authState is Authenticated ? authState.userId : null;
                             context.read<WeddingBloc>().add(
                               WeddingCreated(
                                 weddingDto: WeddingDto(
@@ -103,13 +104,13 @@ class _WeddingFormPageState extends State<WeddingFormPage> {
                                   email: _emailController.text,
                                   budget: int.parse(_budgetController.text),
                                 ),
-                                userId: context.read<UserProvider>().getUserId()
+                                userId: userId!
                               )
                             );
                           } else if (widget.title == "Modifier") {
                             context.read<WeddingBloc>().add(
                               WeddingUpdated(
-                                weddingDto: WeddingDto(
+                                wedding: Wedding(
                                   id: widget.wedding!.id,
                                   name: _nameController.text,
                                   description: _descriptionController.text,
@@ -132,8 +133,7 @@ class _WeddingFormPageState extends State<WeddingFormPage> {
           )
         );
         },
-      )
-    );
+      );
   }
 }
 

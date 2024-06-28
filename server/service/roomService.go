@@ -67,3 +67,14 @@ func (svc *RoomService) GetParticipantsByRoomID(roomID uint) ([]model.User, dto.
 func (s *RoomService) GetRoomsByUserID(userID uint) ([]model.RoomWithUsers, dto.HttpErrorDto) {
 	return s.Repo.GetRoomsByUserID(userID)
 }
+
+func (svc *RoomService) AddParticipant(participant model.RoomParticipant) dto.HttpErrorDto {
+	err := svc.Repo.AddParticipant(participant)
+	if err != nil {
+		return dto.HttpErrorDto{
+			Code:    500,
+			Message: "Failed to add participant",
+		}
+	}
+	return dto.HttpErrorDto{}
+}

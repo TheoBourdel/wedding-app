@@ -61,7 +61,7 @@ class WeddingRepository {
     }
   }
 
-  static Future updateWedding(WeddingDto wedding) async {
+  static Future updateWedding(Wedding wedding) async {
     try {
       final response = await patch(
         Uri.parse('$apiUrl/wedding/${wedding.id}'),
@@ -74,8 +74,6 @@ class WeddingRepository {
           statusCode: response.statusCode
         );
       }
-      print("repository");
-      print(Wedding.fromJson(jsonDecode(response.body)).budget);
       return Wedding.fromJson(jsonDecode(response.body));
     } catch (e) {
       throw Exception(e);

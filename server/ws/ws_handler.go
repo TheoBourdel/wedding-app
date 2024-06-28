@@ -32,6 +32,35 @@ func NewHandler(h *Hub) *Handler {
 	}
 }
 
+// func (h *Handler) CreateRoom(c *gin.Context) {
+// 	var req model.CreateRoomReq
+// 	if err := c.ShouldBindJSON(&req); err != nil {
+// 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+// 		return
+// 	}
+
+// 	room := model.Room{
+// 		RoomName: req.Name,
+// 	}
+
+// 	if h.RoomService == nil {
+// 		log.Fatal("RoomService is not initialized")
+// 	}
+
+// 	createdRoom, err := h.RoomService.CreateRoom(room)
+// 	if err.Code != 0 {
+// 		log.Printf("Failed to save message: %s", err.Message)
+// 	}
+
+// 	h.hub.Rooms[fmt.Sprintf("%d", createdRoom.ID)] = &Room{
+// 		ID:           fmt.Sprintf("%d", createdRoom.ID),
+// 		Name:         createdRoom.RoomName,
+// 		SessionChats: make(map[string]*SessionChat),
+// 	}
+
+// 	c.JSON(http.StatusOK, createdRoom)
+// }
+
 func (h *Handler) CreateRoom(c *gin.Context) {
 	var req model.CreateRoomReq
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -50,6 +79,22 @@ func (h *Handler) CreateRoom(c *gin.Context) {
 	createdRoom, err := h.RoomService.CreateRoom(room)
 	if err.Code != 0 {
 		log.Printf("Failed to save message: %s", err.Message)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create room"})
+		return
+	}
+
+	// Ajouter les participants à la table room_participants
+	for _, userID := range req.UserIDs {
+		participant := model.RoomParticipant{
+			RoomID: createdRoom.ID,
+			UserID: userID,
+		}
+		errDto := h.RoomService.AddParticipant(participant)
+		if errDto.Code != 0 {
+			log.Printf("Failed to add participant: %s", errDto.Message)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to add participant"})
+			return
+		}
 	}
 
 	h.hub.Rooms[fmt.Sprintf("%d", createdRoom.ID)] = &Room{
@@ -70,11 +115,14 @@ var upgrader = websocket.Upgrader{
 }
 
 func (h *Handler) JoinRoom(c *gin.Context) {
+
 	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+
+	fmt.Printf("eee")
 
 	roomID := c.Param("roomId")
 	userID := c.Query("userId")
@@ -119,7 +167,7 @@ func (h *Handler) JoinRoom(c *gin.Context) {
 	}
 
 	m := &model.Message{
-		Content: "A new user has joined the room",
+		Content: "",
 		RoomID:  uint(room.ID),
 	}
 

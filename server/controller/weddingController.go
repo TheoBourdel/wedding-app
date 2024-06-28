@@ -148,7 +148,6 @@ func (wc *WeddingController) UpdateWedding(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid wedding ID"})
 		return
 	}
-
 	var updatedWedding model.Wedding
 
 	// if err := ctx.ShouldBindJSON(&updatedWedding); err != nil {
@@ -170,8 +169,7 @@ func (wc *WeddingController) UpdateWedding(ctx *gin.Context) {
 		}
 		return
 	}
-	fmt.Println("WeddingController", &wedding.Budget)
-	// If the update was successful, return No Content
+
 	ctx.JSON(http.StatusCreated, wedding)
 }
 

@@ -4,9 +4,7 @@ import 'package:client/features/wedding/widgets/wedding_countdown_card.dart';
 import 'package:client/features/wedding/widgets/wedding_info_card.dart';
 import 'package:client/model/wedding.dart';
 import 'package:client/shared/widget/button.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:iconsax/iconsax.dart';
 
 class WeddingInfoPage extends StatelessWidget {
@@ -24,7 +22,6 @@ class WeddingInfoPage extends StatelessWidget {
               flex: 1,
               child: Padding(
                 padding: EdgeInsets.only(left: 20, top: 8, right: 20, bottom: 0),
-                //child: Container(color: Colors.red,)
                 child: Column(
                   children: [
                     Row(

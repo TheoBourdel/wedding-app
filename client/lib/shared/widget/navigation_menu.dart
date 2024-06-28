@@ -1,15 +1,10 @@
-import 'package:client/features/service/provider_services_page.dart';
-import 'package:client/features/message/pages/message_list_page.dart';
-import 'package:client/features/provider/pages/provider_info_page.dart';
+import 'package:client/features/message/pages/rooms_page.dart';
 import 'package:client/features/search/pages/search_page.dart';
-import 'package:client/core/theme/app_colors.dart';
-import 'package:client/features/service/provider_services_page.dart';
-import 'package:client/features/service/pages/service_info_page.dart';
-import 'package:client/features/wedding/pages/wedding_info_page.dart';
-import 'package:client/features/wedding/pages/wedding_page.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:client/features/wedding/pages/wedding_page.dart';
+import 'package:client/features/service/pages/services_page.dart';
 
 class NavigationMenu extends StatefulWidget {
   final token;
@@ -61,7 +56,7 @@ class _NavigationMenu extends State<NavigationMenu> {
         icon: Icon(Iconsax.briefcase), // Changez l'icône si nécessaire
         label: "Services",
       ));
-      _screens.add(ProviderServicesScreen());
+      _screens.add( ServicesScreen());
 
     } else if (role == 'marry') {
       destinations.add(const BottomNavigationBarItem(
@@ -70,15 +65,17 @@ class _NavigationMenu extends State<NavigationMenu> {
       ));
       _screens.add(const WeddingPage());
     }
+
     destinations.add(const BottomNavigationBarItem(
       icon: Icon(Iconsax.message),
       label: "Messages",
     ));
-    _screens.add(const MessageListPage());
+    _screens.add(const RoomPage());
+    //_screens.add(const MessageListPage());
+
 
     return Scaffold(
       bottomNavigationBar: BottomNavigationBar(
-        selectedItemColor: AppColors.pink500,
         items: destinations,
         onTap: (index) {
           setState(() {
@@ -86,7 +83,7 @@ class _NavigationMenu extends State<NavigationMenu> {
           });
           _pageController.animateToPage(
             index,
-            duration: const Duration(milliseconds: 500),
+            duration: Duration(milliseconds: 500),
             curve: Curves.ease,
           );
         },

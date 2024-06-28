@@ -6,7 +6,7 @@
     <string>Need camera access to take pictures for upload</string>
     <key>NSPhotoLibraryUsageDescription</key>
     <string>Need photo access to pick pictures for upload</string>
-	<key>CFBundleDevelopmentRegion</key>
+    <key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
 	<string>Client</string>

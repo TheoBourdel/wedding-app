@@ -8,33 +8,34 @@ part 'wedding_event.dart';
 part 'wedding_state.dart';
 
 class WeddingBloc extends Bloc<WeddingEvent, WeddingState> {
-  WeddingBloc() : super(WeddingInitial()) {
+  WeddingBloc() : super(const WeddingState()) {
 
     on<WeddingDataLoaded>((event, emit) async {
-      emit(WeddingLoading());
+      emit(state.copyWith(status: WeddingStatus.loading));
       try {
         final List<Wedding> wedding = await WeddingRepository.getUserWedding(event.userId);
-        emit(WeddingDataLoadedSuccess(wedding: wedding));
+        emit(state.copyWith(status: WeddingStatus.success, wedding: wedding));
       } catch (error) {
-        emit(WeddingDataLoadedFailure(error: "Error while loading wedding data"));
+        emit(state.copyWith(status: WeddingStatus.failure, error: "Error while loading wedding"));
       }
     });
 
     on<WeddingCreated>((event, emit) async {
       try {
         final Wedding wedding = await WeddingRepository.createWedding(event.weddingDto, event.userId);
-        emit(WeddingDataLoadedSuccess(wedding: [wedding]));
+        emit(state.copyWith(status: WeddingStatus.success, wedding: [wedding]));
       } catch (error) {
-        emit(WeddingDataLoadedFailure(error: "Error while creating wedding"));
+        emit(state.copyWith(status: WeddingStatus.failure, error: "Error while creating wedding"));
       }
     });
 
     on<WeddingUpdated>((event, emit) async {
+      emit(state.copyWith(status: WeddingStatus.loading));
       try {
-        final Wedding wedding = await WeddingRepository.updateWedding(event.weddingDto);
-        emit(WeddingDataLoadedSuccess(wedding: [wedding]));        
+        final Wedding wedding = await WeddingRepository.updateWedding(event.wedding);
+        emit(state.copyWith(status: WeddingStatus.success, wedding: [wedding]));
       } catch (error) {
-        emit(WeddingDataLoadedFailure(error: "Error while updating wedding"));
+        emit(state.copyWith(status: WeddingStatus.failure, error: "Error while updating wedding"));
       }
     });
 

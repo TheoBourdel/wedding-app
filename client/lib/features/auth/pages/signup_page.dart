@@ -5,6 +5,7 @@ import 'package:client/repository/auth_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:client/features/auth/pages/signin_page.dart';
 import 'package:flutter_gen/gen_l10n/app_localization.dart';
+import 'package:client/core/error/failure.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -37,15 +38,16 @@ class _SignUpPageState extends State<SignUpPage> {
         role: selectedRole,
       );
       try {
-        print('test');
         await authRepository.signUp(user);
         
+        // ignore: use_build_context_synchronously
         Navigator.pushReplacement(context,
           MaterialPageRoute(
             builder: (context) => const SignInPage()
           ),
         );
       } catch (e) {
+        print(e);
         // Show error toast
       }
     }
@@ -89,7 +91,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     children: [
                        Text(
                         AppLocalizations.of(context)!.register,
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: AppColors.pink,
                           fontSize: 30,
                           fontWeight: FontWeight.bold,
@@ -144,7 +146,7 @@ class _SignUpPageState extends State<SignUpPage> {
                         ),
                         child: Text(
                           AppLocalizations.of(context)!.register,
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: Colors.white,
                             fontSize: 20,
                             fontWeight: FontWeight.w600,

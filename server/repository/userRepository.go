@@ -42,26 +42,7 @@ func (ur *UserRepository) Create(user model.User) (model.User, dto.HttpErrorDto)
 	return user, dto.HttpErrorDto{}
 }
 
-// func (wr *UserRepository) Update(id uint64, updatedUser model.User) (model.User, error) {
-
-// 	existingUser, err := wr.FindOneBy("id", strconv.FormatUint(id, 10))
-
-// 	if err.Code == 404 {
-
-// 		return model.User{}, fmt.Errorf("wedding not found with ID: %d", id)
-// 	} else if err.Code != 0 {
-// 		return model.User{}, fmt.Errorf("error fetching wedding: %s", err.Message)
-// 	}
-
-// 	result := config.DB.Model(&existingUser).Updates(updatedUser)
-// 	if result.Error != nil {
-// 		return model.User{}, result.Error
-// 	}
-
-// 	return existingUser, nil
-// }
-
-func (ur *UserRepository) FindOneBy(field string, value string) (model.User, dto.HttpErrorDto) {
+func (ur *UserRepository) FindOneBy(field string, value any) (model.User, dto.HttpErrorDto) {
 	var user model.User
 
 	result := config.DB.Where(field+" = ?", value).Preload("Weddings.User").First(&user)
@@ -76,6 +57,7 @@ func (ur *UserRepository) FindOneBy(field string, value string) (model.User, dto
 	return user, dto.HttpErrorDto{}
 }
 
+
 func (ur *UserRepository) DeleteByID(id int) error {
 	result := config.DB.Delete(&model.User{}, id)
 	if result.Error != nil {
@@ -87,4 +69,22 @@ func (ur *UserRepository) DeleteByID(id int) error {
 	}
 
 	return nil
+}
+
+
+func (ur *UserRepository) UpdateFirebaseToken(userID uint, newToken string) (model.User, dto.HttpErrorDto) {
+	var user model.User
+
+	result := config.DB.First(&user, userID)
+	if result.Error != nil {
+		return model.User{}, dto.HttpErrorDto{Message: "User not found", Code: 404}
+	}
+
+	user.AndroidToken = newToken
+	saveResult := config.DB.Save(&user)
+	if saveResult.Error != nil {
+		return model.User{}, dto.HttpErrorDto{Message: "Error while updating token", Code: 500}
+	}
+
+	return user, dto.HttpErrorDto{}
 }

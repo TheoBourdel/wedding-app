@@ -14,10 +14,12 @@ const (
 
 type User struct {
 	gorm.Model
-	Firstname string `json:"Firstname"`
-	Lastname  string
-	Email     string `json:"Email"`
-	Password  string
-	Role      Role
-	Weddings  []Wedding `gorm:"many2many:organizer;"`
+	Firstname    string `json:"Firstname"`
+	Lastname     string
+	Email        string `json:"Email"`
+	Password     string
+	AndroidToken string
+	Role         Role
+	Weddings     []Wedding  `gorm:"many2many:organizer;"`
+	Estimates    []Estimate `gorm:"foreignKey:ClientID"`
 }

@@ -4,6 +4,7 @@ import (
 	"api/config"
 	"api/dto"
 	"api/model"
+	"fmt"
 
 	"gorm.io/gorm"
 )
@@ -78,12 +79,20 @@ func (repo *RoomRepository) GetParticipantsByRoomID(roomID uint) ([]model.User, 
 // func (repo *RoomRepository) GetRoomsByUserID(userID uint) ([]model.RoomWithUsers, dto.HttpErrorDto) {
 // 	var rooms []model.RoomWithUsers
 
+// 	// Subquery to find rooms the user is part of
+// 	subQuery := repo.DB.
+// 		// Table("room_participants").
+// 		Select("room_id").
+// 		Where("user_id = ?", userID)
+
+// 	// Main query to find users in those rooms, excluding the given user
 // 	result := repo.DB.
 // 		Table("rooms").
-// 		Select("rooms.id, rooms.room_name, users.id as user_id, users.firstname, users.lastname, users.email").
+// 		Select("rooms.id as room_id, rooms.room_name, users.id as user_id, users.firstname, users.lastname, users.email").
 // 		Joins("INNER JOIN room_participants ON room_participants.room_id = rooms.id").
 // 		Joins("INNER JOIN users ON room_participants.user_id = users.id").
-// 		Where("room_participants.user_id = ?", userID).
+// 		Where("rooms.id IN (?)", subQuery).
+// 		Where("users.id != ?", userID).
 // 		Scan(&rooms)
 
 // 	if result.Error != nil {
@@ -94,27 +103,65 @@ func (repo *RoomRepository) GetParticipantsByRoomID(roomID uint) ([]model.User, 
 // }
 
 func (repo *RoomRepository) GetRoomsByUserID(userID uint) ([]model.RoomWithUsers, dto.HttpErrorDto) {
-	var rooms []model.RoomWithUsers
+	var rooms []model.Room
 
-	// Subquery to find rooms the user is part of
 	subQuery := repo.DB.
 		Table("room_participants").
 		Select("room_id").
 		Where("user_id = ?", userID)
 
-	// Main query to find users in those rooms, excluding the given user
-	result := repo.DB.
+	mainQuery := repo.DB.
 		Table("rooms").
-		Select("rooms.id as room_id, rooms.room_name, users.id as user_id, users.firstname, users.lastname, users.email").
-		Joins("INNER JOIN room_participants ON room_participants.room_id = rooms.id").
-		Joins("INNER JOIN users ON room_participants.user_id = users.id").
-		Where("rooms.id IN (?)", subQuery).
-		Where("users.id != ?", userID).
-		Scan(&rooms)
+		Where("id IN (?)", subQuery)
+
+	result := mainQuery.Find(&rooms)
 
 	if result.Error != nil {
-		return nil, dto.HttpErrorDto{Message: "Error fetching rooms and users", Code: 500}
+		return nil, dto.HttpErrorDto{Message: "Error fetching rooms", Code: 500}
 	}
 
-	return rooms, dto.HttpErrorDto{}
+	var roomsWithUsers []model.RoomWithUsers
+
+	for _, room := range rooms {
+		var participants []model.RoomWithUsers
+		userResult := repo.DB.
+			Table("users").
+			Select("rooms.id as id, rooms.room_name, rooms.id as room_id, users.id as user_id, users.firstname, users.lastname, users.email").
+			Joins("INNER JOIN room_participants ON room_participants.user_id = users.id").
+			Joins("INNER JOIN rooms ON room_participants.room_id = rooms.id").
+			Where("room_participants.room_id = ?", room.ID).
+			Where("users.id != ?", userID).
+			Scan(&participants)
+
+		if userResult.Error != nil {
+			return nil, dto.HttpErrorDto{Message: "Error fetching users in room", Code: 500}
+		}
+		roomsWithUsers = append(roomsWithUsers, participants...)
+
+	}
+
+	var filteredRooms = filterUniqueItems(roomsWithUsers)
+	fmt.Println(filteredRooms)
+
+	return filteredRooms, dto.HttpErrorDto{}
+}
+
+func filterUniqueItems(items []model.RoomWithUsers) []model.RoomWithUsers {
+	seen := make(map[int]bool)
+	var result []model.RoomWithUsers
+
+	for _, item := range items {
+		if !seen[int(item.ID)] {
+			seen[int(item.ID)] = true
+			result = append(result, item)
+		}
+	}
+	return result
+}
+
+func (s *RoomRepository) AddParticipant(participant model.RoomParticipant) error {
+	if err := s.DB.Create(&participant).Error; err != nil {
+		return err
+	}
+	return nil
 }

@@ -1,17 +1,18 @@
+import 'package:client/features/auth/bloc/auth_bloc.dart';
+import 'package:client/features/auth/bloc/auth_state.dart';
+import 'package:client/features/estimate/pages/estimate_page.dart';
+import 'package:client/features/profile/pages/profile_page.dart';
 import 'package:flutter/material.dart';
-import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:client/core/theme/app_colors.dart';
 import 'package:client/features/message/pages/message_list_page.dart';
-import 'package:client/features/search/pages/search_page.dart';
-import 'package:client/features/service/pages/service_info_page.dart';
 import 'package:client/features/wedding/pages/wedding_page.dart';
 import 'package:client/repository/user_repository.dart';
-import 'package:client/features/service/provider_services_page.dart';
+import 'package:client/features/service/pages/services_page.dart';
+import 'package:provider/provider.dart';
 
 class BottomNavigation extends StatefulWidget {
-  final String? token;
-  const BottomNavigation({super.key, required this.token});
+  const BottomNavigation({super.key});
 
   @override
   State<BottomNavigation> createState() => _BottomNavigationState();
@@ -20,11 +21,12 @@ class BottomNavigation extends StatefulWidget {
 class _BottomNavigationState extends State<BottomNavigation> {
   final UserRepository userRepository = UserRepository();
   int _currentIndex = 0;
-  String role = '';
+  String? role = '';
 
   void getUserRole() {
-    Map<String, dynamic> decodedToken = JwtDecoder.decode(widget.token!);
-    role = decodedToken['role'];
+    final authState = context.read<AuthBloc>().state;
+    role = authState is Authenticated ? authState.userRole : null;
+
   }
 
   @override
@@ -38,10 +40,19 @@ class _BottomNavigationState extends State<BottomNavigation> {
     List<BottomNavigationBarItem> destinations = [];
     List<Widget> screens = [];
 
-    screens.add(const SearchPage());
+
+    if (role == 'marry') {
+      screens.add(ServicesScreen());
+      destinations.add(const BottomNavigationBarItem(
+        icon: Icon(Iconsax.search_normal_1),
+        label: "Rechercher",
+      ));
+    }
+
+    screens.add(const EstimatePage());
     destinations.add(const BottomNavigationBarItem(
-      icon: Icon(Iconsax.search_normal_1),
-      label: "Search",
+      icon: Icon(Iconsax.document),
+      label: "Devis",
     ));
 
     if (role == 'provider') {
@@ -49,7 +60,7 @@ class _BottomNavigationState extends State<BottomNavigation> {
         icon: Icon(Iconsax.briefcase),
         label: "Prestations",
       ));
-      screens.add(ProviderServicesScreen());
+      screens.add(ServicesScreen());
 
     } else if (role == 'marry') {
       destinations.add(const BottomNavigationBarItem(
@@ -64,6 +75,12 @@ class _BottomNavigationState extends State<BottomNavigation> {
     ));
     screens.add(const MessageListPage());
 
+    destinations.add(const BottomNavigationBarItem(
+      icon: Icon(Iconsax.setting),
+      label: "Settings",
+    ));
+    screens.add(const ProfilePage());
+
 
     return Scaffold(
       body: screens[_currentIndex],
@@ -76,6 +93,7 @@ class _BottomNavigationState extends State<BottomNavigation> {
         },
         items: destinations,
         selectedItemColor: AppColors.pink500,
+        unselectedItemColor: Colors.grey[400],
       ),
     );
   }

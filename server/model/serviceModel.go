@@ -5,17 +5,18 @@ import (
 )
 
 type Service struct {
-    gorm.Model
-    Name        string
-    Description string
-    ProfileImage string
-    Localisation string
-    Mail string
-    Phone string
-    Price float64
-    UserID      uint
-    User        User `gorm:"foreignKey:UserID"`
-    CategoryID      uint
-    Category        Category `gorm:"foreignKey:CategoryID"`
-    Images      []Image  `gorm:"foreignKey:ServiceID"`
+	gorm.Model
+	Name         string
+	Description  string
+	ProfileImage string
+	Localisation string
+	Mail         string
+	Phone        string
+	Price        float64
+	UserID       uint
+	User         User `gorm:"foreignKey:UserID"`
+	CategoryID   uint
+	Category     Category   `gorm:"foreignKey:CategoryID"`
+	Images       []Image    `gorm:"foreignKey:ServiceID"`
+	Estimates    []Estimate `gorm:"foreignKey:ServiceID"`
 }

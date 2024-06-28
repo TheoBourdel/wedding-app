@@ -1,5 +1,6 @@
 {
    "language": "English",
    "login": "Login",
-   "register": "Register"
+   "register": "Register",
+   "language": "Language"
 }
