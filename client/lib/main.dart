@@ -51,6 +51,9 @@ class HexColor extends Color {
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load();
+
+  //Stripe.publishableKey = dotenv.env['STRIPE_PUBLISHABLE_KEY']!;
+
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   String roomId = 'test_room_id';

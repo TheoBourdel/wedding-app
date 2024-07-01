@@ -124,7 +124,7 @@ class _ServiceListViewState extends State<ServiceListView> {
           child: Image.network(imagePath, fit: BoxFit.cover),
         ),
         Container(
-          color: ServiceTheme.buildLightTheme().backgroundColor,
+          color: ServiceTheme.buildLightTheme().colorScheme.background,
           child: serviceDetails(),
         ),
       ],
