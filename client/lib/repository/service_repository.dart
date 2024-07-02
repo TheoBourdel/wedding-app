@@ -1,11 +1,7 @@
 import 'dart:convert';
-import 'dart:io';
 import 'package:client/core/constant/constant.dart';
 import 'package:client/dto/service_dto.dart';
-import 'package:client/dto/image_dto.dart';
 import 'package:client/model/service.dart';
-import 'package:client/model/image.dart';
-import 'package:client/repository/image_repository.dart';
 import 'package:http/http.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
@@ -26,21 +22,23 @@ class ServiceRepository {
     }
   }
 
-  Future updateService(ServiceDto service) async {
-    final id = service?.id;
-    try{
+  Future<Service?> updateService(ServiceDto service) async {
+    final id = service.id;
+    try {
       Response res = await patch(
         Uri.parse('$_baseUrl/service/$id'),
         body: json.encode(service),
       );
 
       if (res.statusCode == 204) {
-        return Service.fromJson(jsonDecode(res.body));
+        final updatedService = await getServiceById(id!);
+        return updatedService;
       } else {
-        throw Exception(res.body);
+        throw Exception('Erreur lors de la mise à jour du service');
       }
-    }catch(e){
-      print('service repo $e ');
+    } catch (e) {
+      print('Erreur lors de la mise à jour du service: $e');
+      return null;
     }
   }
 
@@ -104,29 +102,23 @@ class ServiceRepository {
 
 
   Future<void> uploadImages(int serviceId, List<XFile> images) async {
-    print("images");
-    print(images);
-    print("serviceId");
-    print(serviceId);
-    Uri uri = Uri.parse('$_baseUrl/images/upload'); // Assurez-vous que l'URL est correcte
+    Uri uri = Uri.parse('$_baseUrl/images/upload');
     for (var image in images) {
       var request = http.MultipartRequest('POST', uri);
-      request.fields['serviceId'] = serviceId.toString(); // Ajoute le serviceId en tant que champ de texte
-      request.files.add(await http.MultipartFile.fromPath('image', image.path)); // Ajoute l'image à la requête
+      request.fields['serviceId'] = serviceId.toString();
+      request.files.add(await http.MultipartFile.fromPath('image', image.path));
 
       try {
-        var streamedResponse = await request.send(); // Envoie la requête
+        var streamedResponse = await request.send();
         if (streamedResponse.statusCode == 200) {
           print("Image uploaded successfully");
         } else {
-          // Traite les erreurs potentielles du serveur
           print("Failed to upload image: ${streamedResponse.statusCode}");
           streamedResponse.stream.transform(utf8.decoder).listen((value) {
-            print(value); // Affiche la réponse d'erreur du serveur
+            print(value);
           });
         }
       } catch (e) {
-        // Capture les exceptions lors de l'envoi
         print("Error uploading image: $e");
       }
     }

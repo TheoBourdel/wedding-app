@@ -1,10 +1,10 @@
 import 'package:client/features/message/pages/rooms_page.dart';
 import 'package:client/features/search/pages/search_page.dart';
-import 'package:client/features/service/pages/service_info_page.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:client/features/wedding/pages/wedding_page.dart';
+import 'package:client/features/service/pages/services_page.dart';
 
 class NavigationMenu extends StatefulWidget {
   final token;
@@ -56,7 +56,7 @@ class _NavigationMenu extends State<NavigationMenu> {
         icon: Icon(Iconsax.briefcase), // Changez l'icône si nécessaire
         label: "Services",
       ));
-      _screens.add(const ServiceInfoPage());
+      _screens.add( ServicesScreen());
 
     } else if (role == 'marry') {
       destinations.add(const BottomNavigationBarItem(
