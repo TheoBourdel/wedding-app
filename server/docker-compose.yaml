@@ -34,26 +34,6 @@ services:
       - grafana_data:/var/lib/grafana
 
 
-
-  fluentd:
-    image: fluent/fluentd:v1.11-debian-1
-    ports:
-      - "24224:24224"
-    volumes:
-      - ./fluentd:/fluentd/etc
-    environment:
-      FLUENTD_CONF: fluentd.conf
-
-  elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.10.1
-    environment:
-      - discovery.type=single-node
-      - ES_JAVA_OPTS=-Xms512m -Xmx512m
-    ports:
-      - "9200:9200"
-    volumes:
-      - es_data:/usr/share/elasticsearch/data
-
 volumes:
   db_postgres:
   grafana_data:
