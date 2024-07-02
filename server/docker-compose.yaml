@@ -54,3 +54,4 @@ services:
 volumes:
   db_postgres:
   grafana_data:
+  loki_data:
