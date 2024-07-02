@@ -34,24 +34,27 @@ services:
       - grafana_data:/var/lib/grafana
 
 
-  loki:
-    image: grafana/loki:2.6.1
+
+  fluentd:
+    image: fluent/fluentd:v1.11-debian-1
     ports:
-      - "3100:3100"
-    command: -config.file=/etc/loki/local-config.yaml
+      - "24224:24224"
     volumes:
-      - ./loki-config.yaml:/etc/loki/local-config.yaml
-      - loki_data:/loki
+      - ./fluentd:/fluentd/etc
+    environment:
+      FLUENTD_CONF: fluentd.conf
 
-  promtail:
-    image: grafana/promtail:2.6.1
-    command: -config.file=/etc/promtail/config.yaml
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.10.1
+    environment:
+      - discovery.type=single-node
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+    ports:
+      - "9200:9200"
     volumes:
-      - /var/log:/var/log
-      - ./promtail-config.yaml:/etc/promtail/config.yaml
-
+      - es_data:/usr/share/elasticsearch/data
 
 volumes:
   db_postgres:
   grafana_data:
-  loki_data:
+  es_data:
