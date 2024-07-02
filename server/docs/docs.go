@@ -2,6 +2,7 @@
 package docs
 
 import "github.com/swaggo/swag"
+import "os"
 
 const docTemplate = `{
     "schemes": {{ marshal .Schemes }},
@@ -1131,7 +1132,8 @@ const docTemplate = `{
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
-	Host:             "localhost:8080",
+	// Host:             "localhost:8080",
+    Host: os.Getenv("SERVER"),
 	BasePath:         "/",
 	Schemes:          []string{},
 	Title:            "Challenge API",
