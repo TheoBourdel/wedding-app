@@ -24,5 +24,15 @@ services:
     volumes:
       - db_postgres:/var/lib/postgresql/data
 
+  grafana:
+    image: grafana/grafana
+    environment:
+      - GF_SERVER_ROOT_URL=https://challenge.mlk-labs.com/grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+
 volumes:
   db_postgres:
+  grafana_data:
