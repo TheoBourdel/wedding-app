@@ -10,6 +10,7 @@ const (
 	Admin    Role = "admin"
 	Provider Role = "provider"
 	Marry    Role = "marry"
+	//Organizer Role = "organizer"
 )
 
 type User struct {

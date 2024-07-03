@@ -1,3 +1,5 @@
+import 'package:client/features/auth/bloc/auth_bloc.dart';
+import 'package:client/features/auth/bloc/auth_state.dart';
 import 'package:client/features/organizer/pages/organizer_page.dart';
 import 'package:client/features/wedding/pages/wedding_form.dart';
 import 'package:client/features/wedding/widgets/wedding_countdown_card.dart';
@@ -6,6 +8,7 @@ import 'package:client/model/wedding.dart';
 import 'package:client/shared/widget/button.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:provider/provider.dart';
 
 class WeddingInfoPage extends StatelessWidget {
   final Wedding wedding;
@@ -13,6 +16,9 @@ class WeddingInfoPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final authState = context.read<AuthBloc>().state;
+    final userRole = authState is Authenticated ? authState.userRole : null;
+    
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -107,7 +113,8 @@ class WeddingInfoPage extends StatelessWidget {
                 ),
               ),
             ),
-            Padding(
+            userRole == "marry" 
+              ? Padding(
               padding: const EdgeInsets.all(20),
               child: Button(
                 text: "Modifier",
@@ -118,7 +125,7 @@ class WeddingInfoPage extends StatelessWidget {
                 },
                 isOutlined: true,
               )
-            )
+            ): const SizedBox(height: 100,),
           ],
         ),
       )

@@ -41,7 +41,7 @@ class _BottomNavigationState extends State<BottomNavigation> {
     List<Widget> screens = [];
 
 
-    if (role == 'marry') {
+    if (role == 'marry' || role == 'organizer' || role == 'provider') {
       screens.add(ServicesScreen());
       destinations.add(const BottomNavigationBarItem(
         icon: Icon(Iconsax.search_normal_1),
@@ -49,11 +49,13 @@ class _BottomNavigationState extends State<BottomNavigation> {
       ));
     }
 
-    screens.add(const EstimatePage());
-    destinations.add(const BottomNavigationBarItem(
-      icon: Icon(Iconsax.document),
-      label: "Devis",
-    ));
+    if(role != 'organizer') {
+      screens.add(const EstimatePage());
+      destinations.add(const BottomNavigationBarItem(
+        icon: Icon(Iconsax.document),
+        label: "Devis",
+      ));
+    }
 
     if (role == 'provider') {
       destinations.add(const BottomNavigationBarItem(
@@ -62,7 +64,7 @@ class _BottomNavigationState extends State<BottomNavigation> {
       ));
       screens.add(ServicesScreen());
 
-    } else if (role == 'marry') {
+    } else if (role == 'marry' || role == 'organizer') {
       destinations.add(const BottomNavigationBarItem(
         icon: Icon(Iconsax.profile_2user),
         label: "Mariage",

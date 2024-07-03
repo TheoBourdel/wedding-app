@@ -1,4 +1,6 @@
 import 'package:client/core/theme/app_colors.dart';
+import 'package:client/features/auth/bloc/auth_bloc.dart';
+import 'package:client/features/auth/bloc/auth_state.dart';
 import 'package:client/features/organizer/bloc/organizer_bloc.dart';
 import 'package:client/features/organizer/bloc/organizer_event.dart';
 import 'package:client/model/user.dart';
@@ -14,6 +16,9 @@ class OrganizerCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final authState = context.read<AuthBloc>().state;
+    final userRole = authState is Authenticated ? authState.userRole : null;
+    
     return ListTile(
       horizontalTitleGap: 10,
       title: Row(
@@ -30,17 +35,19 @@ class OrganizerCard extends StatelessWidget {
         ]
       ),
       subtitle: Text(organizer.email),
-      trailing: IconButton(
-        icon: const Icon(Icons.delete),
-        onPressed: () {
-          context.read<OrganizerBloc>().add(
-            OrganizerDeleteEvent(
-              weddingId: weddingId,
-              userId: organizer.id
-            )
-          );
-        },
-      ),
+      trailing: userRole == "marry" 
+        ? IconButton(
+          icon: const Icon(Icons.delete),
+          onPressed: () {
+            context.read<OrganizerBloc>().add(
+              OrganizerDeleteEvent(
+                weddingId: weddingId,
+                userId: organizer.id
+              )
+            );
+          },
+        )
+        : null,
     );
   }
 }

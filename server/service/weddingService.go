@@ -102,7 +102,7 @@ func (ws *WeddingService) AddWeddingOrganizer(weddingID uint64, user model.User)
 	}
 
 	// Generate a random password for the user
-	password := ws.PasswordGenerator.GenerateRandomPassword(8)
+	password := ws.PasswordGenerator.GenerateRandomPassword(bcrypt.DefaultCost)
 	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
 		return model.User{}, dto.HttpErrorDto{Message: "Error while hashing password", Code: 500}
@@ -113,6 +113,7 @@ func (ws *WeddingService) AddWeddingOrganizer(weddingID uint64, user model.User)
 		Firstname: user.Firstname,
 		Email:     user.Email,
 		Password:  string(hash),
+		Role:      "organizer",
 	}
 
 	// Add the user to the wedding's organizers

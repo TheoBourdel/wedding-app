@@ -29,6 +29,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
         emit(Authenticated(token, userId, userRole));
       } catch (e) {
+        print('Error while signing in: $e');
         emit(const AuthError('Error while signing in'));
       }
     });

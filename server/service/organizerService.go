@@ -35,6 +35,9 @@ func (os *OrganizerService) DeleteOrganizer(weddingId string, organizerId string
 	if err != (dto.HttpErrorDto{}) {
 		return err
 	}
+	if organizer.Role == "marry" || organizer.Role == "provider" {
+		return dto.HttpErrorDto{Message: "Can't remove this user from the wedding"}
+	}
 
 	err = os.WeddingRepository.RemoveUserFromWedding(int(organizer.ID), int(wedding.ID))
 	if err != (dto.HttpErrorDto{}) {

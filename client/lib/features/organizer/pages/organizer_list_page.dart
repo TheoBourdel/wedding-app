@@ -1,9 +1,12 @@
 import 'package:client/core/theme/app_colors.dart';
+import 'package:client/features/auth/bloc/auth_bloc.dart';
+import 'package:client/features/auth/bloc/auth_state.dart';
 import 'package:client/features/organizer/widgets/organizer_bottom_modal_form.dart';
 import 'package:client/features/organizer/widgets/organizer_card.dart';
 import 'package:client/model/user.dart';
 import 'package:client/shared/widget/button.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class OrganizerListPage extends StatelessWidget {
   final List<User> organizers;
@@ -12,6 +15,9 @@ class OrganizerListPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final authState = context.read<AuthBloc>().state;
+    final userRole = authState is Authenticated ? authState.userRole : null;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Organisateurs'),
@@ -30,20 +36,22 @@ class OrganizerListPage extends StatelessWidget {
         ),
       ),
       backgroundColor: Colors.grey[100],
-      bottomSheet: Container(
-        color: Colors.grey[100],
-        width: MediaQuery.of(context).size.width,
-        padding: const EdgeInsets.all(40),
-        child: Button(
-          text: 'Inviter un organisateur',
-          onPressed: () => {
-            showModalBottomSheet(
-              context: context,
-              builder: (context) => OrganizerBottomModalForm(weddingId: weddingId)
-            )
-          },
+      bottomSheet: userRole == "marry"
+        ? Container(
+          color: Colors.grey[100],
+          width: MediaQuery.of(context).size.width,
+          padding: const EdgeInsets.all(40),
+          child: Button(
+            text: 'Inviter un organisateur',
+            onPressed: () => {
+              showModalBottomSheet(
+                context: context,
+                builder: (context) => OrganizerBottomModalForm(weddingId: weddingId)
+              )
+            },
+          )
         )
-      )
+        : null,
     );
   }
 }
