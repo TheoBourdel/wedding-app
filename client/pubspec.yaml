@@ -2,7 +2,7 @@ name: client
 description: "A new Flutter project."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
 # The following defines the version and build number for your application.
 # A version number is three numbers separated by dots, like 1.2.43
@@ -19,7 +19,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+1
 
 environment:
-  sdk: '>=3.3.1 <4.0.0'
+  sdk: ">=3.3.1 <4.0.0"
 
 # Dependencies specify olther packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -30,25 +30,18 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  dio: ^5.4.3+1
-  firebase_core: ^3.1.1
-  firebase_messaging: ^15.0.2
-  fl_chart: ^0.68.0
-  flutter_bloc: ^8.1.6
-  flutter_hooks: ^0.20.5
-  flutter_i18n: ^0.36.0
-  flutter_local_notifications: ^17.2.1
-  font_awesome_flutter: ^10.7.0
-  image_picker: ^1.1.2
-  retrofit: ^4.1.0
-  toastification: ^2.0.0
-  unicons: ^2.1.2
-
+  image_picker: ^0.8.5+3
+  font_awesome_flutter: ^9.2.0
   flutter_rating_bar: any
   flutter_localizations:
     sdk: flutter
+  flutter_i18n: ^0.35.1
   google_fonts: ^6.2.1
-  get: ^4.6.6         # Utilisez la dernière version disponible
+  get: ^4.6.6 # Utilisez la dernière version disponible
+  unicons: ^2.1.1
+  firebase_messaging: ^15.0.1
+  firebase_core: ^3.1.0
+  flutter_local_notifications: 17.1.2
   googleapis_auth: ^1.1.0
   # The following adds the Cupertino Icons font to your application.
   # The following adds the Cupertino Icons font to your application.
@@ -58,19 +51,23 @@ dependencies:
   fpdart: ^1.1.0
   http: ^1.2.1
   flutter_dotenv: ^5.1.0
+  dio: ^4.0.6
 
   # Icons
   iconsax: ^0.0.8
   # JWT
-  jwt_decoder: 
+  jwt_decoder:
   # Local storage
   shared_preferences: ^2.2.3
+  # Toast
+  toastification: ^1.2.1
+  # State management
+  flutter_bloc: ^8.1.3
   # Provider
   provider: ^6.1.2
 
   # Date format
-  intl: ^0.19.0
-
+  intl: ^0.18.1
 
   # Comparing dart objects
   equatable: ^2.0.5
@@ -81,10 +78,15 @@ dependencies:
   # Database
   floor: ^1.4.2
 
+  # HTTP requests
+  retrofit: ^3.0.1
+
+  # Hooks
+  flutter_hooks: ^0.18.3
+
   # Cached network images
   cached_network_image: ^3.2.0
   dartz: ^0.10.1
-  flutter_svg: ^2.0.5
   carousel_slider: ^4.2.1
 
 dev_dependencies:
@@ -96,17 +98,16 @@ dev_dependencies:
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
-  build_runner: ^2.4.11
-  floor_generator: ^1.5.0
-  flutter_lints: ^4.0.0
-  retrofit_generator: ^8.1.0
+  flutter_lints: ^3.0.0
+  retrofit_generator: ^3.0.1
+  floor_generator: ^1.2.0
+  build_runner: ^2.1.2
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
 # The following section is specific to Flutter packages.
 flutter:
-
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
@@ -117,7 +118,6 @@ flutter:
   assets:
     - assets/images/
     - assets/lang/
-    - assets/icons/
     - .env
 
   # An image asset can refer to one or more resolution-specific "variants", see
