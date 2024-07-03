@@ -3,13 +3,12 @@ package controller
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 
 	_ "api/docs"
 	"api/dto"
-	"api/model"
 	"api/service"
-
-	"strconv"
+	"api/model"
 
 	"github.com/gin-gonic/gin"
 )
@@ -26,9 +25,13 @@ type UserController struct {
 // @Produce json
 // @Success 200 {object} []model.User
 // @Router /users [get]
-func (uc *UserController) GetUsers(ctx *gin.Context) {
-	users := uc.UserService.FindAll()
 
+func (uc *UserController) GetUsers(ctx *gin.Context) {
+	page, _ := strconv.Atoi(ctx.DefaultQuery("page", "1"))
+	pageSize, _ := strconv.Atoi(ctx.DefaultQuery("pageSize", "10"))
+	query := ctx.DefaultQuery("query", "")
+
+	users := uc.UserService.FindAll(page, pageSize, query)
 	ctx.Header("Content-Type", "application/json")
 	ctx.JSON(http.StatusOK, users)
 }
@@ -74,13 +77,19 @@ func (uc *UserController) GetUserEstimates(ctx *gin.Context) {
 }
 
 func (uc *UserController) CreateUser(ctx *gin.Context) {
-
 	var body model.User
 	if ctx.Bind(&body) != nil {
 		ctx.JSON(400, gin.H{"error": "Invalid request"})
 		return
 	}
 
+	user, err := uc.UserService.CreateUser(body)
+	if err != (dto.HttpErrorDto{}) {
+		ctx.JSON(err.Code, err)
+		return
+	}
+
+	ctx.JSON(http.StatusCreated, user)
 }
 
 func (uc *UserController) GetUser(ctx *gin.Context) {
@@ -103,7 +112,6 @@ func (uc *UserController) UpdateUserFirebaseToken(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
 		return
 	}
-
 	var body struct {
 		Token string `json:"token"`
 	}
@@ -119,4 +127,20 @@ func (uc *UserController) UpdateUserFirebaseToken(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, user)
+}
+
+func (uc *UserController) DeleteUser(ctx *gin.Context) {
+	id, err := strconv.Atoi(ctx.Param("id"))
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
+		return
+	}
+
+	err = uc.UserService.DeleteUserByID(id)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete user"})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"message": "User deleted successfully"})
 }

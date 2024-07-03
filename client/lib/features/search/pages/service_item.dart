@@ -1,4 +1,4 @@
-import 'package:client/features/service/pages/service_detail_page.dart';
+import 'package:client/features/service/widgets/details/service_detail.dart';
 import 'package:flutter/material.dart';
 import 'package:client/model/service.dart';
 
@@ -31,7 +31,7 @@ class ServiceListItem extends StatelessWidget {
         trailing: Icon(Icons.arrow_forward_ios),
         onTap: () {
           Navigator.push(context, MaterialPageRoute(
-            builder: (context) => ServiceDetailPage(service: service),
+            builder: (context) => ServiceDetail(service: service),
           ));
         },
       ),

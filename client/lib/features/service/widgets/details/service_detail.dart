@@ -8,16 +8,16 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:client/features/message/pages/chat_page.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 
-class ServiceDetailPage extends StatefulWidget {
+class ServiceDetail extends StatefulWidget {
   final Service service;
 
-  const ServiceDetailPage({Key? key, required this.service}) : super(key: key);
+  const ServiceDetail({Key? key, required this.service}) : super(key: key);
 
   @override
-  _ServiceDetailPageState createState() => _ServiceDetailPageState();
+  _ServiceDetailState createState() => _ServiceDetailState();
 }
 
-class _ServiceDetailPageState extends State<ServiceDetailPage> {
+class _ServiceDetailState extends State<ServiceDetail> {
   int userId = 0;
   final UserRepository userRepository = UserRepository ();
 

@@ -2,10 +2,11 @@ package repository
 
 import (
 	"api/dto"
-	"api/helper"
 	"api/model"
 
 	"api/config"
+
+	"fmt"
 
 	"gorm.io/gorm"
 )
@@ -14,11 +15,20 @@ type UserRepository struct {
 	DB *gorm.DB
 }
 
-func (ur *UserRepository) FindAll() []model.User {
+func (ur *UserRepository) FindAll(page int, pageSize int, query string) []model.User {
 	var users []model.User
+	offset := (page - 1) * pageSize
+	db := config.DB
 
-	result := config.DB.Find(&users)
-	helper.ErrorPanic(result.Error)
+	if query != "" {
+		db = db.Where("firstname LIKE ? OR lastname LIKE ? OR email LIKE ?", "%"+query+"%", "%"+query+"%", "%"+query+"%")
+	}
+
+	result := db.Offset(offset).Limit(pageSize).Find(&users)
+	if result.Error != nil {
+		fmt.Printf("Error retrieving users: %v", result.Error)
+		return []model.User{}
+	}
 
 	return users
 }
@@ -57,6 +67,19 @@ func (ur *UserRepository) FindAllByWeddingID(weddingID uint) ([]model.User, dto.
 	}
 
 	return users, dto.HttpErrorDto{}
+}
+
+func (ur *UserRepository) DeleteByID(id int) error {
+	result := config.DB.Delete(&model.User{}, id)
+	if result.Error != nil {
+		return result.Error
+	}
+
+	if result.RowsAffected == 0 {
+		return fmt.Errorf("no user found with id: %d", id)
+	}
+
+	return nil
 }
 
 func (ur *UserRepository) UpdateFirebaseToken(userID uint, newToken string) (model.User, dto.HttpErrorDto) {

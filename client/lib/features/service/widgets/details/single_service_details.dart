@@ -2,7 +2,6 @@ import 'package:client/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:client/features/service/widgets/details/single_service_details_bottom.dart';
-import 'package:client/features/service/services_theme.dart';
 
 AnimatedPadding buildServiceDetails(service, Color defaultColor,
     Color secondColor, bool extendDetails, Size size,int ServiceID) {
