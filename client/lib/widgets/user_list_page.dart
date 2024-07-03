@@ -6,6 +6,7 @@ class UserListPage extends StatefulWidget {
   const UserListPage({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _UserListPageState createState() => _UserListPageState();
 }
 
@@ -30,6 +31,7 @@ class _UserListPageState extends State<UserListPage> {
       await UserService().deleteUser(id);
       fetchUsers();
     } catch (e) {
+      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Erreur lors de la suppression: $e'),
@@ -66,14 +68,14 @@ class _UserListPageState extends State<UserListPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Liste des utilisateurs'),
+        title: const Text('Liste des utilisateurs'),
       ),
       body: Column(
         children: [
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: TextField(
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Rechercher',
                 border: OutlineInputBorder(),
               ),
@@ -85,11 +87,11 @@ class _UserListPageState extends State<UserListPage> {
               future: futureUsers,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator());
+                  return const Center(child: CircularProgressIndicator());
                 } else if (snapshot.hasError) {
                   return Center(child: Text('Erreur: ${snapshot.error}'));
                 } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return Center(child: Text('Aucun utilisateur trouvé'));
+                  return const Center(child: Text('Aucun utilisateur trouvé'));
                 } else {
                   List<User> users = snapshot.data ?? [];
                   return ListView.builder(
@@ -104,7 +106,7 @@ class _UserListPageState extends State<UserListPage> {
                           children: [
                             Text(user.role),
                             IconButton(
-                              icon: Icon(Icons.delete, color: Colors.red),
+                              icon: const Icon(Icons.delete, color: Colors.red),
                               onPressed: () => _deleteUser(user.id),
                             ),
                           ],
@@ -121,11 +123,11 @@ class _UserListPageState extends State<UserListPage> {
             children: [
               TextButton(
                 onPressed: _previousPage,
-                child: Text('Précédent'),
+                child: const Text('Précédent'),
               ),
               TextButton(
                 onPressed: _nextPage,
-                child: Text('Suivant'),
+                child: const Text('Suivant'),
               ),
             ],
           ),
