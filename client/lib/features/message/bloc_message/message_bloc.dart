@@ -1,6 +1,6 @@
+// ignore: depend_on_referenced_packages
 import 'package:bloc/bloc.dart';
 import 'package:client/features/api/notification_sender.dart';
-import 'package:client/model/user.dart';
 import 'package:client/repository/user_repository.dart';
 import 'package:equatable/equatable.dart';
 import 'package:client/dto/message_dto.dart';
@@ -19,7 +19,6 @@ class MessageBloc extends Bloc<MessageEvent, MessageState> {
     on<SendMessageEvent>((event, emit) async {
       try {
         await messageRepository.sendMessage(event.messageDto, event.token);
-        print(event.token);
 
         await notificationSender.sendNotification(event.token, event.messageDto.content);
         emit(MessageSent());
@@ -31,7 +30,7 @@ class MessageBloc extends Bloc<MessageEvent, MessageState> {
 
     on<ReceiveMessageEvent>((event, emit) {
       if (state is MessagesLoaded) {
-        if (event.message != null && event.message.content.isNotEmpty) {
+        if (event.message.content.isNotEmpty) {
           final updatedMessages = List<Message>.from((state as MessagesLoaded).messages)
             ..add(event.message);
           emit(MessagesLoaded(updatedMessages));

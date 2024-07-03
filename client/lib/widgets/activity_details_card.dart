@@ -8,6 +8,7 @@ class ActivityDetailsCard extends StatefulWidget {
   const ActivityDetailsCard({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _ActivityDetailsCardState createState() => _ActivityDetailsCardState();
 }
 
@@ -57,11 +58,11 @@ class _ActivityDetailsCardState extends State<ActivityDetailsCard> {
       future: _statglobalDataFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator());
         } else if (snapshot.hasError) {
           return Center(child: Text('Erreur: ${snapshot.error}'));
         } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return Center(child: Text('Aucune donnée trouvée'));
+          return const Center(child: Text('Aucune donnée trouvée'));
         } else {
           final statglobalData = snapshot.data!;
           return GridView.builder(

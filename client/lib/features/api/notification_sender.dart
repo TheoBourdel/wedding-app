@@ -44,15 +44,10 @@ class NotificationSender {
     final response = await http.post(Uri.parse(url), headers: headers, body: payload);
 
     if (response.statusCode == 200) {
-      print('Message sent successfully');
     } else {
       final responseBody = jsonDecode(response.body);
       if (responseBody['error']['details'][0]['errorCode'] == 'UNREGISTERED') {
-        // Handle unregistered token, for example, remove it from your database
-        print('Token is unregistered. Removing from database.');
-        // Logique pour supprimer le token de votre base de données
       } else {
-        print('Failed to send message: ${response.body}');
       }
     }
 

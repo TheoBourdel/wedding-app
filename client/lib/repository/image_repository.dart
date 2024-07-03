@@ -45,7 +45,6 @@ class ImageRepository {
     if (res.statusCode == 200) {
       Iterable decodedBody = jsonDecode(res.body);
       List<Image> images = decodedBody.map((imageJson) => Image.fromJson(imageJson)).toList();
-      print(images);
 
       return images;
     } else {

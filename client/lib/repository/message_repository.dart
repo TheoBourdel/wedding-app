@@ -3,8 +3,8 @@ import 'package:client/core/constant/constant.dart';
 import 'package:client/dto/message_dto.dart';
 import 'package:client/model/message.dart';
 import 'package:http/http.dart' as http;
+// ignore: depend_on_referenced_packages
 import 'package:web_socket_channel/web_socket_channel.dart';
-import 'package:client/features/api/notification_sender.dart';
 
 class MessageRepository {
   final String _baseUrl = apiUrl;

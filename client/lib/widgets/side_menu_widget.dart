@@ -1,8 +1,6 @@
 import 'package:client/data/side_menu_data.dart';
 import 'package:client/widgets/user_list_page.dart';
 import 'package:client/widgets/categorie_page.dart';
-import 'package:client/widgets/settings_page.dart';
-import 'package:client/widgets/signout_page.dart';
 import 'package:flutter/material.dart';
 import 'package:client/widgets/dashboard_widget.dart';
 import 'main_scaffold.dart';
@@ -25,22 +23,16 @@ class _SideMenuWidgetState extends State<SideMenuWidget> {
     Widget page;
     switch (index) {
       case 0:
-        page = DashboardWidget();
+        page = const DashboardWidget();
         break;
       case 1:
-        page = CategoryPage();
+        page = const CategoryPage();
         break;
       case 2:
-        page = UserListPage();
-        break;
-      case 3:
-        page = SettingsPage();
-        break;
-      case 5:
-        page = SignOutPage();
+        page = const UserListPage();
         break;
       default:
-        page = DashboardWidget();
+        page = const DashboardWidget();
         break;
     }
 

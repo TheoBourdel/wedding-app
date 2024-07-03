@@ -38,7 +38,7 @@ class OrganizerRepository {
     Response res = await delete(
       Uri.parse('$apiUrl/wedding/$weddingId/organizer/$userId'),
     );
-    print(res.body);
+    
     if(res.statusCode != 204) {
       throw Exception(res.body);
     }

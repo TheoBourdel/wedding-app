@@ -1,6 +1,7 @@
 import 'package:client/features/estimate/bloc/estimate_event.dart';
 import 'package:client/features/estimate/bloc/estimate_state.dart';
 import 'package:client/model/estimate.dart';
+// ignore: depend_on_referenced_packages
 import 'package:bloc/bloc.dart';
 import 'package:client/repository/estimate_repository.dart';
 

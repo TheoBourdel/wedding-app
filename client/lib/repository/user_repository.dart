@@ -31,7 +31,7 @@ class UserRepository {
       }
 
     } catch (e) {
-      print('User Put  Token User $e ');
+      throw Exception(e.toString());
     }
   }
 }

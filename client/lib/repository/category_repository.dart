@@ -22,7 +22,7 @@ class CategoryRepository {
   }
 
   Future updateCategory(CategoryDto category) async {
-    final id = category?.id;
+    final id = category.id;
     try{
       Response res = await patch(
         Uri.parse('$_baseUrl/category/$id'),
@@ -35,7 +35,7 @@ class CategoryRepository {
         throw Exception(res.body);
       }
     }catch(e){
-      print('category repo $e ');
+      throw Exception(e);
     }
   }
 
@@ -63,7 +63,6 @@ class CategoryRepository {
     if (res.statusCode == 200) {
       Iterable decodedBody = jsonDecode(res.body);
       List<Category> categorys = decodedBody.map((categoryJson) => Category.fromJson(categoryJson)).toList();
-      print(categorys);
 
       return categorys;
     } else {

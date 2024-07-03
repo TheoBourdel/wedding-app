@@ -14,8 +14,8 @@ class HeaderWidget extends StatelessWidget {
             padding: const EdgeInsets.only(right: 20),
             child: InkWell(
               onTap: () => Scaffold.of(context).openDrawer(),
-              child: Padding(
-                padding: const EdgeInsets.all(4.0),
+              child: const Padding(
+                padding: EdgeInsets.all(4.0),
                 child: Icon(
                   Icons.menu,
                   color: Colors.grey,
@@ -29,7 +29,7 @@ class HeaderWidget extends StatelessWidget {
             child: TextField(
               decoration: InputDecoration(
                 filled: true,
-                fillColor: Color(0xFF171821),
+                fillColor: const Color(0xFF171821),
                 enabledBorder: const OutlineInputBorder(
                   borderSide: BorderSide(color: Colors.transparent),
                 ),
@@ -50,7 +50,7 @@ class HeaderWidget extends StatelessWidget {
                   size: 21,
                 ),
               ),
-              style: TextStyle(color: Colors.white),
+              style: const TextStyle(color: Colors.white),
             ),
           ),
         if (Responsive.isMobile(context))

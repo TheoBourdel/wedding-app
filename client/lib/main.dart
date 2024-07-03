@@ -25,8 +25,6 @@ import 'package:client/features/message/bloc_message/message_bloc.dart';
 import 'package:client/features/message/bloc_room/room_bloc.dart';
 import 'package:client/repository/message_repository.dart';
 import 'package:client/repository/room_repository.dart';
-import 'package:client/shared/widget/navigation_menu.dart';
-import 'package:flutter_gen/gen_l10n/app_localization.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class LocaleProvider with ChangeNotifier {
@@ -53,8 +51,6 @@ class HexColor extends Color {
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load();
-
-  //Stripe.publishableKey = dotenv.env['STRIPE_PUBLISHABLE_KEY']!;
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 

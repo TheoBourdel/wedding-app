@@ -12,7 +12,7 @@ class SendMessageEvent extends MessageEvent {
   final MessageDto messageDto;
   final String token;
 
-  SendMessageEvent({required this.messageDto, required this.token});
+  const SendMessageEvent({required this.messageDto, required this.token});
 
   @override
   List<Object> get props => [messageDto, token];
