@@ -30,7 +30,7 @@ func main() {
 
 	// Configure CORS middleware
 	router.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost:62622", "http://127.0.0.1:62622", "http://127.0.0.1:8080"}, // Ajoutez vos origines autorisées ici
+		AllowOrigins:     []string{"http://localhost:51653", "http://127.0.0.1:51653", "http://127.0.0.1:8080"}, // Ajoutez vos origines autorisées ici
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization"},
 		ExposeHeaders:    []string{"Content-Length"},

@@ -28,6 +28,7 @@ import 'package:client/repository/room_repository.dart';
 import 'package:client/shared/widget/navigation_menu.dart';
 import 'package:flutter_gen/gen_l10n/app_localization.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:client/screens/main_screen.dart';
 
 class LocaleProvider with ChangeNotifier {
   Locale _currentLocale = const Locale('en');
@@ -56,12 +57,12 @@ void main() async {
 
   //Stripe.publishableKey = dotenv.env['STRIPE_PUBLISHABLE_KEY']!;
 
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  //await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   String roomId = 'test_room_id';
-  FirebaseApi firebaseApi = FirebaseApi();
-  await firebaseApi.initNotifications(roomId);
-  await firebaseApi.initPushNotifications();
+  //FirebaseApi firebaseApi = FirebaseApi();
+  //await firebaseApi.initNotifications(roomId);
+  //await firebaseApi.initPushNotifications();
 
 
   SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -141,10 +142,11 @@ class MyApp extends StatelessWidget {
             theme: AppTheme.lightTheme,
             localizationsDelegates: AppLocalizations.localizationsDelegates,
             supportedLocales: AppLocalizations.supportedLocales,
-            home: const AuthScreen(),
-    /*        routes: {
-              '/test-notifications': (context) => NotificationScreen(), // Ajoutez la nouvelle route
-            },*/
+            routes: {
+              '/': (context) => const AuthScreen(),
+              '/dashboard': (context) => const MainScreen(),
+              '/home': (context) => const BottomNavigation(),
+            },
           ),
         ),
       )
@@ -175,7 +177,12 @@ class AuthScreen extends StatelessWidget {
         }
 
         if (state is Authenticated) {
-          return const BottomNavigation();
+          if (state.userRole == 'admin') {
+            Future.microtask(() => Navigator.pushReplacementNamed(context, '/dashboard'));
+          } else {
+            Future.microtask(() => Navigator.pushReplacementNamed(context, '/home'));
+          }
+          return const SizedBox();
         }
 
         if (state is AuthError) {
