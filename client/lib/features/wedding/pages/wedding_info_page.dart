@@ -4,6 +4,7 @@ import 'package:client/features/organizer/pages/organizer_page.dart';
 import 'package:client/features/wedding/pages/wedding_form.dart';
 import 'package:client/features/wedding/widgets/wedding_countdown_card.dart';
 import 'package:client/features/wedding/widgets/wedding_info_card.dart';
+import 'package:client/features/wedding/widgets/wedding_info_line.dart';
 import 'package:client/model/wedding.dart';
 import 'package:client/shared/widget/button.dart';
 import 'package:flutter/material.dart';
@@ -24,46 +25,52 @@ class WeddingInfoPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            const Expanded(
-              flex: 1,
-              child: Padding(
-                padding: EdgeInsets.only(left: 20, top: 8, right: 20, bottom: 0),
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Gérer votre mariage",
-                              style: TextStyle(
-                                fontSize: 22,
-                                fontWeight: FontWeight.bold,
-                              ),
+            Padding(
+              padding: const EdgeInsets.only(left: 20, top: 8, right: 20, bottom: 0),
+              child: Column(
+                children: [
+                  const Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Gérer votre mariage",
+                            style: TextStyle(
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
                             ),
-                            Text(
-                              "Votre mariage est dans :",
-                              style: TextStyle(
-                                fontSize: 14,
-                              ),
+                          ),
+                          Text(
+                            "Votre mariage est dans :",
+                            style: TextStyle(
+                              fontSize: 14,
                             ),
-                          ],
-                        )
-                      ],
-                    ),
-                    SizedBox(height: 10),
-                    WeddingCountDownCard()
-                  ],
-                )
+                          ),
+                        ],
+                      )
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  WeddingCountDownCard(weddingDate: wedding.date),
+                  const SizedBox(height: 10),
+                  Column(
+                    children: [
+                      WeddingInfoLine(title: wedding.email, icon: Iconsax.sms),
+                      const SizedBox(height: 10),
+                      WeddingInfoLine(title: wedding.phone, icon: Iconsax.call),
+                      const SizedBox(height: 10),
+                      WeddingInfoLine(title: wedding.address, icon: Iconsax.location),
+                    ]
+                  )
+                ],
               )
             ),
             Expanded(
-              flex: 3,
+              flex: 1,
               child: Padding(
-                padding: const EdgeInsets.only(left: 20, right: 20, top: 20),
-                //child: Container(color: Colors.blue,)
+                padding: const EdgeInsets.only(left: 20, right: 20, top: 0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.end,

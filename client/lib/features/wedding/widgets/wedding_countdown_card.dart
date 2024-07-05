@@ -1,91 +1,35 @@
 import 'package:client/core/theme/app_colors.dart';
+import 'package:date_count_down/date_count_down.dart';
 import 'package:flutter/material.dart';
 
 class WeddingCountDownCard extends StatelessWidget {
-  const WeddingCountDownCard({super.key});
+  final String weddingDate;
+  const WeddingCountDownCard({super.key, required this.weddingDate});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 100,
-      width: double.infinity,
-      decoration: BoxDecoration(
-        color: AppColors.pink500,
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: const Padding(
-        padding: EdgeInsets.only(left: 40, right: 40, top: 10, bottom: 10),
-        child: Center(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    "Mois",
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.white,
-                      fontWeight: FontWeight.w600
-                    ),
-                  ),
-                  Text(
-                    "07",
-                    style: TextStyle(
-                      fontSize: 35,
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold
-                    ),
-                  )
-                ],
-              ),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    "Semaines",
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.white,
-                      fontWeight: FontWeight.w600
-                    ),
-                  ),
-                  Text(
-                    "00",
-                    style: TextStyle(
-                      fontSize: 35,
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold
-                    ),
-                  )
-                ],
-              ),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    "Jours",
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.white,
-                      fontWeight: FontWeight.w600
-                    ),
-                  ),
-                  Text(
-                    "00",
-                    style: TextStyle(
-                      fontSize: 35,
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold
-                    ),
-                  )
-                ],
-              ),
-            ],
-          )
-        )
-      ),
+    int days = weddingDate.split("-").length > 2 ? int.parse(weddingDate.split("-")[2]) : 0;
+    int months = weddingDate.split("-").length > 1 ? int.parse(weddingDate.split("-")[1]) : 0;
+    int years = weddingDate.split("-").isNotEmpty ? int.parse(weddingDate.split("-")[0]) : 0;
+
+    return (
+      Container(
+        alignment: Alignment.bottomLeft,
+        child: CountDownText(
+          due: DateTime(years, months, days),
+          finishedText: "Mariage terminé",
+          showLabel: true,
+          daysTextShort: "j  ",
+          hoursTextShort: "h  ",
+          minutesTextShort: "m  ",
+          secondsTextShort: "s ",
+          style: const TextStyle(
+            fontSize: 40,
+            color: AppColors.pink500,
+            fontWeight: FontWeight.bold
+          ),
+        ),
+      )
     );
   }
 }

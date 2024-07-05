@@ -25,17 +25,17 @@ class _WeddingFormPageState extends State<WeddingFormPage> {
   final _phoneController = TextEditingController();
   final _emailController = TextEditingController();
   final _budgetController = TextEditingController();
+  final _dateController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     if (widget.wedding != null) {
-      _nameController.text = widget.wedding!.name;
-      _descriptionController.text = widget.wedding!.description;
       _addressController.text = widget.wedding!.address;
       _phoneController.text = widget.wedding!.phone;
       _emailController.text = widget.wedding!.email;
       _budgetController.text = widget.wedding!.budget.toString();
+      _dateController.text = widget.wedding!.date.toString();
     }
 
   }
@@ -69,17 +69,15 @@ class _WeddingFormPageState extends State<WeddingFormPage> {
                     flex: 5,
                     child: Column(
                       children: [
-                        Input(hintText: "Nom", controller: _nameController),
+                        Input(hintText: "Date", controller: _dateController, icon: Icons.date_range, isDate: true),
                         const SizedBox(height: 20),
-                        Input(hintText: "Description", controller: _descriptionController),
+                        Input(hintText: "Adresse", controller: _addressController, keyboardType: TextInputType.streetAddress),
                         const SizedBox(height: 20),
-                        Input(hintText: "Adresse", controller: _addressController),
+                        Input(hintText: "Budget", controller: _budgetController, keyboardType: TextInputType.number),
                         const SizedBox(height: 20),
-                        Input(hintText: "Téléphone", controller: _phoneController),
+                        Input(hintText: "Email", controller: _emailController, keyboardType: TextInputType.emailAddress),
                         const SizedBox(height: 20),
-                        Input(hintText: "Email", controller: _emailController),
-                        const SizedBox(height: 20),
-                        Input(hintText: "Budget", controller: _budgetController),
+                        Input(hintText: "Téléphone", controller: _phoneController, keyboardType: TextInputType.phone),
                       ],
                     )
                   ),
@@ -96,12 +94,11 @@ class _WeddingFormPageState extends State<WeddingFormPage> {
                             context.read<WeddingBloc>().add(
                               WeddingCreated(
                                 weddingDto: WeddingDto(
-                                  name: _nameController.text,
-                                  description: _descriptionController.text,
                                   address: _addressController.text,
                                   phone: _phoneController.text,
                                   email: _emailController.text,
                                   budget: int.parse(_budgetController.text),
+                                  date: _dateController.text,
                                 ),
                                 userId: userId!
                               )
@@ -111,12 +108,11 @@ class _WeddingFormPageState extends State<WeddingFormPage> {
                               WeddingUpdated(
                                 wedding: Wedding(
                                   id: widget.wedding!.id,
-                                  name: _nameController.text,
-                                  description: _descriptionController.text,
                                   address: _addressController.text,
                                   phone: _phoneController.text,
                                   email: _emailController.text,
                                   budget: int.parse(_budgetController.text),
+                                  date: _dateController.text,
                                 )
                               )
                             );

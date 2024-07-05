@@ -24,7 +24,7 @@ class UserRepository {
         Uri.parse('$_baseUrl/user/${user.id}/token'),
         body: json.encode({'token': token}),
       );
-      if (res.statusCode == 201) {
+      if (res.statusCode == 201 || res.statusCode == 200) {
         return User.fromJson(jsonDecode(res.body));
       } else {
         throw Exception(res.body);
