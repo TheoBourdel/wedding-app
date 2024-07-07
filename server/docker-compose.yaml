@@ -33,6 +33,15 @@ services:
     volumes:
       - grafana_data:/var/lib/grafana
 
+  flutter_client:
+    build:
+      context: ../client
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    volumes:
+      - ../client:/app
+
 
 volumes:
   db_postgres:
