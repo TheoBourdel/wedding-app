@@ -25,12 +25,13 @@ import 'package:client/features/message/bloc_message/message_bloc.dart';
 import 'package:client/features/message/bloc_room/room_bloc.dart';
 import 'package:client/repository/message_repository.dart';
 import 'package:client/repository/room_repository.dart';
-import 'package:client/shared/widget/navigation_menu.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:client/screens/main_screen.dart';
 import 'dart:io' show Platform;
 import 'package:universal_io/io.dart';
 import 'package:universal_platform/universal_platform.dart';
+
+
 
 class LocaleProvider with ChangeNotifier {
   Locale _currentLocale = const Locale('en');
@@ -66,6 +67,7 @@ void main() async {
     await firebaseApi.initNotifications(roomId);
     await firebaseApi.initPushNotifications();
   }
+
 
 
 

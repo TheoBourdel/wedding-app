@@ -11,7 +11,7 @@ abstract class RoomEvent extends Equatable {
 class FetchRoomsEvent extends RoomEvent {
   final int userId;
 
-  FetchRoomsEvent({required this.userId});
+  const FetchRoomsEvent({required this.userId});
 
   @override
   List<Object> get props => [userId];

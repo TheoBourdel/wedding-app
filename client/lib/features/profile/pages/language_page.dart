@@ -37,7 +37,7 @@ class LanguagePage extends StatelessWidget {
           child: Card(
             shape: isSelected
             ? RoundedRectangleBorder(
-                    side: BorderSide(color: AppColors.pink400, width: 2),
+                    side: const BorderSide(color: AppColors.pink400, width: 2),
                     borderRadius: BorderRadius.circular(10),
                   )
                 : RoundedRectangleBorder(

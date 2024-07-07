@@ -2,13 +2,11 @@ import 'package:client/model/user.dart';
 
 class Wedding {
   final int id;
-  final String name;
-  final String description;
-  final String? profileImage;
   final String address;
   final String phone;
   final String email;
   final int budget;
+  final String date;
   final String? createdAt;
   final String? updatedAt;
   final String? deletedAt;
@@ -16,13 +14,11 @@ class Wedding {
 
   Wedding({
     required this.id,
-    required this.name,
-    required this.description,
-    this.profileImage,
     required this.address,
     required this.phone,
     required this.email,
     required this.budget,
+    required this.date,
     this.createdAt,
     this.updatedAt,
     this.deletedAt,
@@ -35,13 +31,11 @@ class Wedding {
 
     return Wedding(
       id: json['ID'] as int,
-      name: json['Name'] as String,
-      description: json['Description'] as String,
-      profileImage: json['ProfileImage'] as String?,
       address: json['Address'] as String,
       phone: json['Phone'] as String,
       email: json['Email'] as String,
       budget: json['Budget'] as int,
+      date: json['Date'] as String,
       createdAt: json['CreatedAt'] as String?,
       updatedAt: json['UpdatedAt'] as String?,
       deletedAt: json['DeletedAt'] as String?,
@@ -52,12 +46,11 @@ class Wedding {
   Map<String, dynamic> toJson() {
     Map<String, dynamic> data = {
       'ID': id.toString(),
-      'Name': name,
-      'Description': description,
       'Address': address,
       'Phone': phone,
       'Email': email,
       'Budget': budget.toString(),
+      'Date': date,
     };
 
     if (organizers != null) {

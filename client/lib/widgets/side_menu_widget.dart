@@ -4,13 +4,14 @@ import 'package:client/features/auth/bloc/auth_event.dart';
 import 'package:client/features/auth/bloc/auth_state.dart';
 import 'package:client/widgets/user_list_page.dart';
 import 'package:client/widgets/categorie_page.dart';
-import 'package:client/widgets/settings_page.dart';
 import 'package:client/widgets/dashboard_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 import 'main_scaffold.dart';
 import 'package:client/widgets/signout_page.dart';
+import 'package:flutter/material.dart';
+
 
 class SideMenuWidget extends StatefulWidget {
   const SideMenuWidget({super.key});
@@ -41,13 +42,13 @@ class _SideMenuWidgetState extends State<SideMenuWidget> {
         case 2:
           page = UserListPage();
           break;
-        case 3:
-          page = SettingsPage();
+
           break;
         default:
           page = DashboardWidget();
           break;
       }
+
 
       Navigator.pushReplacement(
         context,

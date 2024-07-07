@@ -70,7 +70,7 @@ class EstimateListPage extends StatelessWidget {
           padding: const EdgeInsets.only(left: 20, top: 8, right: 20, bottom: 0),
           child: Column(
             children: [
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               Expanded(
                 child: TabBarView(
                   children: [

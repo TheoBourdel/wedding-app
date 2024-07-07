@@ -17,9 +17,9 @@ class NoWeddingPage extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Image.asset(
-                    'assets/images/couple2.png',
-                    width: 300,
-                    height: 300,
+                    'assets/images/couple.png',
+                    width: 350,
+                    height: 350,
                   ),
                   const Padding(
                     padding: EdgeInsets.all(16.0),

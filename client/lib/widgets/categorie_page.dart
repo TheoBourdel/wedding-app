@@ -1,9 +1,13 @@
+// ignore_for_file: use_build_context_synchronously
 import 'package:flutter/material.dart';
 import 'package:client/services/category_service.dart';
 import 'package:client/model/category.dart';
 
 class CategoryPage extends StatefulWidget {
+  const CategoryPage({super.key});
+
   @override
+  // ignore: library_private_types_in_public_api
   _CategoryPageState createState() => _CategoryPageState();
 }
 
@@ -43,7 +47,7 @@ class _CategoryPageState extends State<CategoryPage> {
         _categoriesFuture = CategoryService().fetchCategories();
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Catégorie supprimée avec succès')),
+        const SnackBar(content: Text('Catégorie supprimée avec succès')),
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -55,9 +59,9 @@ class _CategoryPageState extends State<CategoryPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Détails de la Catégorie')),
+      appBar: AppBar(title: const Text('Détails de la Catégorie')),
       body: Padding(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
             Form(
@@ -66,7 +70,7 @@ class _CategoryPageState extends State<CategoryPage> {
                 children: [
                   TextFormField(
                     controller: _categoryNameController,
-                    decoration: InputDecoration(labelText: 'Nom de la Catégorie'),
+                    decoration: const InputDecoration(labelText: 'Nom de la Catégorie'),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Veuillez entrer un nom de catégorie';
@@ -74,25 +78,25 @@ class _CategoryPageState extends State<CategoryPage> {
                       return null;
                     },
                   ),
-                  SizedBox(height: 20),
+                 const  SizedBox(height: 20),
                   ElevatedButton(
                     onPressed: _submitForm,
-                    child: Text('Créer'),
+                    child: const Text('Créer'),
                   ),
                 ],
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Expanded(
               child: FutureBuilder<List<Category>>(
                 future: _categoriesFuture,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Center(child: CircularProgressIndicator());
+                    return const Center(child: CircularProgressIndicator());
                   } else if (snapshot.hasError) {
                     return Center(child: Text('Erreur: ${snapshot.error}'));
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    return Center(child: Text('Aucune catégorie trouvée'));
+                    return const Center(child: Text('Aucune catégorie trouvée'));
                   } else {
                     return ListView.builder(
                       itemCount: snapshot.data!.length,
@@ -101,9 +105,9 @@ class _CategoryPageState extends State<CategoryPage> {
                         return ListTile(
                           title: Text(category.name),
                           trailing: IconButton(
-                            icon: Icon(Icons.delete),
+                            icon: const Icon(Icons.delete),
                             onPressed: () {
-                              _deleteCategory(category.id!);
+                              _deleteCategory(category.id);
                             },
                           ),
                         );

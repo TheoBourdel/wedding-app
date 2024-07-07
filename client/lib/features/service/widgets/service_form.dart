@@ -1,16 +1,12 @@
-import 'dart:ui';
-
+// ignore_for_file: use_build_context_synchronously
 import 'package:client/core/theme/app_colors.dart';
 import 'package:client/model/service.dart';
 import 'package:client/model/category.dart';
 import 'package:client/repository/auth_repository.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:client/dto/service_dto.dart';
 import 'package:client/repository/service_repository.dart';
 import 'package:client/repository/image_repository.dart';
-import 'package:client/dto/image_dto.dart';
 import 'package:client/repository/category_repository.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -19,7 +15,7 @@ import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
 import '../../../core/constant/constant.dart';
-import 'package:client/model/image.dart' as serviceImage;
+import 'package:client/model/image.dart' as service_image;
 
 class ServiceForm extends StatefulWidget {
   final Service? currentService;
@@ -47,7 +43,7 @@ class _ServiceFormState extends State<ServiceForm> {
   final ImagePicker _picker = ImagePicker();
   List<XFile>? _imageFiles;
   List<String>? _imagePaths;
-  List<serviceImage.Image> existingImages = [];
+  List<service_image.Image> existingImages = [];
 
   @override
   void initState() {
@@ -63,8 +59,8 @@ class _ServiceFormState extends State<ServiceForm> {
   }
 
   void pickImages() async {
-    final List<XFile>? selectedImages = await _picker.pickMultiImage();
-    if (selectedImages != null && selectedImages.isNotEmpty) {
+    final List<XFile> selectedImages = await _picker.pickMultiImage();
+    if (selectedImages.isNotEmpty) {
       List<String> filePaths = [];
       final directory = await getApplicationDocumentsDirectory();
       final imageDirectory = Directory('${directory.path}/images');
@@ -93,7 +89,7 @@ class _ServiceFormState extends State<ServiceForm> {
     }
   }
 
-  void _removeImage(serviceImage.Image image) async {
+  void _removeImage(service_image.Image image) async {
     if (image.id != null) {
       try {
         await ImageRepository().deleteImage(image.id!);
@@ -101,10 +97,9 @@ class _ServiceFormState extends State<ServiceForm> {
           existingImages.remove(image);
         });
       } catch (e) {
-        print('Erreur lors de la suppression de l\'image: $e');
+        throw Exception('Erreur lors de la suppression de l\'image: $e');
       }
     } else {
-      print('Erreur: ID de l\'image est nul');
     }
   }
 
@@ -303,7 +298,7 @@ class _ServiceFormState extends State<ServiceForm> {
                             onTap: () => _removeImage(image),
                             child: Container(
                               color: Colors.red,
-                              child: Icon(Icons.close, color: Colors.white),
+                              child: const Icon(Icons.close, color: Colors.white),
                             ),
                           ),
                         ),

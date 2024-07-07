@@ -6,6 +6,7 @@ class RevenueTable extends StatefulWidget {
   const RevenueTable({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _RevenueTableState createState() => _RevenueTableState();
 }
 
@@ -64,11 +65,11 @@ class _RevenueTableState extends State<RevenueTable> {
             future: _revenueDataFuture,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(child: CircularProgressIndicator());
+                return const Center(child: CircularProgressIndicator());
               } else if (snapshot.hasError) {
                 return Center(child: Text('Erreur: ${snapshot.error}'));
               } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                return Center(child: Text('Aucune donnée trouvée'));
+                return const Center(child: Text('Aucune donnée trouvée'));
               } else {
                 final revenueData = snapshot.data!;
                 return SingleChildScrollView(
@@ -89,7 +90,7 @@ class _RevenueTableState extends State<RevenueTable> {
                           DataCell(
                             TextButton(
                               onPressed: () => _navigateToHistory(context, data['year']),
-                              child: Text('Voir détails'),
+                              child: const Text('Voir détails'),
                             ),
                           ), // Cellule de la nouvelle colonne
                         ],

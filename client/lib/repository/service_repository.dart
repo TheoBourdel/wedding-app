@@ -37,8 +37,7 @@ class ServiceRepository {
         throw Exception('Erreur lors de la mise à jour du service');
       }
     } catch (e) {
-      print('Erreur lors de la mise à jour du service: $e');
-      return null;
+      throw Exception('Erreur lors de la mise à jour du service');
     }
   }
 
@@ -80,7 +79,6 @@ class ServiceRepository {
     if (res.statusCode == 200) {
       Iterable decodedBody = jsonDecode(res.body);
       List<Service> services = decodedBody.map((serviceJson) => Service.fromJson(serviceJson)).toList();
-      print(services);
 
       return services;
     } else {
@@ -111,15 +109,12 @@ class ServiceRepository {
       try {
         var streamedResponse = await request.send();
         if (streamedResponse.statusCode == 200) {
-          print("Image uploaded successfully");
         } else {
-          print("Failed to upload image: ${streamedResponse.statusCode}");
           streamedResponse.stream.transform(utf8.decoder).listen((value) {
-            print(value);
           });
         }
       } catch (e) {
-        print("Error uploading image: $e");
+        throw Exception('Erreur lors de l\'envoi des images');
       }
     }
   }

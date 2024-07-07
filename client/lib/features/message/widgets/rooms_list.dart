@@ -11,14 +11,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 class RoomsView extends StatelessWidget {
   final UserRepository userRepository = UserRepository();
 
+  RoomsView({super.key});
+
   Future<String?> getTokenOfOtherUser(int userId) async {
     try {
       User user = await userRepository.getUser(userId);
       String? token = user.androidToken;
-      print('User ID: ${user.id}, Email: ${user.email}, Token: $token');
       return token;
     } catch (e) {
-      print('Error fetching user token: $e');
       return null;
     }
   }
@@ -29,7 +29,7 @@ class RoomsView extends StatelessWidget {
       future: getUserId(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator());
         } else if (snapshot.hasError) {
           return Center(child: Text('Error: ${snapshot.error}'));
         } else {
@@ -40,7 +40,7 @@ class RoomsView extends StatelessWidget {
             child: BlocBuilder<RoomBloc, RoomState>(
               builder: (context, state) {
                 if (state is RoomInitial) {
-                  return Center(child: CircularProgressIndicator());
+                  return const Center(child: CircularProgressIndicator());
                 } else if (state is RoomsLoaded) {
                   return ListView.separated(
                     itemCount: state.rooms.length,
@@ -50,20 +50,20 @@ class RoomsView extends StatelessWidget {
                         leading: CircleAvatar(
                           radius: 30.0,
                           backgroundColor: Colors.pink[100],
-                          child: Icon(Icons.person, color: Colors.white, size: 30.0),
+                          child: const Icon(Icons.person, color: Colors.white, size: 30.0),
                         ),
                         title: Text(
                           '${roomOfUser.firstname} ${roomOfUser.lastname}',
-                          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 18.0),
+                          style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 18.0),
                         ),
                         subtitle: Text(
                           roomOfUser.email,
-                          style: TextStyle(color: Colors.black54, fontSize: 16.0),
+                          style: const TextStyle(color: Colors.black54, fontSize: 16.0),
                         ),
                         onTap: () async {
                           final token = await getTokenOfOtherUser(roomOfUser.userId);
-                          print(token);
                           Navigator.push(
+                            // ignore: use_build_context_synchronously
                             context,
                             MaterialPageRoute(
                               builder: (context) => ChatForm(
@@ -77,7 +77,7 @@ class RoomsView extends StatelessWidget {
                         },
                       );
                     },
-                    separatorBuilder: (context, index) => Divider(
+                    separatorBuilder: (context, index) => const Divider(
                       color: Colors.grey,
                       thickness: 1.0,
                       indent: 16.0,

@@ -6,12 +6,10 @@ import (
 
 type Wedding struct {
 	gorm.Model
-	Name         string
-	Description  string
-	ProfileImage string
-	Address      string
-	Phone        string
-	Email        string
-	Budget       float64
-	User         []User `gorm:"many2many:organizers;"`
+	Address string
+	Phone   string
+	Email   string
+	Budget  float64
+	Date    string
+	User    []User `gorm:"many2many:organizers;"`
 }

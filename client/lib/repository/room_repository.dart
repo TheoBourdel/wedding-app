@@ -7,6 +7,7 @@ import 'package:client/model/room.dart';
 import 'package:client/model/room_with_users.dart';
 import 'package:client/model/user.dart';
 import 'package:http/http.dart' as http;
+// ignore: depend_on_referenced_packages
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 class RoomRepository {
@@ -47,7 +48,6 @@ class RoomRepository {
         completer.complete(messageObj);
       }
     }, onError: (error) {
-      print('Error: $error');
       if (!completer.isCompleted) {
         completer.completeError('Error: $error');
       }

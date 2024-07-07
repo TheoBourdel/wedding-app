@@ -1,6 +1,5 @@
 import 'package:client/dto/room_dto.dart';
 import 'package:client/model/message.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:client/model/room.dart';
 import 'package:equatable/equatable.dart';
@@ -31,7 +30,7 @@ class RoomBloc extends Bloc<RoomEvent, RoomState> {
       try {
         final roomDto = RoomDto(name: event.roomName);
         final room = await roomRepository.createRoom(roomDto, event.userId, event.otherUser);
-        final message = await roomRepository.joinRoom(room.id.toString(), event.userId);
+        await roomRepository.joinRoom(room.id.toString(), event.userId);
         emit(RoomCreated(room));
       } catch (e) {
         emit(RoomError(e.toString()));

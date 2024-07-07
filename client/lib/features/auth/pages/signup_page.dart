@@ -5,7 +5,6 @@ import 'package:client/repository/auth_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:client/features/auth/pages/signin_page.dart';
 import 'package:flutter_gen/gen_l10n/app_localization.dart';
-import 'package:client/core/error/failure.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -47,7 +46,6 @@ class _SignUpPageState extends State<SignUpPage> {
           ),
         );
       } catch (e) {
-        print(e);
         // Show error toast
       }
     }

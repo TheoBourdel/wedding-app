@@ -27,7 +27,7 @@ class ServiceTheme {
   }
 
   static ThemeData buildLightTheme() {
-    final Color primaryColor = AppColors.pink;
+    const Color primaryColor = AppColors.pink;
     final Color secondaryColor = hexToColor('#54D3C2');
     final ColorScheme colorScheme = const ColorScheme.light().copyWith(
       primary: primaryColor,

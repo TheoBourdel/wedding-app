@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:client/features/service/widgets/services_theme.dart';
 import 'package:client/model/service.dart';
 import 'package:client/repository/image_repository.dart';
-import 'package:client/model/image.dart' as serviceImage;
+import 'package:client/model/image.dart' as service_image;
 import 'package:client/core/constant/constant.dart';
 import 'package:client/features/service/pages/single_service_page.dart';
 
@@ -14,20 +13,21 @@ class ServiceListView extends StatefulWidget {
   final AnimationController? animationController;
   final Animation<double>? animation;
 
-  ServiceListView({
-    Key? key,
+  const ServiceListView({
+    super.key,
     this.serviceData,
     this.animationController,
     this.animation,
     this.callback,
-  }) : super(key: key);
+  });
 
   @override
+  // ignore: library_private_types_in_public_api
   _ServiceListViewState createState() => _ServiceListViewState();
 }
 
 class _ServiceListViewState extends State<ServiceListView> {
-  List<serviceImage.Image> images = [];
+  List<service_image.Image> images = [];
   bool _isImagesLoaded = false;
 
   @override
@@ -49,7 +49,7 @@ class _ServiceListViewState extends State<ServiceListView> {
     if (!_isImagesLoaded) {
       var serviceId = widget.serviceData?.id;
       if (serviceId != null) {
-        List<serviceImage.Image> loadedImages = await ImageRepository().getServiceImages(serviceId);
+        List<service_image.Image> loadedImages = await ImageRepository().getServiceImages(serviceId);
         setState(() {
           images = loadedImages;
           _isImagesLoaded = true;
@@ -93,13 +93,13 @@ class _ServiceListViewState extends State<ServiceListView> {
     _loadImages();
     return Container(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.all(Radius.circular(16.0)),
+        borderRadius: const BorderRadius.all(Radius.circular(16.0)),
         boxShadow: [
-          BoxShadow(color: Colors.grey.withOpacity(0.6), offset: Offset(4, 4), blurRadius: 16),
+          BoxShadow(color: Colors.grey.withOpacity(0.6), offset: const Offset(4, 4), blurRadius: 16),
         ],
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.all(Radius.circular(16.0)),
+        borderRadius: const BorderRadius.all(Radius.circular(16.0)),
         child: Stack(
           children: [
             serviceCardContent(),
@@ -111,11 +111,11 @@ class _ServiceListViewState extends State<ServiceListView> {
   }
 
   Widget serviceCardContent() {
-    String defaultImage = apiUrl +'/uploads/presta.jpg';
+    String defaultImage = '$apiUrl/uploads/presta.jpg';
 
     String imagePath = (images.isNotEmpty && (images[0].path?.isNotEmpty ?? false))
         ? apiUrl + (images[0].path!.startsWith('/') ? images[0].path! : '/${images[0].path!}')
-        : defaultImage;;
+        : defaultImage;
 
     return Column(
       children: [
@@ -150,7 +150,7 @@ class _ServiceListViewState extends State<ServiceListView> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(widget.serviceData?.name ?? 'Service Name', textAlign: TextAlign.left, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 22)),
+            Text(widget.serviceData?.name ?? 'Service Name', textAlign: TextAlign.left, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 22)),
             Text(widget.serviceData?.localisation ?? 'No localisation', style: TextStyle(fontSize: 14, color: Colors.grey.withOpacity(0.8))),
             ratingBar(),
           ],
@@ -176,7 +176,7 @@ class _ServiceListViewState extends State<ServiceListView> {
               empty: Icon(Icons.star_border_rounded, color: ServiceTheme.buildLightTheme().primaryColor),
             ),
             itemPadding: EdgeInsets.zero,
-            onRatingUpdate: (rating) => print(rating),
+            onRatingUpdate: (rating) {},
           ),
           Text('5 Reviews', style: TextStyle(fontSize: 14, color: Colors.grey.withOpacity(0.8))),
         ],
@@ -191,7 +191,7 @@ class _ServiceListViewState extends State<ServiceListView> {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          Text('${widget.serviceData?.price.toString() ?? '0'} \€', textAlign: TextAlign.left, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 22)),
+          Text('${widget.serviceData?.price.toString() ?? '0'} €', textAlign: TextAlign.left, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 22)),
           Text('prix d\'estimation', style: TextStyle(fontSize: 14, color: Colors.grey.withOpacity(0.8))),
         ],
       ),
@@ -208,7 +208,7 @@ class _ServiceListViewState extends State<ServiceListView> {
           onTap: () {
             // Define what should happen when the icon is tapped
           },
-          borderRadius: BorderRadius.all(Radius.circular(32.0)),
+          borderRadius: const BorderRadius.all(Radius.circular(32.0)),
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Icon(Icons.favorite_border, color: ServiceTheme.buildLightTheme().primaryColor),

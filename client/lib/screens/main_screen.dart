@@ -21,13 +21,13 @@ class MainScreen extends StatelessWidget {
         child: Row(
           children: [
             if (isDesktop)
-              Expanded(
+              const Expanded(
                 flex: 2,
                 child: SizedBox(
                   child: SideMenuWidget(),
                 ),
               ),
-            Expanded(
+            const Expanded(
               flex: 8,
               child: DashboardWidget(),
             ),

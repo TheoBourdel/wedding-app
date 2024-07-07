@@ -31,7 +31,6 @@ class FirebaseApi {
     try {
       userId = await getUserId();
     } catch (e) {
-      print("Failed to get user ID: $e");
       return;
     }
     final fCMToken = await _firebaseMessaging.getToken();
@@ -40,7 +39,6 @@ class FirebaseApi {
       await userRepository.updateUserAndroidToken(user, fCMToken);
       await _firebaseMessaging.subscribeToTopic('chat_$roomId');
     } else {
-      print("Failed to get FCM token");
     }
   }
 
@@ -65,16 +63,13 @@ class FirebaseApi {
         // handle your logic here
       },
     );
-    print('Local Notifications Initialized');
   }
 
   void handleMessage(RemoteMessage? message) {
     if (message == null) return;
 
-    print('Message received: ${message.messageId}');
     final notification = message.notification;
     if (notification != null) {
-      print('Notification: ${notification.title}, ${notification.body}');
       _showNotification(notification);
     }
   }
@@ -90,7 +85,7 @@ class FirebaseApi {
     );
     const NotificationDetails platformChannelSpecifics = NotificationDetails(
       android: androidPlatformChannelSpecifics,
-      iOS: const DarwinNotificationDetails(), // iOS notification details
+      iOS: DarwinNotificationDetails(),
     );
 
     await _flutterLocalNotificationsPlugin.show(
@@ -99,7 +94,6 @@ class FirebaseApi {
       notification.body,
       platformChannelSpecifics,
     );
-    print('Notification shown');
   }
 
   Future<void> initPushNotifications() async {
@@ -113,17 +107,13 @@ class FirebaseApi {
     );
 
     if (settings.authorizationStatus == AuthorizationStatus.authorized) {
-      print('User granted permission');
     } else if (settings.authorizationStatus == AuthorizationStatus.provisional) {
-      print('User granted provisional permission');
     } else {
-      print('User declined or has not accepted permission');
     }
 
     FirebaseMessaging.onMessage.listen(handleMessage);
     FirebaseMessaging.onMessageOpenedApp.listen(handleMessage);
     FirebaseMessaging.instance.getInitialMessage().then(handleMessage);
-    print('Push Notifications Initialized');
   }
 
   Future<String?> getToken() async {

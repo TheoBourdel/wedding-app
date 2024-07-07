@@ -1,8 +1,5 @@
 import 'dart:async';
-import 'dart:convert';
 import 'package:client/core/theme/app_colors.dart';
-import 'package:client/model/message.dart';
-import 'package:client/model/user.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:client/dto/message_dto.dart';
@@ -11,6 +8,7 @@ import 'package:client/features/message/bloc_room/room_bloc.dart';
 import 'package:client/repository/message_repository.dart';
 import 'package:client/repository/room_repository.dart';
 import 'package:intl/intl.dart';
+// ignore: depend_on_referenced_packages
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 class ChatForm extends StatefulWidget {
@@ -21,12 +19,12 @@ class ChatForm extends StatefulWidget {
 
 
   const ChatForm({
-    Key? key,
+    super.key,
     this.currentChat,
     required this.roomId,
     required this.userId,
     required this.token
-  }) : super(key: key);
+  });
 
   @override
   State<ChatForm> createState() => _ChatState();
@@ -95,7 +93,7 @@ class _ChatState extends State<ChatForm> {
       value: context.read<MessageBloc>(),
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Chat'),
+          title: const Text('Chat'),
         ),
         body: Column(
           children: [
@@ -104,7 +102,7 @@ class _ChatState extends State<ChatForm> {
                 builder: (context, state) {
                   if (state is MessagesLoaded) {
                     if (state.messages.isEmpty) {
-                      return Center(child: Text('No messages'));
+                      return const Center(child: Text('No messages'));
                     }
                     return ListView.builder(
                       itemCount: state.messages.length,
@@ -116,8 +114,8 @@ class _ChatState extends State<ChatForm> {
                           alignment: isMine ? Alignment.centerRight : Alignment.centerLeft,
                           child: Container(
                             constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.55),
-                            padding: EdgeInsets.all(12.0),
-                            margin: EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
+                            padding: const EdgeInsets.all(12.0),
+                            margin: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
                             decoration: BoxDecoration(
                               color: isMine ? AppColors.pink500  : Colors.grey[300],
                               borderRadius: BorderRadius.circular(8.0),
@@ -129,7 +127,7 @@ class _ChatState extends State<ChatForm> {
                                   message.content,
                                   style: TextStyle(color: isMine ? Colors.white : Colors.black, fontSize: 16),
                                 ),
-                                SizedBox(height: 4.0),
+                                const SizedBox(height: 4.0),
                                 Align(
                                   alignment: Alignment.bottomRight,
                                   child: Text(
@@ -146,7 +144,7 @@ class _ChatState extends State<ChatForm> {
                   } else if (state is MessageError) {
                     return Center(child: Text(state.message));
                   } else {
-                    return Center(child: CircularProgressIndicator());
+                    return const Center(child: CircularProgressIndicator());
                   }
                 },
               ),
@@ -166,11 +164,11 @@ class _ChatState extends State<ChatForm> {
                             borderRadius: BorderRadius.circular(8.0),
                           ),
                           enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: AppColors.pink500),
+                            borderSide: const BorderSide(color: AppColors.pink500),
                             borderRadius: BorderRadius.circular(8.0),
                           ),
                           focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: AppColors.pink500, width: 2.0),
+                            borderSide: const BorderSide(color: AppColors.pink500, width: 2.0),
                             borderRadius: BorderRadius.circular(8.0),
                           ),
                         ),
@@ -182,15 +180,15 @@ class _ChatState extends State<ChatForm> {
                         },
                       ),
                       ),
-                    SizedBox(height: 8),
+                    const SizedBox(height: 8),
                     ElevatedButton(
                       onPressed: _sendMessage,
                       style: ElevatedButton.styleFrom(
-                        shape: CircleBorder(),
-                        padding: EdgeInsets.all(12.0),
+                        shape: const CircleBorder(),
+                        padding: const EdgeInsets.all(12.0),
                         backgroundColor: AppColors.pink500,
                       ),
-                      child: Icon(Icons.send, color: Colors.white),
+                      child: const Icon(Icons.send, color: Colors.white),
                     ),
                   ],
                 ),
