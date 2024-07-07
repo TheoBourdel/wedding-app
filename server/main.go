@@ -2,13 +2,14 @@ package main
 
 import (
 	"api/config"
+	_ "api/docs"
 	"api/route"
 	"api/ws"
+	"strings"
 	"time"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	_ "api/docs"
 
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -28,9 +29,12 @@ func main() {
 	// Create a new router
 	router := gin.Default()
 
-	// Configure CORS middleware
+	// Configure CORS middleware with dynamic origin check
 	router.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost:51653", "http://127.0.0.1:51653", "http://127.0.0.1:8080"}, // Ajoutez vos origines autorisées ici
+		AllowOriginFunc: func(origin string) bool {
+			// Allow any origin from localhost with any port
+			return strings.HasPrefix(origin, "http://localhost:") || strings.HasPrefix(origin, "http://127.0.0.1:")
+		},
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization"},
 		ExposeHeaders:    []string{"Content-Length"},

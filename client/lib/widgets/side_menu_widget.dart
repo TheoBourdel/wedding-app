@@ -1,11 +1,16 @@
 import 'package:client/data/side_menu_data.dart';
+import 'package:client/features/auth/bloc/auth_bloc.dart';
+import 'package:client/features/auth/bloc/auth_event.dart';
+import 'package:client/features/auth/bloc/auth_state.dart';
 import 'package:client/widgets/user_list_page.dart';
 import 'package:client/widgets/categorie_page.dart';
 import 'package:client/widgets/settings_page.dart';
-import 'package:client/widgets/signout_page.dart';
-import 'package:flutter/material.dart';
 import 'package:client/widgets/dashboard_widget.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:provider/provider.dart';
 import 'main_scaffold.dart';
+import 'package:client/widgets/signout_page.dart';
 
 class SideMenuWidget extends StatefulWidget {
   const SideMenuWidget({super.key});
@@ -22,46 +27,56 @@ class _SideMenuWidgetState extends State<SideMenuWidget> {
       selectedIndex = index;
     });
 
-    Widget page;
-    switch (index) {
-      case 0:
-        page = DashboardWidget();
-        break;
-      case 1:
-        page = CategoryPage();
-        break;
-      case 2:
-        page = UserListPage();
-        break;
-      case 3:
-        page = SettingsPage();
-        break;
-      case 5:
-        page = SignOutPage();
-        break;
-      default:
-        page = DashboardWidget();
-        break;
-    }
+    if (index == 4) {
+      context.read<AuthBloc>().add(SignOutEvent());
+    } else {
+      Widget page;
+      switch (index) {
+        case 0:
+          page = DashboardWidget();
+          break;
+        case 1:
+          page = CategoryPage();
+          break;
+        case 2:
+          page = UserListPage();
+          break;
+        case 3:
+          page = SettingsPage();
+          break;
+        default:
+          page = DashboardWidget();
+          break;
+      }
 
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => MainScaffold(content: page),
-      ),
-    );
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => MainScaffold(content: page),
+        ),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final data = SideMenuData();
 
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 80, horizontal: 20),
-      color: const Color(0xFF171821),
-      child: ListView.builder(
-        itemCount: data.menu.length,
-        itemBuilder: (context, index) => buildMenuEntry(data, index),
+    return BlocListener<AuthBloc, AuthState>(
+      listener: (context, state) {
+        if (state is AuthUnauthenticated) {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => SignOutPage()),
+          );
+        }
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 80, horizontal: 20),
+        color: const Color(0xFF171821),
+        child: ListView.builder(
+          itemCount: data.menu.length,
+          itemBuilder: (context, index) => buildMenuEntry(data, index),
+        ),
       ),
     );
   }

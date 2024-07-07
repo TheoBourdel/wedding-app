@@ -10,8 +10,10 @@ import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localization.dart';
 
 class SignInPage extends StatefulWidget {
-	const SignInPage({super.key});
-		
+	final String? errorMessage;
+
+	const SignInPage({super.key, this.errorMessage});
+
 	@override
 	State<SignInPage> createState() => _SignInPageState();
 }
@@ -34,6 +36,7 @@ class _SignInPageState extends State<SignInPage> {
 			body: SafeArea(
 				child: Column(
 					children: [
+
 						Expanded(
 							flex: 1,
 							child: Center(
@@ -55,6 +58,15 @@ class _SignInPageState extends State<SignInPage> {
 								)
 							),
 						),
+						if (widget.errorMessage != null) // Ajout du message d'erreur ici
+							Padding(
+								padding: const EdgeInsets.all(8.0),
+								child: Text(
+									widget.errorMessage!,
+									style: const TextStyle(color: Colors.red, fontSize: 18),
+									textAlign: TextAlign.center,
+								),
+							),
 						Expanded(
 							flex: 2,
 							child: Form(

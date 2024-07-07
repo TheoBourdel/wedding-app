@@ -7,8 +7,8 @@ import (
 
 	_ "api/docs"
 	"api/dto"
-	"api/service"
 	"api/model"
+	"api/service"
 
 	"github.com/gin-gonic/gin"
 )

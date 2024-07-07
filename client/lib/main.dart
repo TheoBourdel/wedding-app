@@ -26,9 +26,11 @@ import 'package:client/features/message/bloc_room/room_bloc.dart';
 import 'package:client/repository/message_repository.dart';
 import 'package:client/repository/room_repository.dart';
 import 'package:client/shared/widget/navigation_menu.dart';
-import 'package:flutter_gen/gen_l10n/app_localization.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:client/screens/main_screen.dart';
+import 'dart:io' show Platform;
+import 'package:universal_io/io.dart';
+import 'package:universal_platform/universal_platform.dart';
 
 class LocaleProvider with ChangeNotifier {
   Locale _currentLocale = const Locale('en');
@@ -54,15 +56,17 @@ class HexColor extends Color {
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load();
-
   //Stripe.publishableKey = dotenv.env['STRIPE_PUBLISHABLE_KEY']!;
 
-  //await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  if (Platform.isAndroid) {
+    print('Running on Android');
+    await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+    String roomId = 'test_room_id';
+    FirebaseApi firebaseApi = FirebaseApi();
+    await firebaseApi.initNotifications(roomId);
+    await firebaseApi.initPushNotifications();
+  }
 
-  String roomId = 'test_room_id';
-  //FirebaseApi firebaseApi = FirebaseApi();
-  //await firebaseApi.initNotifications(roomId);
-  //await firebaseApi.initPushNotifications();
 
 
   SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -163,6 +167,7 @@ class AuthScreen extends StatelessWidget {
       builder: (context, state) {
 
         if (state is AuthInitial || state is AuthUnauthenticated) {
+
           return const SignInPage();
         }
 
@@ -177,8 +182,19 @@ class AuthScreen extends StatelessWidget {
         }
 
         if (state is Authenticated) {
-          if (state.userRole == 'admin') {
-            Future.microtask(() => Navigator.pushReplacementNamed(context, '/dashboard'));
+          if (UniversalPlatform.isWeb ) {
+            if(state.userRole == 'admin'){
+              Future.microtask(() => Navigator.pushReplacementNamed(context, '/dashboard'));
+            } else {
+              //context.read<AuthBloc>().add(const SignOutEvent());
+              return const SignInPage(
+                errorMessage: 'Access denied: You must be an admin to use this application on the web.',
+              );
+              /*Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const SignInPage()),
+              );*/
+            }
           } else {
             Future.microtask(() => Navigator.pushReplacementNamed(context, '/home'));
           }
