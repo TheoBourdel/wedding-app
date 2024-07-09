@@ -33,7 +33,7 @@ func main() {
 	router.Use(cors.New(cors.Config{
 		AllowOriginFunc: func(origin string) bool {
 			// Allow any origin from localhost with any port
-			return strings.HasPrefix(origin, "http://localhost:") || strings.HasPrefix(origin, "http://127.0.0.1:")
+			return strings.HasPrefix(origin, "http://localhost:") || strings.HasPrefix(origin, "http://127.0.0.1:") || strings.HasPrefix(origin, "https://challenge.mlk-labs.com:")
 		},
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization"},
