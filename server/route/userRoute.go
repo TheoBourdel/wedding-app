@@ -12,8 +12,7 @@ func UserRoutes(router *gin.Engine) {
 	var userControllerPort controller_port.UserControllerInterface = &controller.UserController{}
 
 	//Auth & Admin
-	// router.GET("/users", middelware.RequireAuthAndAdmin, userControllerPort.GetUsers)
-	router.GET("/users",  userControllerPort.GetUsers)
+	router.GET("/users", middelware.RequireAuthAndAdmin, userControllerPort.GetUsers)
 
 	//Auth
 	router.POST("/user", userControllerPort.CreateUser)
