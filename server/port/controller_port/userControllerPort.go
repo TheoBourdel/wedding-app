@@ -10,4 +10,5 @@ type UserControllerInterface interface {
 	CreateUserEstimate(c *gin.Context)
 	GetUserEstimates(c *gin.Context)
 	UpdateUserFirebaseToken(c *gin.Context)
+	GetWeddingIdByUserId(ctx *gin.Context)
 }

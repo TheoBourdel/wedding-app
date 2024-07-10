@@ -5,11 +5,10 @@ import (
 	"api/dto"
 	"api/model"
 	"api/service"
-	"fmt"
 	"net/http"
 	"strconv"
 	"strings"
-
+    "log"
 	"github.com/gin-gonic/gin"
 )
 
@@ -218,19 +217,26 @@ func (wc *WeddingController) AddWeddingOrganizer(ctx *gin.Context) {
 // @Failure 404 {string} string "Wedding not found"
 // @Router /weddings/user/{userId} [get]
 func (wc *WeddingController) GetWeddingByUserID(ctx *gin.Context) {
-	userID, err := strconv.ParseUint(ctx.Param("id"), 10, 64) // Corrected parameter name
-	fmt.Println("UserID: ", userID)
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
-		return
-	}
+    userID, err := strconv.ParseUint(ctx.Param("id"), 10, 64)
+    if err != nil {
+        ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
+        return
+    }
 
-	wedding, err := wc.WeddingService.FindByUserID(userID)
+    log.Printf("Fetching wedding for user ID: %d", userID)
+    wedding, err := wc.WeddingService.FindByUserID(userID)
+    if err != nil {
+        log.Printf("Error fetching wedding for user ID %d: %v", userID, err)
+        ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
+        return
+    }
 
-	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
-		return
-	}
+    if wedding == nil {
+        log.Printf("No wedding found for user ID %d", userID)
+        ctx.JSON(http.StatusNotFound, gin.H{"error": "No wedding found"})
+        return
+    }
 
-	ctx.JSON(http.StatusOK, wedding)
+    log.Printf("Successfully fetched wedding for user ID %d: %v", userID, wedding)
+    ctx.JSON(http.StatusOK, gin.H{"wedding_id": wedding.ID})
 }

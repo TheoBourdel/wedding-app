@@ -40,5 +40,16 @@ class UserService {
       throw Exception('Failed to delete user: ${response.body}');
     }
   }
+  Future<int> getWeddingIdByUserId(int userId) async {
+    final url = '$_baseUrl/userwedding/$userId';
+    final response = await http.get(Uri.parse(url));
+
+    if (response.statusCode == 200) {
+      final jsonResponse = jsonDecode(response.body);
+      return jsonResponse['wedding_id'];
+    } else {
+      throw Exception('Failed to load wedding ID');
+    }
+  }
 }
 
