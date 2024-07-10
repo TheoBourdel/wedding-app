@@ -1,6 +1,7 @@
 import 'package:client/features/auth/bloc/auth_bloc.dart';
 import 'package:client/features/auth/bloc/auth_event.dart';
 import 'package:client/features/profile/pages/language_page.dart';
+import 'package:client/features/profile/pages/user_page.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:provider/provider.dart';
@@ -44,6 +45,56 @@ class ProfilePage extends StatelessWidget {
                       padding: const EdgeInsets.all(15),
                       child: Column(
                         children: [
+                          InkWell(
+                            onTap: () => {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => const UserPage()),
+                              )
+                            },
+                            child: Row(
+                            children: [
+                              Container(
+                                width: 40,
+                                height: 40,
+                                decoration: BoxDecoration(
+                                  color: Colors.blue,
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: const Icon(
+                                  Iconsax.user,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              const SizedBox(width: 10),
+                              const Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "Profil",
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  Text(
+                                    "Modifier votre profil",
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const Spacer(),
+                              const Icon(Icons.chevron_right)
+                            ],
+                          ),
+                          ),
+                          const SizedBox(height: 10),
+                          Divider(
+                            color: Colors.grey[200],
+                          ),
+                          const SizedBox(height: 10),
                           InkWell(
                             onTap: () => {
                               Navigator.push(

@@ -34,4 +34,22 @@ class UserRepository {
       throw Exception(e.toString());
     }
   }
+
+  Future updateUser(User user) async {
+    try {
+      Response res = await patch(
+        Uri.parse('$_baseUrl/user/${user.id}'),
+        body: user.toJson(),
+      );
+
+      if (res.statusCode == 201 || res.statusCode == 200) {
+        return User.fromJson(jsonDecode(res.body));
+      } else {
+        throw Exception(res.body);
+      }
+
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
 }

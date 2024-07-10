@@ -7,6 +7,7 @@ import 'package:client/features/auth/pages/signin_page.dart';
 import 'package:client/features/estimate/bloc/estimate_bloc.dart';
 import 'package:client/features/estimate/bloc/estimate_event.dart';
 import 'package:client/features/organizer/bloc/organizer_bloc.dart';
+import 'package:client/features/profile/bloc/profile_bloc.dart';
 import 'package:client/features/service/bloc/service_bloc.dart';
 import 'package:client/features/wedding/bloc/wedding_bloc.dart';
 import 'package:client/firebase_options.dart';
@@ -15,6 +16,7 @@ import 'package:client/repository/estimate_repository.dart';
 import 'package:client/repository/organizer_repository.dart';
 import 'package:client/repository/service_repository.dart';
 import 'package:client/services/budget_service.dart';
+import 'package:client/repository/user_repository.dart';
 import 'package:client/shared/bottom_navigation.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -88,6 +90,7 @@ class MyApp extends StatelessWidget {
   MyApp({super.key});
 
   final AuthRepository authRepository = AuthRepository();
+  final UserRepository userRepository = UserRepository();
   final RoomRepository roomRepository = RoomRepository();
   final MessageRepository messageRepository = MessageRepository();
   final EstimateRepository estimateRepository = EstimateRepository();
@@ -141,6 +144,9 @@ class MyApp extends StatelessWidget {
             ),
             BlocProvider(
               create: (context) => OrganizerBloc(organizerRepository)
+            ),
+            BlocProvider(
+              create: (context) => ProfileBloc(userRepository)
             )
             // Mettez ici les autres blocs providers
           ],
@@ -155,13 +161,6 @@ class MyApp extends StatelessWidget {
               '/': (context) => const AuthScreen(),
               '/dashboard': (context) => const MainScreen(),
               '/home': (context) => const BottomNavigation(),
-              '/categoryBudget': (context) => CategoryBudgetPage(
-                weddingId: 10,
-              ),
-              '/budgetManagement': (context) => BudgetManagementPage(
-                weddingId: 10,
-                budgetService: BudgetService(baseUrl: 'http://localhost:8080'),
-              ),
             },
           ),
         ),
