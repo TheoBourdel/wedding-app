@@ -144,3 +144,19 @@ func (uc *UserController) DeleteUser(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, gin.H{"message": "User deleted successfully"})
 }
+
+func (uc *UserController) UpdateUser(ctx *gin.Context) {
+	var body model.User
+	if ctx.Bind(&body) != nil {
+		ctx.JSON(400, gin.H{"error": "Invalid request"})
+		return
+	}
+
+	user, error := uc.UserService.UpdateUser(body)
+	if error != (dto.HttpErrorDto{}) {
+		ctx.JSON(error.Code, error)
+		return
+	}
+
+	ctx.JSON(http.StatusOK, user)
+}

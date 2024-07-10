@@ -20,5 +20,6 @@ func UserRoutes(router *gin.Engine) {
 	router.POST("/user/:id/estimate", userControllerPort.CreateUserEstimate)
 	router.GET("/user/:id/estimates", userControllerPort.GetUserEstimates)
 	router.PUT("/user/:id/token", userControllerPort.UpdateUserFirebaseToken)
+	router.PATCH("/user/:userId", userControllerPort.UpdateUser)
 
 }

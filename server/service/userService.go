@@ -14,7 +14,6 @@ type UserService struct {
 	ServiceRepository  repository.ServiceRepository
 }
 
-
 func (us *UserService) FindAll(page int, pageSize int, query string) []model.User {
 	users := us.UserRepository.FindAll(page, pageSize, query)
 	return users
@@ -115,19 +114,27 @@ func (us *UserService) GetUser(id string) (model.User, dto.HttpErrorDto) {
 	return user, dto.HttpErrorDto{}
 }
 
-
 func (us *UserService) DeleteUserByID(id int) error {
 	err := us.UserRepository.DeleteByID(id)
 	if err != nil {
 		return fmt.Errorf("failed to delete user: %v", err)
 	}
 	return nil
- }
+}
 
 func (us *UserService) UpdateUserFirebaseToken(userID uint, newToken string) (model.User, dto.HttpErrorDto) {
 	user, err := us.UserRepository.UpdateFirebaseToken(userID, newToken)
 	if err != (dto.HttpErrorDto{}) {
 		return model.User{}, err
+	}
+
+	return user, dto.HttpErrorDto{}
+}
+
+func (us *UserService) UpdateUser(user model.User) (model.User, dto.HttpErrorDto) {
+	user, error := us.UserRepository.Update(user)
+	if error != (dto.HttpErrorDto{}) {
+		return model.User{}, error
 	}
 
 	return user, dto.HttpErrorDto{}

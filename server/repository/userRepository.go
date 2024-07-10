@@ -98,3 +98,12 @@ func (ur *UserRepository) UpdateFirebaseToken(userID uint, newToken string) (mod
 
 	return user, dto.HttpErrorDto{}
 }
+
+func (ur *UserRepository) Update(user model.User) (model.User, dto.HttpErrorDto) {
+	result := config.DB.Model(&user).Updates(user)
+	if result.Error != nil {
+		return model.User{}, dto.HttpErrorDto{Message: "Error while updating user", Code: 500}
+	}
+
+	return user, dto.HttpErrorDto{}
+}

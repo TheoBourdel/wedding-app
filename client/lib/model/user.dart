@@ -28,6 +28,34 @@ class User {
     this.weddings,
   });
 
+  User copyWith({
+    int? id,
+    String? email,
+    String? password,
+    String? firstName,
+    String? lastName,
+    String? createdAt,
+    String? updatedAt,
+    String? deletedAt,
+    String? androidToken,
+    String? role,
+    List? weddings,
+  }) {
+    return User(
+      id: id ?? this.id,
+      email: email ?? this.email,
+      password: password ?? this.password,
+      firstName: firstName ?? this.firstName,
+      lastName: lastName ?? this.lastName,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      deletedAt: deletedAt ?? this.deletedAt,
+      androidToken: androidToken ?? this.androidToken,
+      role: role ?? this.role,
+      weddings: weddings ?? this.weddings,
+    );
+  }
+
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
       id: json['ID'] as int,
@@ -46,14 +74,13 @@ class User {
 
   Map<String, dynamic> toJson() {
     return {
-      'ID': id,
+      'ID': id.toString(),
       'Email': email,
       'Password': password,
       'Firstname': firstName,
       'Lastname': lastName,
       'CreatedAt': createdAt,
       'UpdatedAt': updatedAt,
-      'DeletedAt': deletedAt,
       'Role': role,
     };
   }
