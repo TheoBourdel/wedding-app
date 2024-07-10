@@ -15,6 +15,10 @@ type UserRepository struct {
 	DB *gorm.DB
 }
 
+func NewUserRepository(db *gorm.DB) *UserRepository {
+	return &UserRepository{DB: db}
+}
+
 func (ur *UserRepository) FindAll(page int, pageSize int, query string) []model.User {
 	var users []model.User
 	offset := (page - 1) * pageSize

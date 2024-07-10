@@ -131,6 +131,13 @@ func (us *UserService) UpdateUserFirebaseToken(userID uint, newToken string) (mo
 	return user, dto.HttpErrorDto{}
 }
 
+
+func NewUserService(userRepo repository.UserRepository) *UserService {
+	return &UserService{
+		UserRepository: userRepo,
+	}
+}
+
 func (us *UserService) UpdateUser(user model.User) (model.User, dto.HttpErrorDto) {
 	user, error := us.UserRepository.Update(user)
 	if error != (dto.HttpErrorDto{}) {
@@ -139,3 +146,4 @@ func (us *UserService) UpdateUser(user model.User) (model.User, dto.HttpErrorDto
 
 	return user, dto.HttpErrorDto{}
 }
+

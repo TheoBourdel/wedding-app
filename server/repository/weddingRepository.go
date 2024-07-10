@@ -13,6 +13,9 @@ import (
 type WeddingRepository struct {
 	DB *gorm.DB
 }
+func NewWeddingRepository(db *gorm.DB) *WeddingRepository {
+	return &WeddingRepository{DB: db}
+}
 
 func (wr *WeddingRepository) FindAll() []model.Wedding {
 	var weddings []model.Wedding

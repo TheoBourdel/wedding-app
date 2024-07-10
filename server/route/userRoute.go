@@ -4,22 +4,39 @@ import (
 	"api/controller"
 	 "api/middelware"
 	"api/port/controller_port"
+	"api/config"
+	"api/repository"
+	"api/service"
 
 	"github.com/gin-gonic/gin"
 )
 
 func UserRoutes(router *gin.Engine) {
-	var userControllerPort controller_port.UserControllerInterface = &controller.UserController{}
+	// Initialiser les repositories
+	userRepo := repository.UserRepository{DB: config.DB}
+	weddingRepo := repository.WeddingRepository{DB: config.DB}
 
-	//Auth & Admin
+	// Initialiser les services
+	userService := service.UserService{UserRepository: userRepo}
+	weddingService := service.WeddingService{WeddingRepository: weddingRepo, UserRepository: userRepo}
+
+	// Initialiser le contrôleur
+	userController := &controller.UserController{
+		UserService:    userService,
+		WeddingService: weddingService,
+	}
+
+	var userControllerPort controller_port.UserControllerInterface = userController
+
+	// Auth & Admin
 	router.GET("/users", middelware.RequireAuthAndAdmin, userControllerPort.GetUsers)
 
-	//Auth
+	// Auth
 	router.POST("/user", userControllerPort.CreateUser)
 	router.GET("/user/:id", userControllerPort.GetUser)
 	router.POST("/user/:id/estimate", userControllerPort.CreateUserEstimate)
 	router.GET("/user/:id/estimates", userControllerPort.GetUserEstimates)
 	router.PUT("/user/:id/token", userControllerPort.UpdateUserFirebaseToken)
+	router.GET("/user/:id/weddingId", userControllerPort.GetWeddingIdByUserId)
 	router.PATCH("/user/:userId", userControllerPort.UpdateUser)
-
 }

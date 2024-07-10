@@ -15,6 +15,7 @@ import 'package:client/repository/auth_repository.dart';
 import 'package:client/repository/estimate_repository.dart';
 import 'package:client/repository/organizer_repository.dart';
 import 'package:client/repository/service_repository.dart';
+import 'package:client/services/budget_service.dart';
 import 'package:client/repository/user_repository.dart';
 import 'package:client/shared/bottom_navigation.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -32,6 +33,8 @@ import 'package:client/screens/main_screen.dart';
 import 'dart:io' show Platform;
 import 'package:universal_io/io.dart';
 import 'package:universal_platform/universal_platform.dart';
+import 'package:client/features/budget/pages/budget.dart';
+import 'package:client/features/budget/pages/category_budget_page.dart';
 
 
 
@@ -63,11 +66,11 @@ void main() async {
 
   if (Platform.isAndroid) {
     print('Running on Android');
-    await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+   // await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
     String roomId = 'test_room_id';
-    FirebaseApi firebaseApi = FirebaseApi();
-    await firebaseApi.initNotifications(roomId);
-    await firebaseApi.initPushNotifications();
+    //FirebaseApi firebaseApi = FirebaseApi();
+    //await firebaseApi.initNotifications(roomId);
+    //await firebaseApi.initPushNotifications();
   }
 
 

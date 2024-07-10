@@ -14,6 +14,9 @@ import (
 type ServiceRepository struct {
 	DB *gorm.DB
 }
+func NewServiceRepository(db *gorm.DB) *ServiceRepository {
+	return &ServiceRepository{DB: db}
+}
 
 func (r *ServiceRepository) FindImagesByServiceID(serviceID uint64) ([]model.Image, dto.HttpErrorDto) {
 	var images []model.Image
