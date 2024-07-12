@@ -14,7 +14,7 @@ import (
 )
 
 type UserController struct {
-	UserService service.UserService
+	UserService    service.UserService
 	WeddingService service.WeddingService
 }
 
@@ -146,29 +146,27 @@ func (uc *UserController) DeleteUser(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{"message": "User deleted successfully"})
 }
 
-
 func (uc *UserController) GetWeddingIdByUserId(ctx *gin.Context) {
-    userIdStr := ctx.Param("id")
-    userId, err := strconv.ParseUint(userIdStr, 10, 64)
-    if err != nil {
-        ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
-        return
-    }
+	userIdStr := ctx.Param("id")
+	userId, err := strconv.ParseUint(userIdStr, 10, 64)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
+		return
+	}
 
-    wedding, err := uc.WeddingService.FindByUserID(userId)
-    if err != nil {
-        ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
-        return
-    }
+	wedding, err := uc.WeddingService.FindByUserID(userId)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
+		return
+	}
 
-    if wedding == nil {
-        ctx.JSON(http.StatusNotFound, gin.H{"error": "No wedding found"})
-        return
-    }
+	if wedding == nil {
+		ctx.JSON(http.StatusNotFound, gin.H{"error": "No wedding found"})
+		return
+	}
 
-    ctx.JSON(http.StatusOK, gin.H{"wedding_id": wedding.ID})
+	//ctx.JSON(http.StatusOK, gin.H{"wedding_id": wedding.ID})
 }
-
 
 func (uc *UserController) UpdateUser(ctx *gin.Context) {
 	var body model.User
@@ -185,4 +183,3 @@ func (uc *UserController) UpdateUser(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, user)
 }
-

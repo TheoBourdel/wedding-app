@@ -20,6 +20,7 @@ func main() {
 	config.DB.AutoMigrate(&model.Message{})
 	config.DB.AutoMigrate(&model.RoomParticipant{})
 	config.DB.AutoMigrate(&model.Estimate{})
+	config.DB.AutoMigrate(&model.WeddingBudget{})
 
 	fmt.Println("Migration has been processed!")
 }

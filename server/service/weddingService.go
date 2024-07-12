@@ -9,7 +9,7 @@ import (
 	"api/utils"
 	"fmt"
 	"strconv"
-    "log"
+
 	"gorm.io/gorm"
 
 	"golang.org/x/crypto/bcrypt"
@@ -162,20 +162,20 @@ func (ws *WeddingService) Update(id uint64, wedding model.Wedding) (model.Weddin
 	return updatedWedding, nil
 }
 
+func (ws *WeddingService) FindByUserID(userID uint64) ([]model.Wedding, error) {
+	//wedding, err := ws.WeddingRepository.FindByUserID(userID)
+	print("WeddingService", userID)
+	user, err := ws.UserRepository.FindOneBy("id", strconv.FormatUint(userID, 10))
+	wedding := user.Weddings
 
-func (ws *WeddingService) FindByUserID(userID uint64) (*model.Wedding, error) {
-	if ws.DB == nil {
-		ws.DB = config.DB // Assurez-vous que ws.DB utilise la connexion initialisée
+	if err.Code != 0 {
+		if err.Code == 404 {
+			return []model.Wedding{}, fmt.Errorf("wedding not found for user ID %d", userID)
+		}
+		return []model.Wedding{}, fmt.Errorf("error finding wedding for user ID %d: %s", userID, err.Message)
 	}
 
-	var wedding model.Wedding
-	result := ws.DB.Where("user_id = ?", userID).First(&wedding)
-	if result.Error != nil {
-		log.Printf("Error finding wedding by user ID %d: %v", userID, result.Error)
-		return nil, result.Error
-	}
-	log.Printf("Found wedding for user ID %d: %v", userID, wedding)
-	return &wedding, nil
+	return wedding, nil
 }
 
 func NewWeddingService(weddingRepo repository.WeddingRepository, userRepo repository.UserRepository) *WeddingService {
