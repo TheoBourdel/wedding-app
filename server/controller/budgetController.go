@@ -3,47 +3,39 @@ package controller
 import (
 	"api/model"
 	"api/service"
+	"log"
 	"net/http"
-	"github.com/gin-gonic/gin"
 	"strconv"
+	"time"
+
+	"github.com/gin-gonic/gin"
 )
 
 type BudgetController struct {
 	BudgetService service.BudgetService
 }
 
-type CategoryBudget struct {
-	CategoryID uint    `json:"category_id"`
-	Amount     float64 `json:"amount"`
-}
-
-type CreateBudgetRequest struct {
-	WeddingID       uint             `json:"wedding_id"`
-	CategoryBudgets []CategoryBudget `json:"category_budgets"`
-}
-
 func (bc *BudgetController) CreateBudget(ctx *gin.Context) {
-	var request CreateBudgetRequest
+	var request model.WeddingBudget
 	if err := ctx.ShouldBindJSON(&request); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	for _, cb := range request.CategoryBudgets {
-		budget := model.WeddingBudget{
-			WeddingID:  request.WeddingID,
-			CategoryID: cb.CategoryID,
-			Amount:     cb.Amount,
-		}
+	log.Printf("Received request: %+v", request)
 
-		_, err := bc.BudgetService.Create(budget)
-		if err != nil {
-			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-			return
-		}
+	request.CreatedAt = time.Now()
+	request.UpdatedAt = time.Now()
+
+	createdBudget, err := bc.BudgetService.Create(request)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
 	}
 
-	ctx.JSON(http.StatusCreated, gin.H{"message": "Budgets created successfully"})
+	log.Printf("Created budget: %+v", createdBudget)
+
+	ctx.JSON(http.StatusCreated, createdBudget)
 }
 
 func (bc *BudgetController) GetBudgetsByWeddingID(ctx *gin.Context) {
@@ -104,20 +96,18 @@ func (bc *BudgetController) DeleteBudgetByID(ctx *gin.Context) {
 	ctx.Status(http.StatusNoContent)
 }
 
-
 func (bc *BudgetController) GetTotalBudget(ctx *gin.Context) {
-    weddingID, err := strconv.ParseUint(ctx.Param("wedding_id"), 10, 64)
-    if err != nil {
-        ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid wedding ID"})
-        return
-    }
+	weddingID, err := strconv.ParseUint(ctx.Param("wedding_id"), 10, 64)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid wedding ID"})
+		return
+	}
 
-    budget, err := bc.BudgetService.GetTotalBudget(uint(weddingID))
-    if err != nil {
-        ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-        return
-    }
+	budget, err := bc.BudgetService.GetTotalBudget(uint(weddingID))
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
 
-    ctx.JSON(http.StatusOK, gin.H{"total_budget": budget})
+	ctx.JSON(http.StatusOK, gin.H{"total_budget": budget})
 }
-

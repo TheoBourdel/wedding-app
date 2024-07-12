@@ -35,6 +35,7 @@ class BudgetService {
   }
 
   Future<WeddingBudget> createBudget(WeddingBudget budget) async {
+
     final response = await http.post(
       Uri.parse('$apiUrl/budgets'),
       headers: {"Content-Type": "application/json"},
@@ -54,9 +55,6 @@ class BudgetService {
       'wedding_id': budget.weddingId,
       'category_id': budget.categoryId,
       'amount': budget.amount,
-      'created_at': budget.createdAt?.toIso8601String(),
-      'updated_at': budget.updatedAt?.toIso8601String(),
-      'deleted_at': budget.deletedAt?.toIso8601String(),
     });
 
     print('Sending data to server: $body');

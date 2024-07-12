@@ -26,7 +26,7 @@ class FirebaseApi {
     return userId;
   }
 
-  Future<void> initNotifications(String roomId) async {
+  Future<void> initNotifications() async {
     await _firebaseMessaging.requestPermission();
     try {
       userId = await getUserId();
@@ -37,7 +37,7 @@ class FirebaseApi {
     if (fCMToken != null) {
       User user = await userRepository.getUser(userId);
       await userRepository.updateUserAndroidToken(user, fCMToken);
-      await _firebaseMessaging.subscribeToTopic('chat_$roomId');
+      await _firebaseMessaging.subscribeToTopic('chat_room_id');
     } else {
     }
   }

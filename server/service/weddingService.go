@@ -164,7 +164,6 @@ func (ws *WeddingService) Update(id uint64, wedding model.Wedding) (model.Weddin
 
 func (ws *WeddingService) FindByUserID(userID uint64) ([]model.Wedding, error) {
 	//wedding, err := ws.WeddingRepository.FindByUserID(userID)
-	print("WeddingService", userID)
 	user, err := ws.UserRepository.FindOneBy("id", strconv.FormatUint(userID, 10))
 	wedding := user.Weddings
 

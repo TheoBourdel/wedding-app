@@ -1,8 +1,10 @@
+import 'package:client/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:client/model/budget_model.dart';
 import 'package:client/services/budget_service.dart';
 import 'package:client/services/category_service.dart';
 import 'package:client/model/category.dart';
+import 'budget_card.dart'; // Assurez-vous d'importer le fichier contenant le widget BudgetCard
 
 class BudgetManagementPage extends StatefulWidget {
   final int weddingId;
@@ -55,11 +57,7 @@ class _BudgetManagementPageState extends State<BudgetManagementPage> {
       weddingId: widget.weddingId,
       categoryId: categoryId,
       amount: amount,
-      createdAt: DateTime.now(),
-      updatedAt: DateTime.now(),
     );
-
-    print('Creating new budget: ${newBudget.toJson()}');
 
     budgetService.createBudget(newBudget).then((createdBudget) {
       setState(() {
@@ -79,12 +77,7 @@ class _BudgetManagementPageState extends State<BudgetManagementPage> {
       weddingId: budget.weddingId,
       categoryId: budget.categoryId,
       amount: amount,
-      createdAt: budget.createdAt,
-      updatedAt: DateTime.now(),
-      deletedAt: budget.deletedAt,
     );
-
-    print('Updating budget: ${updatedBudget.toJson()}');
 
     budgetService.updateBudget(updatedBudget).then((_) {
       setState(() {
@@ -97,8 +90,6 @@ class _BudgetManagementPageState extends State<BudgetManagementPage> {
       );
     });
   }
-
-
 
   void _deleteBudget(int id) {
     budgetService.deleteBudget(id).then((_) {
@@ -113,11 +104,60 @@ class _BudgetManagementPageState extends State<BudgetManagementPage> {
     });
   }
 
+  void _showUpdateDialog(WeddingBudget budget) {
+    final TextEditingController amountController = TextEditingController(text: budget.amount.toString());
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(20.0)),
+          ),
+          title: Text('Mettre à jour le budget'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: amountController,
+                decoration: InputDecoration(
+                  labelText: 'Montant',
+                  border: OutlineInputBorder(),
+                  prefixIcon: Icon(Icons.euro),
+                ),
+                keyboardType: TextInputType.number,
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                final amount = double.tryParse(amountController.text);
+                if (amount != null) {
+                  _updateBudget(budget, amount);
+                  Navigator.of(context).pop();
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Veuillez entrer un montant valide')),
+                  );
+                }
+              },
+              child: Text('Mettre à jour'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[100],
+
       appBar: AppBar(
-        title: Text('Budget Management'),
+        title: Text('Gérer votre budget'),
+        elevation: 0,
       ),
       body: FutureBuilder<List<WeddingBudget>>(
         future: futureBudgets,
@@ -130,43 +170,31 @@ class _BudgetManagementPageState extends State<BudgetManagementPage> {
             return Center(child: Text('No budgets available'));
           } else {
             final budgets = snapshot.data!;
-            return ListView.builder(
-              itemCount: budgets.length,
-              itemBuilder: (context, index) {
-                final budget = budgets[index];
-                if (!_controllers.containsKey(budget.categoryId)) {
-                  _controllers[budget.categoryId] = TextEditingController(text: budget.amount.toString());
-                }
-                final categoryName = categoryNames[budget.categoryId] ?? 'Unknown Category';
-                return ListTile(
-                  title: Text(categoryName),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
+            return Padding(
+              padding: const EdgeInsets.only(top: 20.0), // 20 pixels de marge en haut
+              child: ListView.builder(
+                itemCount: budgets.length,
+                itemBuilder: (context, index) {
+                  final budget = budgets[index];
+                  if (!_controllers.containsKey(budget.categoryId)) {
+                    _controllers[budget.categoryId] = TextEditingController(text: budget.amount.toString());
+                  }
+                  final categoryName = categoryNames[budget.categoryId] ?? 'Unknown Category';
+                  return Column(
                     children: [
-                      Container(
-                        width: 100,
-                        child: TextField(
-                          controller: _controllers[budget.categoryId],
-                          keyboardType: TextInputType.number,
-                          decoration: InputDecoration(
-                            hintText: '€',
-                          ),
-                          onSubmitted: (value) {
-                            final amount = double.tryParse(value) ?? 0;
-                            _updateBudget(budget, amount);
-                          },
-                        ),
+                      BudgetCard(
+                        budget: budget,
+                        categoryName: categoryName,
+                        controller: _controllers[budget.categoryId]!,
+                        onUpdate: (amount) => _updateBudget(budget, amount),
+                        onDelete: () => _deleteBudget(budget.id),
+                        onTap: () => _showUpdateDialog(budget), // Passez le callback ici
                       ),
-                      IconButton(
-                        icon: Icon(Icons.delete),
-                        onPressed: () {
-                          _deleteBudget(budget.id);
-                        },
-                      ),
+                      const SizedBox(height: 20),
                     ],
-                  ),
-                );
-              },
+                  );
+                },
+              ),
             );
           }
         },
@@ -178,11 +206,13 @@ class _BudgetManagementPageState extends State<BudgetManagementPage> {
             return FloatingActionButton(
               onPressed: null,
               child: CircularProgressIndicator(),
+              backgroundColor: Colors.pink,
             );
           } else if (snapshot.hasError || !snapshot.hasData || snapshot.data!.isEmpty) {
             return FloatingActionButton(
               onPressed: null,
               child: Icon(Icons.error),
+              backgroundColor: Colors.pink,
             );
           } else {
             return FloatingActionButton(
@@ -194,13 +224,16 @@ class _BudgetManagementPageState extends State<BudgetManagementPage> {
                     Category? selectedCategory;
 
                     return AlertDialog(
-                      title: Text('Add Budget'),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(20.0)),
+                      ),
+                      title: Text('Ajouter un budget'),
                       content: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           DropdownButtonFormField<Category>(
                             decoration: InputDecoration(
-                              labelText: 'Select Category',
+                              labelText: 'Sélectionner une catégorie',
                               border: OutlineInputBorder(),
                             ),
                             items: categoryNames.entries.map((entry) {
@@ -224,7 +257,9 @@ class _BudgetManagementPageState extends State<BudgetManagementPage> {
                           TextField(
                             controller: amountController,
                             decoration: InputDecoration(
-                              labelText: 'Amount',
+                              labelText: 'Montant',
+                              border: OutlineInputBorder(),
+                              prefixIcon: Icon(Icons.euro),
                             ),
                             keyboardType: TextInputType.number,
                           ),
@@ -250,7 +285,7 @@ class _BudgetManagementPageState extends State<BudgetManagementPage> {
                               );
                             }
                           },
-                          child: Text('Save'),
+                          child: Text('Enregistrer'),
                         ),
                       ],
                     );
@@ -258,6 +293,7 @@ class _BudgetManagementPageState extends State<BudgetManagementPage> {
                 );
               },
               child: Icon(Icons.add),
+              backgroundColor: AppColors.pink500,
             );
           }
         },

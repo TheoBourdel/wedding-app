@@ -66,11 +66,10 @@ void main() async {
 
   if (Platform.isAndroid) {
     print('Running on Android');
-   // await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-    String roomId = 'test_room_id';
-    //FirebaseApi firebaseApi = FirebaseApi();
-    //await firebaseApi.initNotifications(roomId);
-    //await firebaseApi.initPushNotifications();
+    await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+    FirebaseApi firebaseApi = FirebaseApi();
+    await firebaseApi.initNotifications();
+    await firebaseApi.initPushNotifications();
   }
 
 

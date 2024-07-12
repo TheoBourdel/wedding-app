@@ -122,9 +122,6 @@ class _CategoryBudgetPageState extends State<CategoryBudgetPage> {
       weddingId: budget.weddingId,
       categoryId: budget.categoryId,
       amount: amount,
-      createdAt: budget.createdAt,
-      updatedAt: DateTime.now(),
-      deletedAt: budget.deletedAt,
     );
 
     try {
@@ -155,9 +152,6 @@ class _CategoryBudgetPageState extends State<CategoryBudgetPage> {
         weddingId: widget.weddingId,
         categoryId: categoryId,
         amount: amount,
-        createdAt: DateTime.now(),
-        updatedAt: DateTime.now(),
-        deletedAt: null,
       );
       budgetService.createBudget(newBudget).then((createdBudget) {
         setState(() {
