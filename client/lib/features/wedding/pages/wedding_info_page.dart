@@ -89,7 +89,7 @@ class WeddingInfoPage extends StatelessWidget {
                     GestureDetector(
                       onTap: () {
                         Navigator.push(context, MaterialPageRoute(
-                          builder: (context) => BudgetManagementPage(weddingId: wedding.id),
+                          builder: (context) => BudgetManagementPage(weddingId: wedding.id, budget: wedding.budget),
                         ));
                       },
                       child: WeddingInfoCard(title: "Budget", value: "TOTAL : ${wedding.budget}€", icon: Iconsax.wallet),

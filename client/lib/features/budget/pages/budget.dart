@@ -8,8 +8,9 @@ import 'budget_card.dart'; // Assurez-vous d'importer le fichier contenant le wi
 
 class BudgetManagementPage extends StatefulWidget {
   final int weddingId;
+  final int budget;
 
-  BudgetManagementPage({required this.weddingId});
+  BudgetManagementPage({required this.weddingId, required this.budget});
 
   @override
   _BudgetManagementPageState createState() => _BudgetManagementPageState();
@@ -45,13 +46,25 @@ class _BudgetManagementPageState extends State<BudgetManagementPage> {
     }
   }
 
-  @override
-  void dispose() {
-    _controllers.values.forEach((controller) => controller.dispose());
-    super.dispose();
+  double _calculateTotalAllocatedBudget(List<WeddingBudget> budgets) {
+    double total = 0;
+    for (var budget in budgets) {
+      total += budget.amount;
+    }
+    return total;
   }
 
-  void _saveBudget(int categoryId, double amount) {
+  void _saveBudget(int categoryId, double amount) async {
+    final existingBudgets = await budgetService.getBudgets(widget.weddingId);
+    final totalAllocated = _calculateTotalAllocatedBudget(existingBudgets);
+
+    if (totalAllocated + amount > widget.budget) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Tu as dépassé le budget de ton mariage')),
+      );
+      return;
+    }
+
     final newBudget = WeddingBudget(
       id: 0,
       weddingId: widget.weddingId,
@@ -71,7 +84,17 @@ class _BudgetManagementPageState extends State<BudgetManagementPage> {
     });
   }
 
-  void _updateBudget(WeddingBudget budget, double amount) {
+  void _updateBudget(WeddingBudget budget, double amount) async {
+    final existingBudgets = await budgetService.getBudgets(widget.weddingId);
+    final totalAllocated = _calculateTotalAllocatedBudget(existingBudgets) - budget.amount;
+
+    if (totalAllocated + amount > widget.budget) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Tu as dépassé le budget de ton mariage')),
+      );
+      return;
+    }
+
     final updatedBudget = WeddingBudget(
       id: budget.id,
       weddingId: budget.weddingId,
