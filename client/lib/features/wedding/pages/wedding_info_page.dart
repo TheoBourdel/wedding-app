@@ -1,11 +1,13 @@
 import 'package:client/features/auth/bloc/auth_bloc.dart';
 import 'package:client/features/auth/bloc/auth_state.dart';
+import 'package:client/features/budget/pages/budget.dart';
 import 'package:client/features/organizer/pages/organizer_page.dart';
 import 'package:client/features/wedding/pages/wedding_form.dart';
 import 'package:client/features/wedding/widgets/wedding_countdown_card.dart';
 import 'package:client/features/wedding/widgets/wedding_info_card.dart';
 import 'package:client/features/wedding/widgets/wedding_info_line.dart';
 import 'package:client/model/wedding.dart';
+import 'package:client/services/budget_service.dart';
 import 'package:client/shared/widget/button.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
@@ -84,7 +86,14 @@ class WeddingInfoPage extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 15),
-                    WeddingInfoCard(title: "Budget", value: "TOTAL : ${wedding.budget}€", icon: Iconsax.wallet),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(context, MaterialPageRoute(
+                          builder: (context) => BudgetManagementPage(weddingId: wedding.id),
+                        ));
+                      },
+                      child: WeddingInfoCard(title: "Budget", value: "TOTAL : ${wedding.budget}€", icon: Iconsax.wallet),
+                    ),
                     const SizedBox(height: 15),
                     const Row(
                       children: [

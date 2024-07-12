@@ -1,14 +1,12 @@
 import 'dart:convert';
+import 'package:client/core/constant/constant.dart';
 import 'package:http/http.dart' as http;
 import 'package:client/model/budget_model.dart';
 
 class BudgetService {
-  final String baseUrl;
-
-  BudgetService({required this.baseUrl});
 
   Future<void> submitBudgets(int weddingId, List<Map<String, dynamic>> categoryBudgets) async {
-    final url = '$baseUrl/budgets';
+    final url = '$apiUrl/budgets';
     final body = jsonEncode({
       'wedding_id': weddingId,
       'category_budgets': categoryBudgets,
@@ -26,7 +24,7 @@ class BudgetService {
   }
 
   Future<List<WeddingBudget>> getBudgets(int weddingId) async {
-    final response = await http.get(Uri.parse('$baseUrl/weddings/$weddingId/budgets'));
+    final response = await http.get(Uri.parse('$apiUrl/weddings/$weddingId/budgets'));
 
     if (response.statusCode == 200) {
       List jsonResponse = jsonDecode(response.body) as List;
@@ -38,7 +36,7 @@ class BudgetService {
 
   Future<WeddingBudget> createBudget(WeddingBudget budget) async {
     final response = await http.post(
-      Uri.parse('$baseUrl/budgets'),
+      Uri.parse('$apiUrl/budgets'),
       headers: {"Content-Type": "application/json"},
       body: jsonEncode(budget.toJson()),
     );
@@ -51,7 +49,7 @@ class BudgetService {
   }
 
   Future<void> updateBudget(WeddingBudget budget) async {
-    final url = '$baseUrl/budgets/${budget.id}';
+    final url = '$apiUrl/budgets/${budget.id}';
     final body = jsonEncode({
       'wedding_id': budget.weddingId,
       'category_id': budget.categoryId,
@@ -75,7 +73,7 @@ class BudgetService {
   }
 
   Future<void> deleteBudget(int id) async {
-    final response = await http.delete(Uri.parse('$baseUrl/budgets/$id'));
+    final response = await http.delete(Uri.parse('$apiUrl/budgets/$id'));
 
     if (response.statusCode != 204) {
       throw Exception('Failed to delete budget: ${response.body}');
@@ -83,7 +81,7 @@ class BudgetService {
   }
 
   Future<double> getTotalBudget(int weddingId) async {
-    final response = await http.get(Uri.parse('$baseUrl/weddings/$weddingId/total_budget'));
+    final response = await http.get(Uri.parse('$apiUrl/weddings/$weddingId/total_budget'));
 
     if (response.statusCode == 200) {
       final jsonResponse = jsonDecode(response.body);

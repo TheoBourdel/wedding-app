@@ -16,7 +16,7 @@ class CategoryBudgetPage extends StatefulWidget {
 
 class _CategoryBudgetPageState extends State<CategoryBudgetPage> {
   final CategoryService categoryService = CategoryService();
-  final BudgetService budgetService = BudgetService(baseUrl: apiUrl);
+  final BudgetService budgetService = BudgetService();
   final Map<int, double> _selectedAmounts = {};
   List<Category> categories = [];
   List<WeddingBudget> budgets = [];

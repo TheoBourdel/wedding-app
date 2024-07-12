@@ -6,9 +6,8 @@ import 'package:client/model/category.dart';
 
 class BudgetManagementPage extends StatefulWidget {
   final int weddingId;
-  final BudgetService budgetService;
 
-  BudgetManagementPage({required this.weddingId, required this.budgetService});
+  BudgetManagementPage({required this.weddingId});
 
   @override
   _BudgetManagementPageState createState() => _BudgetManagementPageState();
@@ -19,11 +18,12 @@ class _BudgetManagementPageState extends State<BudgetManagementPage> {
   late Future<List<Category>> futureCategories;
   final Map<int, TextEditingController> _controllers = {};
   Map<int, String> categoryNames = {};
+  final BudgetService budgetService = BudgetService();
 
   @override
   void initState() {
     super.initState();
-    futureBudgets = widget.budgetService.getBudgets(widget.weddingId);
+    futureBudgets = budgetService.getBudgets(widget.weddingId);
     futureCategories = _fetchCategories();
   }
 
@@ -61,9 +61,9 @@ class _BudgetManagementPageState extends State<BudgetManagementPage> {
 
     print('Creating new budget: ${newBudget.toJson()}');
 
-    widget.budgetService.createBudget(newBudget).then((createdBudget) {
+    budgetService.createBudget(newBudget).then((createdBudget) {
       setState(() {
-        futureBudgets = widget.budgetService.getBudgets(widget.weddingId);
+        futureBudgets = budgetService.getBudgets(widget.weddingId);
       });
     }).catchError((error) {
       print('Failed to save budget: $error');
@@ -86,9 +86,9 @@ class _BudgetManagementPageState extends State<BudgetManagementPage> {
 
     print('Updating budget: ${updatedBudget.toJson()}');
 
-    widget.budgetService.updateBudget(updatedBudget).then((_) {
+    budgetService.updateBudget(updatedBudget).then((_) {
       setState(() {
-        futureBudgets = widget.budgetService.getBudgets(widget.weddingId);
+        futureBudgets = budgetService.getBudgets(widget.weddingId);
       });
     }).catchError((error) {
       print('Failed to update budget: $error');
@@ -101,9 +101,9 @@ class _BudgetManagementPageState extends State<BudgetManagementPage> {
 
 
   void _deleteBudget(int id) {
-    widget.budgetService.deleteBudget(id).then((_) {
+    budgetService.deleteBudget(id).then((_) {
       setState(() {
-        futureBudgets = widget.budgetService.getBudgets(widget.weddingId);
+        futureBudgets = budgetService.getBudgets(widget.weddingId);
       });
     }).catchError((error) {
       print('Failed to delete budget: $error');
