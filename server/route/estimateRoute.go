@@ -12,5 +12,6 @@ func EstimateRoutes(router *gin.Engine) {
 
 	router.PATCH("/user/:userId/estimate/:estimateId", estimateControllerPort.UpdateEstimate)
 	router.DELETE("/user/:userId/estimate/:estimateId", estimateControllerPort.DeleteEstimate)
+	router.POST("/pay", estimateControllerPort.PayEstimate)
 
 }
