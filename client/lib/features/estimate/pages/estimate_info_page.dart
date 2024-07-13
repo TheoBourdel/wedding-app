@@ -4,7 +4,14 @@ import 'package:client/features/auth/bloc/auth_state.dart';
 import 'package:client/features/estimate/bloc/estimate_bloc.dart';
 import 'package:client/features/estimate/bloc/estimate_event.dart';
 import 'package:client/features/estimate/widgets/estimate_bottom_modal_form.dart';
+import 'package:client/model/budget_model.dart';
+import 'package:client/model/category.dart';
 import 'package:client/model/estimate.dart';
+import 'package:client/model/wedding.dart';
+import 'package:client/provider/token_utils.dart';
+import 'package:client/repository/wedding_repository.dart';
+import 'package:client/services/budget_service.dart';
+import 'package:client/services/category_service.dart';
 import 'package:client/shared/widget/button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_braintree/flutter_braintree.dart';
@@ -18,30 +25,123 @@ class EstimateInfoPage extends StatelessWidget {
   final Estimate estimate;
   const EstimateInfoPage({super.key, required this.estimate});
 
-  Future<void> _startBraintreePayment(BuildContext context, userId) async {
-    print("Starting Braintree payment...");
-    var request = BraintreeDropInRequest(
-      tokenizationKey: 'sandbox_jybm8wfr_qsn76kgd9qtrkyv5',
-      collectDeviceData: true,
-      requestThreeDSecureVerification: true,
-      googlePaymentRequest: BraintreeGooglePaymentRequest(
-        totalPrice: estimate.price.toString(),
-        currencyCode: 'EUR',
-        billingAddressRequired: false,
-      ),
-      paypalRequest: BraintreePayPalRequest(
-        amount: estimate.price.toString(),
-        displayName: 'Example company',
-      ),
-      cardEnabled: true,
-    );
 
-    BraintreeDropInResult? result = await BraintreeDropIn.start(request);
-    if (result != null) {
-      print('Nonce received: ${result.paymentMethodNonce.nonce}');
-      await _sendNonceToServer(context, result.paymentMethodNonce.nonce, userId);
+
+  Future<void> _startBraintreePayment(BuildContext context, userId) async {
+    final suffisantAmount = await isAmountSufficient();
+   if(suffisantAmount) {
+     print("Starting Braintree payment...");
+      var request = BraintreeDropInRequest(
+        // a mettre dans le .env
+        tokenizationKey: 'sandbox_jybm8wfr_qsn76kgd9qtrkyv5',
+        collectDeviceData: true,
+        requestThreeDSecureVerification: true,
+        googlePaymentRequest: BraintreeGooglePaymentRequest(
+          totalPrice: estimate.price.toString(),
+          currencyCode: 'EUR',
+          billingAddressRequired: false,
+        ),
+        paypalRequest: BraintreePayPalRequest(
+          amount: estimate.price.toString(),
+          displayName: 'Example company',
+        ),
+        cardEnabled: true,
+      );
+
+      BraintreeDropInResult? result = await BraintreeDropIn.start(request);
+      if (result != null) {
+        print('Nonce received: ${result.paymentMethodNonce.nonce}');
+        await _sendNonceToServer(context, result.paymentMethodNonce.nonce, userId);
+      } else {
+        print('Payment was cancelled or failed.');
+      }
     } else {
-      print('Payment was cancelled or failed.');
+      print('Insufficient overall budget for this payment.');
+    }
+  }
+
+  Future<bool> isAmountSufficient() async {
+    final BudgetService budgetService = BudgetService();
+    int userId = await TokenUtils.getUserId();
+    final priceToPay = estimate.price;
+    final List<Wedding> weddings = await WeddingRepository.getUserWedding(userId);
+
+    if (weddings.isNotEmpty) {
+      final Wedding wedding = weddings.first;
+      final budgets = await budgetService.getBudgets(wedding.id);
+      double totalAllocatedBudget = budgets.fold(0, (sum, budget) => sum + budget.amount);
+
+      if (wedding.budget < totalAllocatedBudget + priceToPay) {
+        print('Insufficient overall budget for this payment.');
+        return false;
+      } else {
+        return true;
+      }
+    } else {
+      return false;
+    }
+  }
+
+  Future<void> _fetchCurrentBalance() async {
+    final BudgetService budgetService = BudgetService();
+    int userId = await TokenUtils.getUserId();
+    final categorieId = estimate.service?.CategoryID;
+    final priceToPay = estimate.price;
+    final List<Wedding> weddings = await WeddingRepository.getUserWedding(userId);
+
+    if (categorieId == null) {
+      print('No category ID found for the estimate.');
+      return;
+    }
+
+    if (weddings.isNotEmpty) {
+      final Wedding wedding = weddings.first;
+      final budgets = await budgetService.getBudgets(wedding.id);
+
+      double totalAllocatedBudget = budgets.fold(0, (sum, budget) => sum + budget.amount);
+
+      if (wedding.budget < totalAllocatedBudget + priceToPay) {
+        print('Insufficient overall budget for this payment.');
+        return;
+      }
+
+      WeddingBudget? budgetToUpdate;
+      try {
+        budgetToUpdate = budgets.firstWhere(
+              (budget) => budget.categoryId == categorieId,
+        );
+      } catch (e) {
+        budgetToUpdate = null;
+      }
+
+      if (budgetToUpdate != null) {
+       // if (budgetToUpdate.amount >= priceToPay && budgetToUpdate.paid == false ) {
+        if ( budgetToUpdate.paid == false ) {
+          final updatedBudget = WeddingBudget(
+            id: budgetToUpdate.id,
+            weddingId: budgetToUpdate.weddingId,
+            categoryId: budgetToUpdate.categoryId,
+            amount: budgetToUpdate.amount ,
+            amountPaid: priceToPay.toDouble(),
+            paid: true,
+          );
+          await budgetService.updateBudget(updatedBudget);
+          print('Payment successful. Updated budget amount: ${updatedBudget.amount}');
+        }
+      } else {
+        print('No budget found for category ID: ${estimate.service?.name}. Created new budget.');
+        final createBudget = WeddingBudget(
+          id: 0,
+          weddingId: wedding.id,
+          categoryId: categorieId,
+          amount: priceToPay.toDouble(),
+          amountPaid: priceToPay.toDouble(),
+          paid: true,
+        );
+        await budgetService.createBudget(createBudget);
+      }
+    } else {
+      print("No weddings found for user");
     }
   }
 
@@ -60,35 +160,13 @@ class EstimateInfoPage extends StatelessWidget {
             userId: userId,
           )
       );
-
+      _fetchCurrentBalance();
       Navigator.pop(context);
     } catch (error) {
       print('Payment failed: $error');
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Payment Failed: $error')));
     }
   }
-
-  /*Future<void> _startCreditCardPayment(BuildContext context) async {
-    print("Starting Braintree credit card payment...");
-    var request = BraintreeCreditCardRequest(
-      cardNumber: '4111111111111111',
-      expirationMonth: '12',
-      expirationYear: '2025',
-      cvv: '123',
-    );
-
-    BraintreePaymentMethodNonce? result = await Braintree.tokenizeCreditCard(
-      'sandbox_jybm8wfr_qsn76kgd9qtrkyv5',
-      request,
-    );
-
-    if (result != null) {
-      print('Nonce received: ${result.nonce}');
-      await _sendNonceToServer(context, result.nonce);
-    } else {
-      print('Payment was cancelled or failed.');
-    }
-  }*/
 
   @override
   Widget build(BuildContext context) {

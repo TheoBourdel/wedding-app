@@ -8,7 +8,7 @@ class BudgetCard extends StatelessWidget {
   final TextEditingController controller;
   final Function(double) onUpdate;
   final Function() onDelete;
-  final Function() onTap; // Ajoutez ce callback
+  final Function() onTap;
 
   BudgetCard({
     required this.budget,
@@ -16,13 +16,15 @@ class BudgetCard extends StatelessWidget {
     required this.controller,
     required this.onUpdate,
     required this.onDelete,
-    required this.onTap, // Ajoutez ce paramètre
+    required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
+    double remainingAmount = budget.amount - budget.amountPaid;
+
     return InkWell(
-      onTap: onTap, // Connectez le callback ici
+      onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
@@ -61,16 +63,56 @@ class BudgetCard extends StatelessWidget {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        Text(
-                          '€${budget.amount.toStringAsFixed(2)}',
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.green,
-                          ),
+                        Row(
+                          children: [
+                            if (budget.paid)
+                              Container(
+                                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                decoration: BoxDecoration(
+                                  color: Colors.green[100],
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Text(
+                                  'Payé',
+                                  style: TextStyle(
+                                    color: Colors.green,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            const SizedBox(width: 10),
+                            Text(
+                              '${budget.amount.toStringAsFixed(2)}€',
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.green,
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
+                    const SizedBox(height: 8),
+                    if (remainingAmount != 0 && budget.paid)
+                      Row(
+                        children: [
+                          Text(
+                            '${remainingAmount.toStringAsFixed(2)}€',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: remainingAmount >= 0 ? Colors.green : Colors.red,
+                            ),
+                          ),
+                          const SizedBox(width: 5),
+                          Icon(
+                            remainingAmount >= 0 ? Icons.arrow_upward : Icons.arrow_downward,
+                            color: remainingAmount >= 0 ? Colors.green : Colors.red,
+                            size: 20,
+                          ),
+                        ],
+                      ),
                   ],
                 ),
               ),

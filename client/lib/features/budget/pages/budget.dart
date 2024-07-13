@@ -5,6 +5,7 @@ import 'package:client/services/budget_service.dart';
 import 'package:client/services/category_service.dart';
 import 'package:client/model/category.dart';
 import 'budget_card.dart'; // Assurez-vous d'importer le fichier contenant le widget BudgetCard
+import 'buildbudget_card.dart'; // Importez le nouveau fichier
 
 class BudgetManagementPage extends StatefulWidget {
   final int weddingId;
@@ -49,14 +50,30 @@ class _BudgetManagementPageState extends State<BudgetManagementPage> {
   double _calculateTotalAllocatedBudget(List<WeddingBudget> budgets) {
     double total = 0;
     for (var budget in budgets) {
-      total += budget.amount;
+      total += budget.amountPaid;
     }
     return total;
+  }
+
+  bool _categoryExists(int categoryId, List<WeddingBudget> budgets) {
+    for (var budget in budgets) {
+      if (budget.categoryId == categoryId) {
+        return true;
+      }
+    }
+    return false;
   }
 
   void _saveBudget(int categoryId, double amount) async {
     final existingBudgets = await budgetService.getBudgets(widget.weddingId);
     final totalAllocated = _calculateTotalAllocatedBudget(existingBudgets);
+
+    if (_categoryExists(categoryId, existingBudgets)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Un budget pour cette catégorie existe déjà')),
+      );
+      return;
+    }
 
     if (totalAllocated + amount > widget.budget) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -88,7 +105,7 @@ class _BudgetManagementPageState extends State<BudgetManagementPage> {
     final existingBudgets = await budgetService.getBudgets(widget.weddingId);
     final totalAllocated = _calculateTotalAllocatedBudget(existingBudgets) - budget.amount;
 
-    if (totalAllocated + amount > widget.budget) {
+    if (totalAllocated + amount > widget.budget.toDouble()) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Tu as dépassé le budget de ton mariage')),
       );
@@ -177,7 +194,6 @@ class _BudgetManagementPageState extends State<BudgetManagementPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[100],
-
       appBar: AppBar(
         title: Text('Gérer votre budget'),
         elevation: 0,
@@ -193,31 +209,47 @@ class _BudgetManagementPageState extends State<BudgetManagementPage> {
             return Center(child: Text('No budgets available'));
           } else {
             final budgets = snapshot.data!;
-            return Padding(
-              padding: const EdgeInsets.only(top: 20.0), // 20 pixels de marge en haut
-              child: ListView.builder(
-                itemCount: budgets.length,
-                itemBuilder: (context, index) {
-                  final budget = budgets[index];
-                  if (!_controllers.containsKey(budget.categoryId)) {
-                    _controllers[budget.categoryId] = TextEditingController(text: budget.amount.toString());
-                  }
-                  final categoryName = categoryNames[budget.categoryId] ?? 'Unknown Category';
-                  return Column(
+            final totalAllocated = _calculateTotalAllocatedBudget(budgets);
+            final remainingBudget = widget.budget - totalAllocated;
+
+            return Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      BudgetCard(
-                        budget: budget,
-                        categoryName: categoryName,
-                        controller: _controllers[budget.categoryId]!,
-                        onUpdate: (amount) => _updateBudget(budget, amount),
-                        onDelete: () => _deleteBudget(budget.id),
-                        onTap: () => _showUpdateDialog(budget), // Passez le callback ici
-                      ),
-                      const SizedBox(height: 20),
+                      BudgetCardWidget(title: 'Budget Total', amount: widget.budget),
+                      BudgetCardWidget(title: 'Montant Restant', amount: remainingBudget.toInt(), color: remainingBudget >= 0 ? Colors.green : Colors.red),
                     ],
-                  );
-                },
-              ),
+                  ),
+                ),
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: budgets.length,
+                    itemBuilder: (context, index) {
+                      final budget = budgets[index];
+                      if (!_controllers.containsKey(budget.categoryId)) {
+                        _controllers[budget.categoryId] = TextEditingController(text: budget.amount.toString());
+                      }
+                      final categoryName = categoryNames[budget.categoryId] ?? 'Unknown Category';
+                      return Column(
+                        children: [
+                          BudgetCard(
+                            budget: budget,
+                            categoryName: categoryName,
+                            controller: _controllers[budget.categoryId]!,
+                            onUpdate: (amount) => _updateBudget(budget, amount),
+                            onDelete: () => _deleteBudget(budget.id),
+                            onTap: () => _showUpdateDialog(budget),
+                          ),
+                          const SizedBox(height: 20),
+                        ],
+                      );
+                    },
+                  ),
+                ),
+              ],
             );
           }
         },
@@ -324,3 +356,4 @@ class _BudgetManagementPageState extends State<BudgetManagementPage> {
     );
   }
 }
+

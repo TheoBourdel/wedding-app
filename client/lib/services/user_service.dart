@@ -10,7 +10,6 @@ import 'package:client/provider/token_utils.dart';
 class UserService {
   final String _baseUrl = apiUrl;
   Future<List<User>> fetchUsers({int page = 1, int pageSize = 10, String query = ''}) async {
-   // final response = await http.get(Uri.parse('$_baseUrl/users?page=$page&pageSize=$pageSize&query=$query'));
     String? token = await TokenUtils.getToken();
 
     final response = await http.get(
