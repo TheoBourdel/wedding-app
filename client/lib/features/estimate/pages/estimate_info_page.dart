@@ -1,4 +1,4 @@
-import 'dart:convert';
+// ignore_for_file: use_build_context_synchronously
 import 'package:client/features/auth/bloc/auth_bloc.dart';
 import 'package:client/features/auth/bloc/auth_state.dart';
 import 'package:client/features/estimate/bloc/estimate_bloc.dart';
@@ -17,15 +17,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_braintree/flutter_braintree.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:provider/provider.dart';
-import 'package:http/http.dart' as http;
-
 import '../../../repository/estimate_repository.dart';
 
 class EstimateInfoPage extends StatelessWidget {
   final Estimate estimate;
   const EstimateInfoPage({super.key, required this.estimate});
-
-
 
   Future<void> _startBraintreePayment(BuildContext context, userId) async {
     final suffisantAmount = await isAmountSufficient();
@@ -142,14 +138,14 @@ class EstimateInfoPage extends StatelessWidget {
       }
     } else {
       print("No weddings found for user");
+
     }
   }
 
   Future<void> _sendNonceToServer(BuildContext context, String nonce, userId) async {
     try {
-      print('Sending nonce to server: $nonce');
       await EstimateRepository.payEstimate(estimate.id, nonce);
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Payment Successful')));
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Payment Successful')));
       context.read<EstimateBloc>().add(
           EstimateUpdateEvent(
             estimate: estimate.copyWith(
@@ -163,7 +159,6 @@ class EstimateInfoPage extends StatelessWidget {
       _fetchCurrentBalance();
       Navigator.pop(context);
     } catch (error) {
-      print('Payment failed: $error');
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Payment Failed: $error')));
     }
   }
@@ -272,7 +267,7 @@ class EstimateInfoPage extends StatelessWidget {
                   Navigator.pop(context);
                 },
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
             ],
           );
         }
