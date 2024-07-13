@@ -1,4 +1,4 @@
-import 'dart:convert';
+// ignore_for_file: use_build_context_synchronously
 import 'package:client/features/auth/bloc/auth_bloc.dart';
 import 'package:client/features/auth/bloc/auth_state.dart';
 import 'package:client/features/estimate/bloc/estimate_bloc.dart';
@@ -10,8 +10,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_braintree/flutter_braintree.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:provider/provider.dart';
-import 'package:http/http.dart' as http;
-
 import '../../../repository/estimate_repository.dart';
 
 class EstimateInfoPage extends StatelessWidget {
@@ -19,7 +17,6 @@ class EstimateInfoPage extends StatelessWidget {
   const EstimateInfoPage({super.key, required this.estimate});
 
   Future<void> _startBraintreePayment(BuildContext context, userId) async {
-    print("Starting Braintree payment...");
     var request = BraintreeDropInRequest(
       tokenizationKey: 'sandbox_jybm8wfr_qsn76kgd9qtrkyv5',
       collectDeviceData: true,
@@ -38,18 +35,14 @@ class EstimateInfoPage extends StatelessWidget {
 
     BraintreeDropInResult? result = await BraintreeDropIn.start(request);
     if (result != null) {
-      print('Nonce received: ${result.paymentMethodNonce.nonce}');
       await _sendNonceToServer(context, result.paymentMethodNonce.nonce, userId);
-    } else {
-      print('Payment was cancelled or failed.');
     }
   }
 
   Future<void> _sendNonceToServer(BuildContext context, String nonce, userId) async {
     try {
-      print('Sending nonce to server: $nonce');
       await EstimateRepository.payEstimate(estimate.id, nonce);
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Payment Successful')));
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Payment Successful')));
       context.read<EstimateBloc>().add(
           EstimateUpdateEvent(
             estimate: estimate.copyWith(
@@ -63,32 +56,9 @@ class EstimateInfoPage extends StatelessWidget {
 
       Navigator.pop(context);
     } catch (error) {
-      print('Payment failed: $error');
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Payment Failed: $error')));
     }
   }
-
-  /*Future<void> _startCreditCardPayment(BuildContext context) async {
-    print("Starting Braintree credit card payment...");
-    var request = BraintreeCreditCardRequest(
-      cardNumber: '4111111111111111',
-      expirationMonth: '12',
-      expirationYear: '2025',
-      cvv: '123',
-    );
-
-    BraintreePaymentMethodNonce? result = await Braintree.tokenizeCreditCard(
-      'sandbox_jybm8wfr_qsn76kgd9qtrkyv5',
-      request,
-    );
-
-    if (result != null) {
-      print('Nonce received: ${result.nonce}');
-      await _sendNonceToServer(context, result.nonce);
-    } else {
-      print('Payment was cancelled or failed.');
-    }
-  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -194,7 +164,7 @@ class EstimateInfoPage extends StatelessWidget {
                   Navigator.pop(context);
                 },
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
             ],
           );
         }
