@@ -65,3 +65,11 @@ func (es *EstimateService) DeleteEstimate(userId int, estimateId int) dto.HttpEr
 
 	return dto.HttpErrorDto{}
 }
+
+func (es *EstimateService) GetEstimateByID(estimateID uint) (model.Estimate, error) {
+	estimate, error := es.EstimateRepository.FindOneBy("id", estimateID)
+	if error != (dto.HttpErrorDto{}) {
+		return model.Estimate{}, error
+	}
+	return estimate, nil
+}

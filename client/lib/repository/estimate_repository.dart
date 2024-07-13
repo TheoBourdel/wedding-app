@@ -62,4 +62,21 @@ class EstimateRepository {
       throw Exception(res.body);
     }
   }
+
+  static Future<void> payEstimate(int estimateId, String nonce) async {
+    final res = await post(
+      Uri.parse('$apiUrl/pay'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, dynamic>{
+        'estimate_id': estimateId,
+        'nonce': nonce,
+      }),
+    );
+
+    if(res.statusCode != 200) {
+      throw Exception(res.body);
+    }
+  }
 }
