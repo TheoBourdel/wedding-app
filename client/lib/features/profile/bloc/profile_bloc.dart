@@ -24,7 +24,6 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       emit(state.copyWith(status: ProfileStatus.loading));
       try {
         await userRepository.updateUser(event.user);
-        // update user in state
         final updatedUser = event.user;
         emit(state.copyWith(status: ProfileStatus.success, user: updatedUser));
 

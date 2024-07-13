@@ -35,7 +35,7 @@ class OrganizerCard extends StatelessWidget {
         ]
       ),
       subtitle: Text(organizer.email),
-      trailing: userRole == "marry" 
+      trailing: (userRole == "marry" && organizer.role != "marry")
         ? IconButton(
           icon: const Icon(Icons.delete),
           onPressed: () {

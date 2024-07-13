@@ -98,11 +98,11 @@ class WeddingInfoPage extends StatelessWidget {
                     const Row(
                       children: [
                         Expanded(
-                          child: WeddingInfoCard(title: "Invités", value: "0", icon: Iconsax.people),
+                          child: WeddingInfoCard(title: "Invités", value: "", icon: Iconsax.people),
                         ),
                         SizedBox(width: 20),
                         Expanded(
-                          child: WeddingInfoCard(title: "Prestations", value: "0", icon: Iconsax.briefcase),
+                          child: WeddingInfoCard(title: "Prestations", value: "", icon: Iconsax.briefcase),
                         ),
                       ],
                     ),
@@ -110,7 +110,7 @@ class WeddingInfoPage extends StatelessWidget {
                     Row(
                       children: [
                         const Expanded(
-                          child: WeddingInfoCard(title: "ToDo", value: "11/20", icon: Iconsax.clipboard_text),
+                          child: WeddingInfoCard(title: "ToDo", value: "", icon: Iconsax.clipboard_text),
                         ),
                         const SizedBox(width: 20),
                         Expanded(
@@ -120,7 +120,7 @@ class WeddingInfoPage extends StatelessWidget {
                                 builder: (context) => OrganizerPage(weddingId: wedding.id),
                               ));
                             },
-                            child: const WeddingInfoCard(title: "Organisateurs", value: "0", icon: Iconsax.profile_2user),
+                            child: const WeddingInfoCard(title: "Organisateurs", value: "", icon: Iconsax.profile_2user),
                           )
                         ),
                       ],
