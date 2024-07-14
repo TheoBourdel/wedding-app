@@ -274,8 +274,8 @@ class _ServiceListViewState extends State<ServiceListView> {
                 );
               },
               child: _isFavorite
-                  ? Icon(Icons.favorite, color: Colors.red, key: ValueKey<bool>(_isFavorite))
-                  : Icon(Icons.favorite_border, color: ServiceTheme.buildLightTheme().primaryColor, key: ValueKey<bool>(_isFavorite)),
+                  ? Icon(Icons.favorite, color: Colors.red, size: 35.0, key: ValueKey<bool>(_isFavorite))
+                  : Icon(Icons.favorite_border, size: 35.0, color: ServiceTheme.buildLightTheme().primaryColor, key: ValueKey<bool>(_isFavorite)),
             ),
           ),
         ),
