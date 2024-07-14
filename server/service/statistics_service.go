@@ -3,6 +3,7 @@ package service
 import (
 	"api/model"
 	"gorm.io/gorm"
+	"time"
 )
 
 type StatisticsService struct {
@@ -28,7 +29,11 @@ func (s *StatisticsService) TotalWeddings() (int64, error) {
 
 func (s *StatisticsService) TotalGuests() (int64, error) {
 	var count int64
-	err := s.DB.Model(&model.User{}).Where("role = ?", "invité").Count(&count).Error
+	startOfMonth := time.Now().UTC().Truncate(time.Hour * 24).AddDate(0, 0, -time.Now().Day()+1)
+	endOfMonth := startOfMonth.AddDate(0, 1, 0)
+	err := s.DB.Model(&model.User{}).
+		Where("created_at >= ? AND created_at < ?", startOfMonth, endOfMonth).
+		Count(&count).Error
 	return count, err
 }
 

@@ -39,4 +39,5 @@ func UserRoutes(router *gin.Engine) {
 	router.PUT("/user/:id/token", userControllerPort.UpdateUserFirebaseToken)
 	router.GET("/user/:id/weddingId", userControllerPort.GetWeddingIdByUserId)
 	router.PATCH("/user/:userId", userControllerPort.UpdateUser)
+	router.DELETE("/users/:id", userControllerPort.DeleteUser)
 }
