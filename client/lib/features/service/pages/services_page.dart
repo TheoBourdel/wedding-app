@@ -63,16 +63,14 @@ class _ServicesScreenState extends State<ServicesScreen> with TickerProviderStat
 
   Widget buildSearchBar(Function(String) onSearchChanged) {
     return Padding(
-      padding: const EdgeInsets.all(8),
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
       child: TextField(
         controller: searchController,
         decoration: const InputDecoration(
-          labelText: 'Search',
-          hintText: 'Enter service name',
+          labelText: 'Rechercher',
+          hintText: 'Entrez un nom',
           prefixIcon: Icon(Icons.search),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.all(Radius.circular(25.0)),
-          ),
+          border: OutlineInputBorder(),
         ),
         onChanged: onSearchChanged,
       ),
@@ -110,6 +108,41 @@ class _ServicesScreenState extends State<ServicesScreen> with TickerProviderStat
     return Theme(
       data: ServiceTheme.buildLightTheme(),
       child: Scaffold(
+        backgroundColor: Colors.grey[100],
+        appBar: AppBar(
+          title: const Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Prestations",
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    Text(
+                      "Liste des prestations",
+                      style: TextStyle(
+                        fontSize: 16,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          bottom: PreferredSize(
+            preferredSize: const Size.fromHeight(4.0),
+            child: Container(
+              color: Colors.grey[300],
+              height: 1.0,
+            ),
+          ),
+        ),
         body: Column(
           children: [
             buildSearchBar((query) => setState(() {})),
