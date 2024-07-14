@@ -7,6 +7,10 @@ import 'package:client/model/image.dart' as service_image;
 import 'package:client/core/constant/constant.dart';
 import 'package:client/features/service/pages/single_service_page.dart';
 import 'package:client/core/theme/app_colors.dart';
+import 'package:client/repository/favorite_repository.dart';
+import 'package:client/model/favorite.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ServiceListView extends StatefulWidget {
   final VoidCallback? callback;
@@ -31,6 +35,7 @@ class _ServiceListViewState extends State<ServiceListView> {
   List<service_image.Image> images = [];
   bool _isImagesLoaded = false;
   bool _isFavorite = false;
+  int? _favoriteId;
 
   @override
   void didUpdateWidget(covariant ServiceListView oldWidget) {
@@ -45,6 +50,7 @@ class _ServiceListViewState extends State<ServiceListView> {
   void initState() {
     super.initState();
     _loadImages();
+    _checkIfFavorite();
   }
 
   void _loadImages() async {
@@ -57,6 +63,44 @@ class _ServiceListViewState extends State<ServiceListView> {
           _isImagesLoaded = true;
         });
       }
+    }
+  }
+
+  void _checkIfFavorite() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String token = prefs.getString('token')!;
+    final int userId = JwtDecoder.decode(token)['sub'];
+    List<Favorite> favorites = await FavoriteRepository().getFavoritesByUserID(userId);
+    for (var favorite in favorites) {
+      if (favorite.ServiceID == widget.serviceData?.id) {
+        setState(() {
+          _isFavorite = true;
+          _favoriteId = favorite.id;
+        });
+        break;
+      }
+    }
+  }
+
+  void _toggleFavorite() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String token = prefs.getString('token')!;
+    final int userId = JwtDecoder.decode(token)['sub'];
+    int? serviceId = widget.serviceData!.id;
+
+    if (_isFavorite) {
+      await FavoriteRepository().deleteFavorite(_favoriteId!);
+      setState(() {
+        _isFavorite = false;
+        _favoriteId = null;
+      });
+    } else {
+      Favorite favorite = Favorite(UserID: userId, ServiceID: serviceId);
+      Favorite newFavorite = await FavoriteRepository().createFavorite(favorite);
+      setState(() {
+        _isFavorite = true;
+        _favoriteId = newFavorite.id;
+      });
     }
   }
 
@@ -207,12 +251,7 @@ class _ServiceListViewState extends State<ServiceListView> {
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          onTap: () {
-            setState(() {
-              _isFavorite = !_isFavorite;
-            });
-
-          },
+          onTap: _toggleFavorite,
           borderRadius: const BorderRadius.all(Radius.circular(32.0)),
           child: Padding(
             padding: const EdgeInsets.all(8.0),
@@ -225,7 +264,7 @@ class _ServiceListViewState extends State<ServiceListView> {
                 );
               },
               child: _isFavorite
-                  ? Icon(Icons.favorite, color: AppColors.pink, key: ValueKey<bool>(_isFavorite))
+                  ? Icon(Icons.favorite, color: Colors.red, key: ValueKey<bool>(_isFavorite))
                   : Icon(Icons.favorite_border, color: ServiceTheme.buildLightTheme().primaryColor, key: ValueKey<bool>(_isFavorite)),
             ),
           ),
