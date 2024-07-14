@@ -16,4 +16,5 @@ func FavoriteRoutes(router *gin.Engine) {
     router.GET("/favorite/:id", favoriteControllerPort.GetFavoriteByID)
     router.DELETE("/favorite/:id", favoriteControllerPort.DeleteFavoriteByID)
     router.PATCH("/favorite/:id", favoriteControllerPort.UpdateFavorite)
+    router.GET("/user/:id/favorites", favoriteControllerPort.GetFavoritesByUserID)
 }

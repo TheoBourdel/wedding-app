@@ -80,3 +80,34 @@ func (ctrl *FavoriteController) UpdateFavorite(ctx *gin.Context) {
     }
     ctx.Status(http.StatusNoContent)
 }
+
+// GetFavoritesByUserID godoc
+// @Summary Get favorites by user ID
+// @Description Get all favorites associated with a specific user ID
+// @Tags favorites
+// @Accept json
+// @Produce json
+// @Param userId path int true "User ID"
+// @Success 200 {object} []model.Favorite
+// @Failure 404 {string} string "No favorites found for this user"
+// @Router /user/{id}/favorites [get]
+func (wc *FavoriteController) GetFavoritesByUserID(ctx *gin.Context) {
+	userId, err := strconv.ParseUint(ctx.Param("id"), 10, 64)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
+		return
+	}
+
+	favorites, err := wc.FavoriteService.FindByUserID(userId)
+	if err != nil { // Handle the error appropriately, maybe log it
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
+		return
+	}
+
+	if len(favorites) == 0 {
+		ctx.JSON(http.StatusNotFound, gin.H{"error": "No favorites found for this user"})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, favorites)
+}

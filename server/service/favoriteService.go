@@ -70,3 +70,11 @@ func (svc *FavoriteService) Update(id uint64, updatedFavorite model.Favorite) er
 
     return nil
 }
+
+func (ws *FavoriteService) FindByUserID(userID uint64) ([]model.Favorite, error) {
+	favorites, err := ws.FavoriteRepository.FindByUserID(userID)
+	if err.Code != 0 {
+		return nil, fmt.Errorf("error fetching favorites: %s", err.Message)
+	}
+	return favorites, nil
+}

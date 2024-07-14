@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:client/features/service/widgets/services_theme.dart';
@@ -43,6 +44,7 @@ class _ServiceListViewState extends State<ServiceListView> {
     if (widget.serviceData != oldWidget.serviceData) {
       _isImagesLoaded = false;
       _loadImages();
+      _checkIfFavorite();
     }
   }
 
@@ -67,40 +69,48 @@ class _ServiceListViewState extends State<ServiceListView> {
   }
 
   void _checkIfFavorite() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    final String token = prefs.getString('token')!;
-    final int userId = JwtDecoder.decode(token)['sub'];
-    List<Favorite> favorites = await FavoriteRepository().getFavoritesByUserID(userId);
-    for (var favorite in favorites) {
-      if (favorite.ServiceID == widget.serviceData?.id) {
-        setState(() {
-          _isFavorite = true;
-          _favoriteId = favorite.id;
-        });
-        break;
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      final String token = prefs.getString('token')!;
+      final int userId = JwtDecoder.decode(token)['sub'];
+      List<Favorite> favorites = await FavoriteRepository.getFavoritesByUserId(userId);
+      for (var favorite in favorites) {
+        if (favorite.ServiceID == widget.serviceData?.id) {
+          setState(() {
+            _isFavorite = true;
+            _favoriteId = favorite.id;
+          });
+          break;
+        }
       }
+    } catch (e) {
+      print('Failed to load favorites: $e');
     }
   }
 
   void _toggleFavorite() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    final String token = prefs.getString('token')!;
-    final int userId = JwtDecoder.decode(token)['sub'];
-    int? serviceId = widget.serviceData!.id;
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      final String token = prefs.getString('token')!;
+      final int userId = JwtDecoder.decode(token)['sub'];
+      int? serviceId = widget.serviceData!.id;
 
-    if (_isFavorite) {
-      await FavoriteRepository().deleteFavorite(_favoriteId!);
-      setState(() {
-        _isFavorite = false;
-        _favoriteId = null;
-      });
-    } else {
-      Favorite favorite = Favorite(UserID: userId, ServiceID: serviceId);
-      Favorite newFavorite = await FavoriteRepository().createFavorite(favorite);
-      setState(() {
-        _isFavorite = true;
-        _favoriteId = newFavorite.id;
-      });
+      if (_isFavorite) {
+        await FavoriteRepository().deleteFavorite(_favoriteId!);
+        setState(() {
+          _isFavorite = false;
+          _favoriteId = null;
+        });
+      } else {
+        Favorite favorite = Favorite(UserID: userId, ServiceID: serviceId);
+        Favorite newFavorite = await FavoriteRepository().createFavorite(favorite);
+        setState(() {
+          _isFavorite = true;
+          _favoriteId = newFavorite.id;
+        });
+      }
+    } catch (e) {
+      print('Failed to toggle favorite: $e');
     }
   }
 

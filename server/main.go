@@ -55,6 +55,7 @@ func main() {
 	route.EstimateRoutes(router)
 	route.OrganizerRoutes(router)
 	route.BudgetRoutes(router)
+	route.FavoriteRoutes(router)
 
 	// WebSocket
 	hub := ws.NewHub()

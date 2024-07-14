@@ -63,13 +63,15 @@ class FavoriteRepository {
     }
   }
 
-  static Future<Favorite> getFavoriteById(int favoriteId) async {
+  static Future<List<Favorite>> getFavoritesByUserId(int userId) async {
     Response res = await get(
-      Uri.parse('$apiUrl/favorite/$favoriteId'),
+      Uri.parse('$apiUrl/user/$userId/favorites'),
     );
 
     if (res.statusCode == 200) {
-      return Favorite.fromJson(jsonDecode(res.body));
+      final List<dynamic> decodedBody = jsonDecode(res.body);
+      final List<Favorite> favorites = decodedBody.map((favoriteJson) => Favorite.fromJson(favoriteJson)).toList();
+      return favorites;
     } else {
       throw Exception(res.body);
     }

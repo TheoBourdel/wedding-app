@@ -76,3 +76,16 @@ func (repo *FavoriteRepository) Update(id uint64, updatedFavorite model.Favorite
 
     return nil
 }
+
+func (wr *FavoriteRepository) FindByUserID(userID uint64) ([]model.Favorite, dto.HttpErrorDto) {
+	var favorites []model.Favorite
+	result := config.DB.Where("user_id = ?", userID).Find(&favorites)
+
+	if result.Error != nil {
+		return nil, dto.HttpErrorDto{Message: "Error fetching favorites", Code: 500}
+	}
+	if result.RowsAffected == 0 {
+		return nil, dto.HttpErrorDto{Message: "No favorites found for this user", Code: 404}
+	}
+	return favorites, dto.HttpErrorDto{}
+}
