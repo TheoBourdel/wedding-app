@@ -6,6 +6,7 @@ import 'package:client/repository/image_repository.dart';
 import 'package:client/model/image.dart' as service_image;
 import 'package:client/core/constant/constant.dart';
 import 'package:client/features/service/pages/single_service_page.dart';
+import 'package:client/core/theme/app_colors.dart';
 
 class ServiceListView extends StatefulWidget {
   final VoidCallback? callback;
@@ -29,6 +30,7 @@ class ServiceListView extends StatefulWidget {
 class _ServiceListViewState extends State<ServiceListView> {
   List<service_image.Image> images = [];
   bool _isImagesLoaded = false;
+  bool _isFavorite = false;
 
   @override
   void didUpdateWidget(covariant ServiceListView oldWidget) {
@@ -206,12 +208,26 @@ class _ServiceListViewState extends State<ServiceListView> {
         color: Colors.transparent,
         child: InkWell(
           onTap: () {
-            // Define what should happen when the icon is tapped
+            setState(() {
+              _isFavorite = !_isFavorite;
+            });
+
           },
           borderRadius: const BorderRadius.all(Radius.circular(32.0)),
           child: Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Icon(Icons.favorite_border, color: ServiceTheme.buildLightTheme().primaryColor),
+            child: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 300),
+              transitionBuilder: (Widget child, Animation<double> animation) {
+                return RotationTransition(
+                  turns: child.key == ValueKey<bool>(_isFavorite) ? Tween<double>(begin: 0.75, end: 1.0).animate(animation) : Tween<double>(begin: 1.0, end: 0.75).animate(animation),
+                  child: ScaleTransition(scale: animation, child: child),
+                );
+              },
+              child: _isFavorite
+                  ? Icon(Icons.favorite, color: AppColors.pink, key: ValueKey<bool>(_isFavorite))
+                  : Icon(Icons.favorite_border, color: ServiceTheme.buildLightTheme().primaryColor, key: ValueKey<bool>(_isFavorite)),
+            ),
           ),
         ),
       ),
