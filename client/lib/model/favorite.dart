@@ -16,7 +16,7 @@ class Favorite {
   });
 
   factory Favorite.fromJson(Map<String, dynamic> json) {
-    return Service(
+    return Favorite(
       id: json['ID'] as int?,
       UserID: json['UserID'] as int,
       ServiceID: json['ServiceID'] as int?,
@@ -28,9 +28,9 @@ class Favorite {
 
   Map<String, dynamic> toJson() {
     return {
-      'ID': id.toString(),
-      'UserID': UserID.toString(),
-      'ServiceID': ServiceID.toString(),
+      'ID': id,
+      'UserID': UserID,
+      'ServiceID': ServiceID,
       'CreatedAt': createdAt,
       'UpdatedAt': updatedAt,
       'DeletedAt': deletedAt,

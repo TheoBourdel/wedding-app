@@ -56,7 +56,7 @@ class FavoriteRepository {
       Uri.parse('$_baseUrl/favorite/$id'),
     );
 
-    if (res.statusCode == 200) {
+    if (res.statusCode == 204) {
       return;
     } else {
       throw Exception(res.body);
