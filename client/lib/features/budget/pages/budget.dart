@@ -195,18 +195,18 @@ class _BudgetManagementPageState extends State<BudgetManagementPage> {
     return Scaffold(
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
-        title: Text('Gérer votre budget'),
+        title: const Text('Gérer votre budget'),
         elevation: 0,
       ),
       body: FutureBuilder<List<WeddingBudget>>(
         future: futureBudgets,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
-            return Center(child: Text('Failed to load budgets'));
+            return const Center(child: Text('Erreur lors du chargement des budgets'));
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return Center(child: Text('No budgets available'));
+            return const Center(child: Text('Aucun budget trouvé'));
           } else {
             final budgets = snapshot.data!;
             final totalAllocated = _calculateTotalAllocatedBudget(budgets);
@@ -216,16 +216,38 @@ class _BudgetManagementPageState extends State<BudgetManagementPage> {
               children: [
                 Padding(
                   padding: const EdgeInsets.all(16.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      BudgetCardWidget(title: 'Budget Total', amount: widget.budget),
-                      BudgetCardWidget(title: 'Montant Restant', amount: remainingBudget.toInt(), color: remainingBudget >= 0 ? Colors.green : Colors.red),
+                      Text(
+                        '€$remainingBudget',
+                        style: const TextStyle(
+                          fontSize: 30,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(
+                        'restant sur un budget de ${widget.budget} €',
+                        style: const TextStyle(
+                          fontSize: 16,
+                          color: Colors.grey,
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      LinearProgressIndicator(
+                        value: totalAllocated / widget.budget,
+                        backgroundColor: Colors.grey[300],
+                        valueColor: const AlwaysStoppedAnimation<Color>(AppColors.pink500),
+                        minHeight: 10,
+                        borderRadius: BorderRadius.circular(10),
+                      )
                     ],
                   ),
                 ),
                 Expanded(
-                  child: ListView.builder(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: ListView.builder(
                     itemCount: budgets.length,
                     itemBuilder: (context, index) {
                       final budget = budgets[index];
@@ -248,6 +270,7 @@ class _BudgetManagementPageState extends State<BudgetManagementPage> {
                       );
                     },
                   ),
+                  )
                 ),
               ],
             );
