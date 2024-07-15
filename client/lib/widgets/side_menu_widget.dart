@@ -2,6 +2,7 @@ import 'package:client/data/side_menu_data.dart';
 import 'package:client/features/auth/bloc/auth_bloc.dart';
 import 'package:client/features/auth/bloc/auth_event.dart';
 import 'package:client/features/auth/bloc/auth_state.dart';
+import 'package:client/features/logs/pages/logspage.dart';
 import 'package:client/widgets/user_list_page.dart';
 import 'package:client/widgets/categorie_page.dart';
 import 'package:client/widgets/dashboard_widget.dart';
@@ -28,7 +29,7 @@ class _SideMenuWidgetState extends State<SideMenuWidget> {
       selectedIndex = index;
     });
 
-    if (index == 4) {
+    if (index == 5) {
       context.read<AuthBloc>().add(SignOutEvent());
     } else {
       Widget page;
@@ -42,7 +43,8 @@ class _SideMenuWidgetState extends State<SideMenuWidget> {
         case 2:
           page = UserListPage();
           break;
-
+        case 3:
+          page = LogsPage();
           break;
         default:
           page = DashboardWidget();
@@ -84,7 +86,7 @@ class _SideMenuWidgetState extends State<SideMenuWidget> {
 
   Widget buildMenuEntry(SideMenuData data, int index) {
     final isSelected = selectedIndex == index;
-
+    print(index);
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 5),
       decoration: BoxDecoration(
