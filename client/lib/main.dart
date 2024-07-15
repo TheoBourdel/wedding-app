@@ -62,7 +62,7 @@ class HexColor extends Color {
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load();
-  //Stripe.publishableKey = dotenv.env['STRIPE_PUBLISHABLE_KEY']!;
+  await dotenv.load(fileName: ".env");
 
   if (Platform.isAndroid) {
     print('Running on Android');

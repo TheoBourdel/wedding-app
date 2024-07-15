@@ -65,6 +65,9 @@ class RoomRepository {
   }
 
   Future<List<RoomWithUsers>> fetchRooms(int userId) async {
+
+    print(_baseUrl);
+
     final response = await http.get(Uri.parse('$_baseUrl/ws/users/$userId/rooms'));
     if (response.statusCode == 200) {
       if (response.body == "null") {
