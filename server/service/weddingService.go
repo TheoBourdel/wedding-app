@@ -101,6 +101,12 @@ func (ws *WeddingService) AddWeddingOrganizer(weddingID uint64, user model.User)
 		return model.User{}, error
 	}
 
+	// check if the email is already used
+	_, error = ws.UserRepository.FindOneBy("email", user.Email)
+	if error.Code == 0 {
+		return model.User{}, dto.HttpErrorDto{Message: "L'email est déjà utilisé", Code: 400}
+	}
+
 	// Generate a random password for the user
 	password := ws.PasswordGenerator.GenerateRandomPassword(bcrypt.DefaultCost)
 	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)

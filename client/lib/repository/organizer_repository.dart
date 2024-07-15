@@ -30,7 +30,7 @@ class OrganizerRepository {
     if (res.statusCode == 200) {
       return User.fromJson(jsonDecode(res.body));
     }else {
-      throw Exception(res.body);
+      throw (jsonDecode(res.body)['error'] ?? "Erreur lors de l'ajout de l'organisateur");
     }
   }
 
