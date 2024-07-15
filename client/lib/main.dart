@@ -173,54 +173,55 @@ class AuthScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AuthBloc, AuthState>(
-      builder: (context, state) {
-
-        if (state is AuthInitial || state is AuthUnauthenticated) {
-
-          return const SignInPage();
-        }
-
-        if (state is AuthLoading) {
-          return const SafeArea(
-            child: Scaffold(
-              body: Center(
-                child: CircularProgressIndicator(),
-              ),
-            ),
-          );
-        }
-
-        if (state is Authenticated) {
-          if (UniversalPlatform.isWeb ) {
-            if(state.userRole == 'admin'){
-              Future.microtask(() => Navigator.pushReplacementNamed(context, '/dashboard'));
-            } else {
-              //context.read<AuthBloc>().add(const SignOutEvent());
-              return const SignInPage(
-                errorMessage: 'Access denied: You must be an admin to use this application on the web.',
-              );
-              /*Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => const SignInPage()),
-              );*/
-            }
-          } else {
-            Future.microtask(() => Navigator.pushReplacementNamed(context, '/home'));
-          }
-          return const SizedBox();
-        }
-
+    return BlocListener<AuthBloc, AuthState>(
+      listener: (context, state) {
         if (state is AuthError) {
-          return const SafeArea(
-            child: Scaffold(
-              body: Text('Error'),
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.message),
+              backgroundColor: Colors.red,
             ),
           );
         }
-
-        return const SizedBox();
       },
+      child: BlocBuilder<AuthBloc, AuthState>(
+        builder: (context, state) {
+          if (state is AuthInitial || state is AuthUnauthenticated) {
+            return const SignInPage();
+          }
+
+          if (state is AuthLoading) {
+            return const SafeArea(
+              child: Scaffold(
+                body: Center(
+                  child: CircularProgressIndicator(),
+                ),
+              ),
+            );
+          }
+
+          if (state is Authenticated) {
+            if (UniversalPlatform.isWeb) {
+              if (state.userRole == 'admin') {
+                Future.microtask(() => Navigator.pushReplacementNamed(context, '/dashboard'));
+              } else {
+                return const SignInPage(
+                  errorMessage: 'Access denied: You must be an admin to use this application on the web.',
+                );
+              }
+            } else {
+              Future.microtask(() => Navigator.pushReplacementNamed(context, '/home'));
+            }
+            return const SizedBox();
+          }
+
+          if (state is AuthError) {
+            return const SignInPage();
+          }
+
+          return const SizedBox();
+        },
+      ),
     );
   }
 }

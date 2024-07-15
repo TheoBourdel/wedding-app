@@ -105,13 +105,13 @@ class WeddingInfoPage extends StatelessWidget {
                           builder: (context) => BudgetManagementPage(weddingId: wedding.id, budget: wedding.budget),
                         ));
                       },
-                      child: WeddingInfoCard(title: "Budget", value: "TOTAL : ${wedding.budget}€", icon: Iconsax.wallet),
+                      child: const WeddingInfoCard(title: "Budget", value: "", icon: Iconsax.wallet),
                     ),
                     const SizedBox(height: 15),
                     const Row(
                       children: [
                         Expanded(
-                          child: WeddingInfoCard(title: "Invités", value: "", icon: Iconsax.people),
+                          child: WeddingInfoCard(title: "Signets", value: "", icon: Iconsax.archive_tick),
                         ),
                         SizedBox(width: 20),
                         Expanded(

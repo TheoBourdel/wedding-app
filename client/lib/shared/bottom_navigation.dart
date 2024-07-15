@@ -1,7 +1,7 @@
 import 'package:client/features/auth/bloc/auth_bloc.dart';
 import 'package:client/features/auth/bloc/auth_state.dart';
 import 'package:client/features/estimate/pages/estimate_page.dart';
-import 'package:client/features/message/pages/rooms_page.dart';
+import 'package:client/features/message/pages/message_list_page.dart';
 import 'package:client/features/profile/pages/profile_page.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
@@ -75,7 +75,7 @@ class _BottomNavigationState extends State<BottomNavigation> {
       icon: Icon(Iconsax.message),
       label: "Messages",
     ));
-    screens.add(const RoomPage());
+    screens.add(const MessageListPage());
 
     destinations.add(const BottomNavigationBarItem(
       icon: Icon(Iconsax.setting),

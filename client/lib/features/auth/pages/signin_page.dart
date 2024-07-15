@@ -34,9 +34,8 @@ class _SignInPageState extends State<SignInPage> {
 		return Scaffold(
 			backgroundColor: AppColors.lightPink,
 			body: SafeArea(
-					child: Column(
-						children: [
-
+			  child: Column(
+					children: [
 							Expanded(
 								flex: 1,
 								child: Center(
@@ -58,15 +57,6 @@ class _SignInPageState extends State<SignInPage> {
 										)
 								),
 							),
-							if (widget.errorMessage != null) // Ajout du message d'erreur ici
-								Padding(
-									padding: const EdgeInsets.all(8.0),
-									child: Text(
-										widget.errorMessage!,
-										style: const TextStyle(color: Colors.red, fontSize: 18),
-										textAlign: TextAlign.center,
-									),
-								),
 							Expanded(
 									flex: 2,
 									child: Form(

@@ -1,9 +1,10 @@
 package controller
 
 import (
-    _ "api/docs"
-    "api/model"
+	_ "api/docs"
 	"api/dto"
+	"api/model"
+	"api/repository"
 	"api/service"
 	"context"
 	"net/http"
@@ -21,7 +22,10 @@ var braintreeClient = braintree.New(
 )
 
 type EstimateController struct {
-	EstimateService service.EstimateService
+	EstimateService    service.EstimateService
+	CategoryRepository repository.CategoryRepository
+	UserRepository     repository.UserRepository
+	WeddingRepository  repository.WeddingRepository
 }
 
 func (ec *EstimateController) UpdateEstimate(ctx *gin.Context) {
@@ -75,8 +79,8 @@ func (ec *EstimateController) PayEstimate(ctx *gin.Context) {
 	amount := estimate.Price
 
 	tx, braintreeErr := braintreeClient.Transaction().Create(context.Background(), &braintree.TransactionRequest{
-		Type: "sale",
-		Amount: braintree.NewDecimal(int64(amount*100), 2),
+		Type:               "sale",
+		Amount:             braintree.NewDecimal(int64(amount*100), 2),
 		PaymentMethodNonce: request.Nonce,
 		Options: &braintree.TransactionOptions{
 			SubmitForSettlement: true,
@@ -85,6 +89,40 @@ func (ec *EstimateController) PayEstimate(ctx *gin.Context) {
 	if braintreeErr != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": braintreeErr.Error()})
 		return
+	}
+
+	category, err := ec.CategoryRepository.FindOneBy("id", strconv.Itoa(int(estimate.Service.CategoryID)))
+	if err != (dto.HttpErrorDto{}) {
+		return
+	}
+
+	if category.Name == "Organisateur" {
+
+		provider, err := ec.UserRepository.FindOneBy("id", strconv.Itoa(int(estimate.ProviderID)))
+		if err != (dto.HttpErrorDto{}) {
+			return
+		}
+
+		client, err := ec.UserRepository.FindOneBy("id", strconv.Itoa(int(estimate.ClientID)))
+		if err != (dto.HttpErrorDto{}) {
+			return
+		}
+
+		wedding, err := ec.WeddingRepository.FindOneBy("id", strconv.Itoa(int(client.Weddings[0].ID)))
+		if err != (dto.HttpErrorDto{}) {
+			return
+		}
+
+		//provider.Weddings = append(provider.Weddings, wedding)
+		// ADD PROVIDER TO WEDDING ORGANIZERS
+
+		provider.Weddings = append(provider.Weddings, wedding)
+
+		provider, err = ec.UserRepository.Update(provider)
+		if err != (dto.HttpErrorDto{}) {
+			ctx.JSON(http.StatusInternalServerError, err)
+			return
+		}
 	}
 
 	ctx.JSON(http.StatusOK, tx)

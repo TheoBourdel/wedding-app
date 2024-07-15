@@ -28,8 +28,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         final String userRole = decodedToken['role'];
 
         emit(Authenticated(token, userId, userRole));
-      } catch (e) {
-        emit(const AuthError('Error while signing in'));
+      } catch (error) {
+        emit(AuthError(error.toString()));
       }
     });
 
