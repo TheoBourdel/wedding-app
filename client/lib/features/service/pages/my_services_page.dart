@@ -5,24 +5,23 @@ import 'package:client/repository/user_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:client/repository/service_repository.dart';
 import 'package:client/model/service.dart';
-import 'package:iconsax/iconsax.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../model/category.dart';
 import '../../../repository/category_repository.dart';
-import '../widgets/services_list_view.dart';
+import '../widgets/my_service_list_view.dart';
 import '../widgets/services_theme.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class ServicesScreen extends StatefulWidget {
-  const ServicesScreen({super.key});
+class MyServicesPage extends StatefulWidget {
+  const MyServicesPage({super.key});
 
   @override
   // ignore: library_private_types_in_public_api
-  _ServicesScreenState createState() => _ServicesScreenState();
+  _MyServicesPageState createState() => _MyServicesPageState();
 }
 
-class _ServicesScreenState extends State<ServicesScreen> with TickerProviderStateMixin {
+class _MyServicesPageState extends State<MyServicesPage> with TickerProviderStateMixin {
   AnimationController? animationController;
   TextEditingController searchController = TextEditingController();
   List<Category> categories = [];
@@ -62,72 +61,6 @@ class _ServicesScreenState extends State<ServicesScreen> with TickerProviderStat
     super.dispose();
   }
 
-  Widget buildSearchBar(Function(String) onSearchChanged) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 10),
-      child: TextField(
-        controller: searchController,
-        decoration: InputDecoration(
-          labelText: 'Rechercher',
-          hintText: 'Entrez un nom',
-          prefixIcon: const Icon(Iconsax.search_normal_1),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: const BorderRadius.all(Radius.circular(20.0)),
-            borderSide: BorderSide(
-              color: Colors.grey[500]!,
-            ),
-          ),
-          focusedBorder: const OutlineInputBorder(
-            borderRadius: BorderRadius.all(Radius.circular(20.0)),
-            borderSide: BorderSide(
-              color: AppColors.pink500,
-            ),
-          ),
-        ),
-        onChanged: onSearchChanged,
-      ),
-    );
-  }
-
-  Widget buildCategorySelector(Function(int?) onCategoryChanged) {
-  return Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 20),
-    child: SizedBox(
-      height: 60,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        itemCount: categories.length,
-        itemBuilder: (context, index) {
-          return Padding(
-            padding: const EdgeInsets.only(right: 10),
-            child: ChoiceChip(
-              label: Text(categories[index].name),
-              backgroundColor: Colors.grey[100]!,
-              selectedColor: AppColors.pink500,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15),
-              ),
-              side: BorderSide(
-                color: selectedCategoryId == categories[index].id
-                  ? AppColors.pink500
-                  : Colors.grey[500]!,
-              ),
-              selected: selectedCategoryId == categories[index].id,
-              onSelected: (bool selected) {
-                setState(() {
-                  selectedCategoryId = selected ? categories[index].id : null;
-                });
-                onCategoryChanged(selected ? categories[index].id : null);
-              },
-            ),
-          );
-        },
-      ),
-    ),
-  );
-}
-
-
   @override
   Widget build(BuildContext context) {
     return Theme(
@@ -143,7 +76,7 @@ class _ServicesScreenState extends State<ServicesScreen> with TickerProviderStat
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Prestations",
+                      "Mes Prestations",
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.w600,
@@ -170,11 +103,6 @@ class _ServicesScreenState extends State<ServicesScreen> with TickerProviderStat
         ),
         body: Column(
           children: [
-            buildSearchBar((query) => setState(() {})),
-            buildCategorySelector((categoryId) {
-              selectedCategoryId = categoryId;
-              setState(() {});
-            }),
             Expanded(
               child: ServiceList(
                 searchQuery: searchController.text,
@@ -184,7 +112,7 @@ class _ServicesScreenState extends State<ServicesScreen> with TickerProviderStat
             ),
           ],
         ),
-        /*floatingActionButton: FutureBuilder<String>(
+        floatingActionButton: FutureBuilder<String>(
           future: role,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
@@ -208,7 +136,7 @@ class _ServicesScreenState extends State<ServicesScreen> with TickerProviderStat
             }
           },
         ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,*/
+        floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
       ),
     );
   }
@@ -289,7 +217,7 @@ class ServiceList extends StatelessWidget {
                   ),
                 );
                 animationController?.forward();
-                return ServiceListView(
+                return MyServiceListView(
                   callback: () {},
                   serviceData: snapshot.data![index],
                   animation: animation,
