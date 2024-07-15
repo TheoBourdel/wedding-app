@@ -8,8 +8,8 @@ import 'package:client/model/service.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../model/category.dart';
 import '../../../repository/category_repository.dart';
-import '../widgets/services_list_view.dart';
 import '../widgets/services_theme.dart';
+import '../widgets/services_list_view.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -17,7 +17,6 @@ class MyFavoritePage extends StatefulWidget {
   const MyFavoritePage({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
   _MyFavoritePageState createState() => _MyFavoritePageState();
 }
 
@@ -27,6 +26,7 @@ class _MyFavoritePageState extends State<MyFavoritePage> with TickerProviderStat
   List<Category> categories = [];
   int? selectedCategoryId;
   late Future<String> role;
+  List<Service> favoriteServices = [];
 
   @override
   void initState() {
@@ -34,6 +34,7 @@ class _MyFavoritePageState extends State<MyFavoritePage> with TickerProviderStat
     animationController = AnimationController(duration: const Duration(milliseconds: 1000), vsync: this);
     _loadCategories();
     role = _getUserRole();
+    _loadFavoriteServices();
   }
 
   Future<String> _getUserRole() async {
@@ -53,6 +54,20 @@ class _MyFavoritePageState extends State<MyFavoritePage> with TickerProviderStat
     categories = await CategoryRepository().getCategorys();
     selectedCategoryId = null;
     setState(() {});
+  }
+
+  void _loadFavoriteServices() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String token = prefs.getString('token')!;
+    final int userId = JwtDecoder.decode(token)['sub'];
+    favoriteServices = await ServiceRepository.getFavoritesServicesByUserId(userId);
+    setState(() {});
+  }
+
+  void _removeFavoriteService(int serviceId) {
+    setState(() {
+      favoriteServices.removeWhere((service) => service.id == serviceId);
+    });
   }
 
   @override
@@ -76,7 +91,7 @@ class _MyFavoritePageState extends State<MyFavoritePage> with TickerProviderStat
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Prestations enregistrés",
+                      "Mes Prestations",
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.w600,
@@ -104,10 +119,34 @@ class _MyFavoritePageState extends State<MyFavoritePage> with TickerProviderStat
         body: Column(
           children: [
             Expanded(
-              child: ServiceList(
-                searchQuery: searchController.text,
-                selectedCategoryId: selectedCategoryId,
-                animationController: animationController,
+              child: ListView.builder(
+                itemCount: favoriteServices.length,
+                padding: const EdgeInsets.only(top: 8),
+                scrollDirection: Axis.vertical,
+                itemBuilder: (BuildContext context, int index) {
+                  final int count = favoriteServices.length > 10 ? 10 : favoriteServices.length;
+                  final Animation<double> animation = Tween<double>(
+                    begin: 0.0,
+                    end: 1.0,
+                  ).animate(
+                    CurvedAnimation(
+                      parent: animationController!,
+                      curve: Interval(
+                        (1 / count) * index,
+                        1.0,
+                        curve: Curves.fastOutSlowIn,
+                      ),
+                    ),
+                  );
+                  animationController?.forward();
+                  return ServiceListView(
+                    callback: () {},
+                    serviceData: favoriteServices[index],
+                    animation: animation,
+                    animationController: animationController!,
+                    onFavoriteToggled: _removeFavoriteService,
+                  );
+                },
               ),
             ),
           ],
@@ -138,99 +177,6 @@ class _MyFavoritePageState extends State<MyFavoritePage> with TickerProviderStat
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
       ),
-    );
-  }
-}
-
-class ServiceList extends StatelessWidget {
-  final String searchQuery;
-  final int? selectedCategoryId;
-  final AnimationController? animationController;
-
-  const ServiceList({super.key, required this.searchQuery, required this.selectedCategoryId, this.animationController});
-
-  Future<String> getUserRole(userId) async {
-    final UserRepository userRepository = UserRepository();
-    try {
-      User user = await userRepository.getUser(userId);
-      return user.role;
-    } catch (e) {
-      return "Error fetching user";
-    }
-  }
-
-  Future<List<Service>> getServices() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    final String token = prefs.getString('token')!;
-    final int userId = JwtDecoder.decode(token)['sub'];
-    var role = await getUserRole(userId);
-
-    if(role == "marry") {
-      return ServiceRepository.getFavoritesServicesByUserId(userId).then((services) {
-        return services.where((service) {
-          bool categoryMatch = selectedCategoryId == null ||
-              service.CategoryID == selectedCategoryId;
-          bool nameMatch = searchQuery.isEmpty ||
-              service.name!.toLowerCase().contains(searchQuery.toLowerCase());
-          return categoryMatch && nameMatch;
-        }).toList();
-      });
-    }else if(role == "provider"){
-      return ServiceRepository().getServicesByUserID(userId).then((services) {
-        return services.where((service) {
-          bool categoryMatch = selectedCategoryId == null ||
-              service.CategoryID == selectedCategoryId;
-          bool nameMatch = searchQuery.isEmpty ||
-              service.name!.toLowerCase().contains(searchQuery.toLowerCase());
-          return categoryMatch && nameMatch;
-        }).toList();
-      });
-    } else {
-      return Future.value([]);
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return FutureBuilder<List<Service>>(
-      future: getServices(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.done) {
-          if (snapshot.hasData) {
-            return ListView.builder(
-              itemCount: snapshot.data!.length,
-              padding: const EdgeInsets.only(top: 8),
-              scrollDirection: Axis.vertical,
-              itemBuilder: (BuildContext context, int index) {
-                final int count = snapshot.data!.length > 10 ? 10 : snapshot.data!.length;
-                final Animation<double> animation = Tween<double>(
-                  begin: 0.0,
-                  end: 1.0,
-                ).animate(
-                  CurvedAnimation(
-                    parent: animationController!,
-                    curve: Interval(
-                      (1 / count) * index,
-                      1.0,
-                      curve: Curves.fastOutSlowIn,
-                    ),
-                  ),
-                );
-                animationController?.forward();
-                return ServiceListView(
-                  callback: () {},
-                  serviceData: snapshot.data![index],
-                  animation: animation,
-                  animationController: animationController!,
-                );
-              },
-            );
-          } else if (snapshot.hasError) {
-            return Center(child: Text("Erreur : ${snapshot.error}"));
-          }
-        }
-        return const Center(child: CircularProgressIndicator());
-      },
     );
   }
 }
