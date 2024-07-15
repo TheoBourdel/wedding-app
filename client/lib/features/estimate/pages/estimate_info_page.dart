@@ -178,6 +178,7 @@ class EstimateInfoPage extends StatelessWidget {
                 text: "Accepter",
                 onPressed: () {
                   showModalBottomSheet(
+                    isScrollControlled: true,
                     context: context,
                     builder: (context) => EstimateBottomModalForm(
                         estimate: estimate,

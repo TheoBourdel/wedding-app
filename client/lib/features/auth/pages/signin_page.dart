@@ -84,8 +84,8 @@ class _SignInPageState extends State<SignInPage> {
 																onPressed: () {
 																	if(formKey.currentState!.validate()) {
 																		context.read<AuthBloc>().add(SignInEvent(
-																				email: emailController.text,
-																				password: passwordController.text
+																			email: emailController.text,
+																			password: passwordController.text
 																		));
 																	}
 																},
