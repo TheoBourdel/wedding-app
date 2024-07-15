@@ -111,3 +111,19 @@ func (wc *FavoriteController) GetFavoritesByUserID(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, favorites)
 }
+
+func (ctrl *FavoriteController) GetFavoritesServicesByUserId(ctx *gin.Context) {
+    userId, err := strconv.Atoi(ctx.Param("id"))
+    if err != nil {
+        ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
+        return
+    }
+
+    favoriteServices, err := ctrl.FavoriteService.GetFavoriteServicesByUserId(userId)
+    if err != nil {
+        ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+        return
+    }
+
+    ctx.JSON(http.StatusOK, favoriteServices)
+}

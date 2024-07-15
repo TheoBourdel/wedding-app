@@ -10,4 +10,5 @@ type FavoriteControllerInterface interface {
     DeleteFavoriteByID(c *gin.Context)
     UpdateFavorite(c *gin.Context)
     GetFavoritesByUserID(c *gin.Context)
+    GetFavoritesServicesByUserId(c *gin.Context)
 }

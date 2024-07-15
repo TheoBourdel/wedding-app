@@ -89,3 +89,14 @@ func (wr *FavoriteRepository) FindByUserID(userID uint64) ([]model.Favorite, dto
 	}
 	return favorites, dto.HttpErrorDto{}
 }
+
+func (repo *FavoriteRepository) GetFavoriteServicesByUserId(userId int) ([]model.Service, error) {
+    var favoriteServices []model.Service
+    err := config.DB.Joins("JOIN favorites ON favorites.service_id = services.id").
+        Where("favorites.user_id = ? AND favorites.deleted_at IS NULL", userId).
+        Find(&favoriteServices).Error
+    if err != nil {
+        return nil, err
+    }
+    return favoriteServices, nil
+}
