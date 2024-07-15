@@ -34,12 +34,10 @@ class _EstimateBottomModalFormState extends State<EstimateBottomModalForm> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
+    return Container(
+      width: MediaQuery.of(context).size.width,
       padding: const EdgeInsets.all(20),
-      child: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(15),
-          child: Column(
+      child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
@@ -131,8 +129,6 @@ class _EstimateBottomModalFormState extends State<EstimateBottomModalForm> {
               ),
             ],
           ),
-        ),
-      ),
     );
   }
 }
