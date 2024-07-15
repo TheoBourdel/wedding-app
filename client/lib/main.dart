@@ -8,6 +8,7 @@ import 'package:client/features/estimate/bloc/estimate_bloc.dart';
 import 'package:client/features/estimate/bloc/estimate_event.dart';
 import 'package:client/features/organizer/bloc/organizer_bloc.dart';
 import 'package:client/features/profile/bloc/profile_bloc.dart';
+import 'package:client/features/profile/pages/profile_page.dart';
 import 'package:client/features/service/bloc/service_bloc.dart';
 import 'package:client/features/wedding/bloc/wedding_bloc.dart';
 import 'package:client/firebase_options.dart';
@@ -65,7 +66,6 @@ void main() async {
   await dotenv.load(fileName: ".env");
 
   if (Platform.isAndroid) {
-    print('Running on Android');
     await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
     FirebaseApi firebaseApi = FirebaseApi();
     await firebaseApi.initNotifications();
@@ -156,11 +156,11 @@ class MyApp extends StatelessWidget {
             theme: AppTheme.lightTheme,
             localizationsDelegates: AppLocalizations.localizationsDelegates,
             supportedLocales: AppLocalizations.supportedLocales,
-            routes: {
-              '/': (context) => const AuthScreen(),
-              '/dashboard': (context) => const MainScreen(),
-              '/home': (context) => const BottomNavigation(),
-            },
+            home: const AuthScreen(),
+            // routes: {
+            //   '/dashboard': (context) => const MainScreen(),
+            //   '/home': (context) => const BottomNavigation(),
+            // },
           ),
         ),
       )
@@ -203,16 +203,17 @@ class AuthScreen extends StatelessWidget {
           if (state is Authenticated) {
             if (UniversalPlatform.isWeb) {
               if (state.userRole == 'admin') {
-                Future.microtask(() => Navigator.pushReplacementNamed(context, '/dashboard'));
+                return const MainScreen();
+                //Future.microtask(() => Navigator.pushReplacementNamed(context, '/dashboard'));
               } else {
                 return const SignInPage(
                   errorMessage: 'Access denied: You must be an admin to use this application on the web.',
                 );
               }
             } else {
-              Future.microtask(() => Navigator.pushReplacementNamed(context, '/home'));
+              return const BottomNavigation();
+              //Future.microtask(() => Navigator.pushReplacementNamed(context, '/home'));
             }
-            return const SizedBox();
           }
 
           if (state is AuthError) {

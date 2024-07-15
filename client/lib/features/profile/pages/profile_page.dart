@@ -1,6 +1,5 @@
 import 'package:client/features/auth/bloc/auth_bloc.dart';
 import 'package:client/features/auth/bloc/auth_event.dart';
-import 'package:client/features/auth/pages/signin_page.dart';
 import 'package:client/features/profile/pages/language_page.dart';
 import 'package:client/features/profile/pages/user_page.dart';
 import 'package:flutter/material.dart';
@@ -210,7 +209,6 @@ class ProfilePage extends StatelessWidget {
               InkWell(
                 onTap: () async {
                   context.read<AuthBloc>().add(const SignOutEvent());
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => const SignInPage()));
                 },
                 child: Container(
                   decoration: BoxDecoration(
