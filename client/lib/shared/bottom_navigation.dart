@@ -41,7 +41,6 @@ class _BottomNavigationState extends State<BottomNavigation> {
     List<BottomNavigationBarItem> destinations = [];
     List<Widget> screens = [];
 
-
     if (role == 'marry' || role == 'organizer' || role == 'provider') {
       screens.add(ServicesScreen());
       destinations.add(const BottomNavigationBarItem(

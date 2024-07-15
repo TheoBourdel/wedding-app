@@ -81,6 +81,29 @@ class RoomRepository {
     }
   }
 
+  Future<String?> checkExistingRoom(int userId, int otherUserId) async {
+    final request = {
+      "user1_id": userId,
+      "user2_id": otherUserId
+    };
+
+    final response = await http.post(
+      Uri.parse('$_baseUrl/ws/check-room-exists'),
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: json.encode(request),
+    );
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      if (data['exists']) {
+        return data['room']['ID'].toString();
+      }
+    }
+    return null;
+  }
+
   Future<List<User>> getSessionChats(int roomId) async {
     final res = await http.get(
       Uri.parse('$_baseUrl/ws/getParticipants/$roomId'),
