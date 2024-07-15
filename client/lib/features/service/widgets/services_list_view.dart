@@ -10,6 +10,7 @@ import 'package:client/features/service/pages/single_service_page.dart';
 import 'package:client/core/theme/app_colors.dart';
 import 'package:client/repository/favorite_repository.dart';
 import 'package:client/model/favorite.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -274,8 +275,8 @@ class _ServiceListViewState extends State<ServiceListView> {
                 );
               },
               child: _isFavorite
-                  ? Icon(Icons.favorite, color: Colors.red, size: 35.0, key: ValueKey<bool>(_isFavorite))
-                  : Icon(Icons.favorite_border, size: 35.0, color: ServiceTheme.buildLightTheme().primaryColor, key: ValueKey<bool>(_isFavorite)),
+                  ? Icon(Iconsax.archive_tick1, color: AppColors.pink500, size: 35.0, key: ValueKey<bool>(_isFavorite))
+                  : Icon(Iconsax.archive_add, size: 35.0, color: ServiceTheme.buildLightTheme().primaryColor, key: ValueKey<bool>(_isFavorite)),
             ),
           ),
         ),

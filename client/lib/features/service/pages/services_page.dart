@@ -1,11 +1,11 @@
 import 'dart:async';
-
 import 'package:client/features/service/widgets/service_form.dart';
 import 'package:client/model/user.dart';
 import 'package:client/repository/user_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:client/repository/service_repository.dart';
 import 'package:client/model/service.dart';
+import 'package:iconsax/iconsax.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../model/category.dart';
 import '../../../repository/category_repository.dart';
@@ -15,13 +15,15 @@ import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ServicesScreen extends StatefulWidget {
+  const ServicesScreen({super.key});
+
   @override
+  // ignore: library_private_types_in_public_api
   _ServicesScreenState createState() => _ServicesScreenState();
 }
 
 class _ServicesScreenState extends State<ServicesScreen> with TickerProviderStateMixin {
   AnimationController? animationController;
-  final ScrollController _scrollController = ScrollController();
   TextEditingController searchController = TextEditingController();
   List<Category> categories = [];
   int? selectedCategoryId;
@@ -44,7 +46,6 @@ class _ServicesScreenState extends State<ServicesScreen> with TickerProviderStat
       User user = await userRepository.getUser(userId);
       return user.role;
     } catch (e) {
-      print("Error fetching user: $e");
       return "Error fetching user";
     }
   }
@@ -63,14 +64,25 @@ class _ServicesScreenState extends State<ServicesScreen> with TickerProviderStat
 
   Widget buildSearchBar(Function(String) onSearchChanged) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      padding: const EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 10),
       child: TextField(
         controller: searchController,
-        decoration: const InputDecoration(
+        decoration: InputDecoration(
           labelText: 'Rechercher',
           hintText: 'Entrez un nom',
-          prefixIcon: Icon(Icons.search),
-          border: OutlineInputBorder(),
+          prefixIcon: const Icon(Iconsax.search_normal_1),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: const BorderRadius.all(Radius.circular(20.0)),
+            borderSide: BorderSide(
+              color: Colors.grey[500]!,
+            ),
+          ),
+          focusedBorder: const OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(20.0)),
+            borderSide: BorderSide(
+              color: AppColors.pink500,
+            ),
+          ),
         ),
         onChanged: onSearchChanged,
       ),
@@ -78,30 +90,43 @@ class _ServicesScreenState extends State<ServicesScreen> with TickerProviderStat
   }
 
   Widget buildCategorySelector(Function(int?) onCategoryChanged) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-      child: DropdownButtonFormField<int?>(
-        value: selectedCategoryId,
-        decoration: const InputDecoration(
-          labelText: 'Catégorie',
-          border: OutlineInputBorder(),
-        ),
-        onChanged: onCategoryChanged,
-        items: [
-          const DropdownMenuItem<int?>(
-            value: null,
-            child: Text("Tous"),
-          ),
-          ...categories.map<DropdownMenuItem<int?>>((Category category) {
-            return DropdownMenuItem<int?>(
-              value: category.id,
-              child: Text(category.name),
-            );
-          }).toList(),
-        ],
+  return Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 20),
+    child: SizedBox(
+      height: 60,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: categories.length,
+        itemBuilder: (context, index) {
+          return Padding(
+            padding: const EdgeInsets.only(right: 10),
+            child: ChoiceChip(
+              label: Text(categories[index].name),
+              backgroundColor: Colors.grey[100]!,
+              selectedColor: AppColors.pink500,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15),
+              ),
+              side: BorderSide(
+                color: selectedCategoryId == categories[index].id
+                  ? AppColors.pink500
+                  : Colors.grey[500]!,
+              ),
+              selected: selectedCategoryId == categories[index].id,
+              onSelected: (bool selected) {
+                setState(() {
+                  selectedCategoryId = selected ? categories[index].id : null;
+                });
+                onCategoryChanged(selected ? categories[index].id : null);
+              },
+            ),
+          );
+        },
       ),
-    );
-  }
+    ),
+  );
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -163,7 +188,7 @@ class _ServicesScreenState extends State<ServicesScreen> with TickerProviderStat
           future: role,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return Container(); // Return an empty container while waiting
+              return Container();
             }
             if (snapshot.hasData && snapshot.data == "provider") {
               return FloatingActionButton(
@@ -202,7 +227,6 @@ class ServiceList extends StatelessWidget {
       User user = await userRepository.getUser(userId);
       return user.role;
     } catch (e) {
-      print("Error fetching user: $e");
       return "Error fetching user";
     }
   }

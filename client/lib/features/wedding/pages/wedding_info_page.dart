@@ -111,7 +111,7 @@ class WeddingInfoPage extends StatelessWidget {
                     const Row(
                       children: [
                         Expanded(
-                          child: WeddingInfoCard(title: "Invités", value: "", icon: Iconsax.people),
+                          child: WeddingInfoCard(title: "Signets", value: "", icon: Iconsax.archive_tick),
                         ),
                         SizedBox(width: 20),
                         Expanded(
