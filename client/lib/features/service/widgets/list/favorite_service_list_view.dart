@@ -7,21 +7,29 @@ import 'package:client/model/image.dart' as service_image;
 import 'package:client/core/constant/constant.dart';
 import 'package:client/features/service/pages/single_service_page.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../../../../model/favorite.dart';
+import '../../../../repository/favorite_repository.dart';
 
 class FavoriteServiceListView extends StatefulWidget {
   final VoidCallback? callback;
   final Service? serviceData;
+  final int? favoriteId; // Add favoriteId to the constructor
   final AnimationController? animationController;
   final Animation<double>? animation;
+  final Function(int)? onFavoriteToggled;
 
   const FavoriteServiceListView({
     super.key,
     this.serviceData,
+    this.favoriteId, // Initialize favoriteId
     this.animationController,
     this.animation,
     this.callback,
+    this.onFavoriteToggled,
   });
 
   @override
@@ -29,10 +37,13 @@ class FavoriteServiceListView extends StatefulWidget {
   _FavoriteServiceListViewState createState() => _FavoriteServiceListViewState();
 }
 
-class _FavoriteServiceListViewState extends State<FavoriteServiceListView> {
+class _FavoriteServiceListViewState extends State<FavoriteServiceListView>  with SingleTickerProviderStateMixin {
   List<service_image.Image> images = [];
   bool _isImagesLoaded = false;
-  final bool _isFavorite = false;
+  late bool _isFavorite = true;  // Initialize directly as favorite
+  late int? _favoriteId; // Initialize favoriteId
+  late AnimationController _opacityController;
+  late Animation<double> _opacityAnimation;
 
   @override
   void didUpdateWidget(covariant FavoriteServiceListView oldWidget) {
@@ -46,7 +57,10 @@ class _FavoriteServiceListViewState extends State<FavoriteServiceListView> {
   @override
   void initState() {
     super.initState();
+    _favoriteId = widget.favoriteId; // Set the favoriteId from widget
     _loadImages();
+    _opacityController = AnimationController(duration: const Duration(milliseconds: 300), vsync: this);
+    _opacityAnimation = Tween<double>(begin: 1.0, end: 0.0).animate(_opacityController);
   }
 
   void _loadImages() async {
@@ -59,6 +73,41 @@ class _FavoriteServiceListViewState extends State<FavoriteServiceListView> {
           _isImagesLoaded = true;
         });
       }
+    }
+  }
+
+  void _toggleFavorite() async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      final String token = prefs.getString('token')!;
+      final int userId = JwtDecoder.decode(token)['sub'];
+
+      List<Favorite> favorites = await FavoriteRepository.getFavoritesByUserId(userId);
+      for (var favorite in favorites) {
+        if (favorite.ServiceID == widget.serviceData?.id) {
+          setState(() {
+            _isFavorite = true;
+            _favoriteId = favorite.id;
+          });
+          break;
+        }
+      }
+      if (_favoriteId == null) {
+        throw Exception("Favorite ID is null");
+      }
+
+      int? serviceId = widget.serviceData!.id;
+      await FavoriteRepository().deleteFavorite(_favoriteId!);
+      setState(() {
+        _isFavorite = false;
+        _favoriteId = null;
+      });
+      if (widget.onFavoriteToggled != null) {
+        _opacityController.forward().then((_) => widget.onFavoriteToggled!(serviceId!));
+      }
+
+    } catch (e) {
+      print('Failed to toggle favorite: $e');
     }
   }
 
@@ -209,7 +258,7 @@ class _FavoriteServiceListViewState extends State<FavoriteServiceListView> {
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          //onTap: _toggleFavorite,
+          onTap: _toggleFavorite,
           borderRadius: const BorderRadius.all(Radius.circular(12)),
           child: Container(
             decoration: const BoxDecoration(
@@ -221,7 +270,7 @@ class _FavoriteServiceListViewState extends State<FavoriteServiceListView> {
               duration: const Duration(milliseconds: 300),
               transitionBuilder: (Widget child, Animation<double> animation) {
                 return RotationTransition(
-                  turns: child.key == const ValueKey<bool>(false) ? Tween<double>(begin: 0.75, end: 1.0).animate(animation) : Tween<double>(begin: 1.0, end: 0.75).animate(animation),
+                  turns: child.key == const ValueKey<bool>(true) ? Tween<double>(begin: 0.75, end: 1.0).animate(animation) : Tween<double>(begin: 1.0, end: 0.75).animate(animation),
                   child: ScaleTransition(scale: animation, child: child),
                 );
               },

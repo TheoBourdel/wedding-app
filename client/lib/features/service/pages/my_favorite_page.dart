@@ -167,7 +167,7 @@ class ServiceList extends StatelessWidget {
     var role = await getUserRole(userId);
 
     if(role == "marry") {
-      return ServiceRepository().getServices().then((services) {
+      return ServiceRepository.getFavoritesServicesByUserId(userId).then((services) {
         return services.where((service) {
           bool categoryMatch = selectedCategoryId == null ||
               service.CategoryID == selectedCategoryId;
