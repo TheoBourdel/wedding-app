@@ -2,6 +2,8 @@ import 'package:client/features/auth/bloc/auth_bloc.dart';
 import 'package:client/features/auth/bloc/auth_state.dart';
 import 'package:client/features/budget/pages/budget.dart';
 import 'package:client/features/organizer/pages/organizer_page.dart';
+import 'package:client/features/service/pages/my_favorite_page.dart';
+import 'package:client/features/service/pages/my_services_page.dart';
 import 'package:client/features/wedding/pages/wedding_form.dart';
 import 'package:client/features/wedding/widgets/wedding_countdown_card.dart';
 import 'package:client/features/wedding/widgets/wedding_info_card.dart';
@@ -108,13 +110,20 @@ class WeddingInfoPage extends StatelessWidget {
                       child: const WeddingInfoCard(title: "Budget", value: "", icon: Iconsax.wallet),
                     ),
                     const SizedBox(height: 15),
-                    const Row(
+                    Row(
                       children: [
                         Expanded(
-                          child: WeddingInfoCard(title: "Signets", value: "", icon: Iconsax.archive_tick),
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.push(context, MaterialPageRoute(
+                                builder: (context) => const MyFavoritePage(),
+                              ));
+                            },
+                          child: const WeddingInfoCard(title: "Enregistré", value: "", icon: Iconsax.archive_tick),
+                          )
                         ),
-                        SizedBox(width: 20),
-                        Expanded(
+                        const SizedBox(width: 20),
+                        const Expanded(
                           child: WeddingInfoCard(title: "Prestations", value: "", icon: Iconsax.briefcase),
                         ),
                       ],
