@@ -32,10 +32,7 @@ class RoomBloc extends Bloc<RoomEvent, RoomState> {
         if(ifRoomExistDataId != null) {
           final message = await roomRepository.joinRoom(ifRoomExistDataId, event.userId);
           emit(RoomJoined(Room(id:int.parse(ifRoomExistDataId), name: ''), message));
-          print('exist $ifRoomExistDataId.');
-
         } else {
-          print('not exist $ifRoomExistDataId.');
           final roomDto = RoomDto(name: event.roomName);
           final room = await roomRepository.createRoom(roomDto, event.userId, event.otherUser);
           await roomRepository.joinRoom(room.id.toString(), event.userId);

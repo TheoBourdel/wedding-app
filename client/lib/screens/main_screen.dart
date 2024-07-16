@@ -1,3 +1,4 @@
+import 'package:client/features/logs/pages/logspage.dart';
 import 'package:flutter/material.dart';
 import 'package:client/widgets/dashboard_widget.dart';
 import 'package:client/widgets/side_menu_widget.dart';
@@ -37,6 +38,9 @@ class _MainScreenState extends State<MainScreen> {
         break;
       case 'Historique':
         content = HistoryPage(year:  DateTime.now().year);
+        break;
+      case 'Logs':
+        content = LogsPage();
         break;
       case 'SignOut':
         content = const Center(child: Text('SignOut Page'));

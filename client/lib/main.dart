@@ -37,8 +37,6 @@ import 'package:universal_platform/universal_platform.dart';
 import 'package:client/features/budget/pages/budget.dart';
 import 'package:client/features/budget/pages/category_budget_page.dart';
 
-
-
 class LocaleProvider with ChangeNotifier {
   Locale _currentLocale = const Locale('en');
   Locale get currentLocale => _currentLocale;
@@ -71,9 +69,6 @@ void main() async {
     await firebaseApi.initNotifications();
     await firebaseApi.initPushNotifications();
   }
-
-
-
 
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String localeCode = prefs.getString('locale_code') ?? 'en';

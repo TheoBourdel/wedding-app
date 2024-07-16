@@ -9,7 +9,7 @@ class LogsPage extends StatelessWidget {
 
   Future<List<Log>> fetchLogs() async {
     final logs = await LogRepository().getLogs();
-    logs.sort((a, b) => a.timestamp.compareTo(b.timestamp));
+    logs.sort((a, b) => b.timestamp.compareTo(a.timestamp));
     return logs;
   }
 
