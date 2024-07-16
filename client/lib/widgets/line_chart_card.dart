@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:client/services/revenue_service.dart';
 import 'package:client/widgets/history_page.dart';
+import 'package:client/widgets/main_scaffold.dart';
 
 class RevenueTable extends StatefulWidget {
   const RevenueTable({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
   _RevenueTableState createState() => _RevenueTableState();
 }
 
 class _RevenueTableState extends State<RevenueTable> {
   late Future<List<Map<String, dynamic>>> _revenueDataFuture;
-  int _selectedYear = DateTime.now().year; // Année sélectionnée par défaut
+  int _selectedYear = DateTime.now().year;
 
   @override
   void initState() {
@@ -31,7 +31,13 @@ class _RevenueTableState extends State<RevenueTable> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => HistoryPage(year: year),
+        builder: (context) => MainScaffold(
+          currentPage: 'Historique',
+          content: HistoryPage(year: year),
+          onPageSelected: (String value) {
+            // Logique de changement de page, si nécessaire
+          },
+        ),
       ),
     );
   }
@@ -42,7 +48,7 @@ class _RevenueTableState extends State<RevenueTable> {
     List<int> years = List<int>.generate(5, (index) => currentYear - index).reversed.toList();
 
     return Column(
-      mainAxisSize: MainAxisSize.min, // Ajouté pour gérer les contraintes de hauteur infinies
+      mainAxisSize: MainAxisSize.min,
       children: [
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
@@ -60,7 +66,8 @@ class _RevenueTableState extends State<RevenueTable> {
           ),
         ),
         const SizedBox(height: 16),
-        Flexible( // Utiliser Flexible au lieu de Expanded
+        Container(
+          height: 400, // Hauteur fixe pour le tableau
           child: FutureBuilder<List<Map<String, dynamic>>>(
             future: _revenueDataFuture,
             builder: (context, snapshot) {
@@ -73,29 +80,32 @@ class _RevenueTableState extends State<RevenueTable> {
               } else {
                 final revenueData = snapshot.data!;
                 return SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: DataTable(
-                    columns: const [
-                      DataColumn(label: Text('Année')),
-                      DataColumn(label: Text('Mois')),
-                      DataColumn(label: Text('Chiffre d\'affaires')),
-                      DataColumn(label: Text('Plus de détails')), // Nouvelle colonne
-                    ],
-                    rows: revenueData.map((data) {
-                      return DataRow(
-                        cells: [
-                          DataCell(Text(data['year']?.toString() ?? 'N/A')),
-                          DataCell(Text(_monthName(data['month'] ?? 0))),
-                          DataCell(Text('${data['revenue']} €')),
-                          DataCell(
-                            TextButton(
-                              onPressed: () => _navigateToHistory(context, data['year']),
-                              child: const Text('Voir détails'),
-                            ),
-                          ), // Cellule de la nouvelle colonne
-                        ],
-                      );
-                    }).toList(),
+                  scrollDirection: Axis.vertical, // Défilement vertical si nécessaire
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: DataTable(
+                      columns: const [
+                        DataColumn(label: Text('Année')),
+                        DataColumn(label: Text('Mois')),
+                        DataColumn(label: Text('Chiffre d\'affaires')),
+                        DataColumn(label: Text('Plus de détails')), // Nouvelle colonne
+                      ],
+                      rows: revenueData.map((data) {
+                        return DataRow(
+                          cells: [
+                            DataCell(Text(data['year']?.toString() ?? 'N/A')),
+                            DataCell(Text(_monthName(data['month'] ?? 0))),
+                            DataCell(Text('${data['revenue']} €')),
+                            DataCell(
+                              TextButton(
+                                onPressed: () => _navigateToHistory(context, data['year']),
+                                child: const Text('Voir détails'),
+                              ),
+                            ), // Cellule de la nouvelle colonne
+                          ],
+                        );
+                      }).toList(),
+                    ),
                   ),
                 );
               }

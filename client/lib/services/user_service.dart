@@ -11,17 +11,12 @@ class UserService {
   final String _baseUrl = apiUrl;
   Future<List<User>> fetchUsers({int page = 1, int pageSize = 10, String query = ''}) async {
     String? token = await TokenUtils.getToken();
-
     final response = await http.get(
-      Uri.parse('$_baseUrl/users'),
+      Uri.parse('$_baseUrl/users?page=$page&pageSize=$pageSize&query=$query'),
       headers: {
         'Authorization': 'Bearer $token',
       },
     );
-
-    print('Request headers: ${response.request?.headers}');
-
-
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body);
       return jsonResponse.map<User>((user) => User.fromJson(user)).toList();
@@ -48,6 +43,26 @@ class UserService {
       return jsonResponse['wedding_id'];
     } else {
       throw Exception('Failed to load wedding ID');
+    }
+  }
+  Future<User> createUser(String firstName, String lastName, String email, String role) async {
+    final response = await http.post(
+      Uri.parse('$apiUrl/user'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        'firstname': firstName,
+        'lastname': lastName,
+        'email': email,
+        'role': role,
+      }),
+    );
+
+    if (response.statusCode == 201) {
+      return User.fromJson(jsonDecode(response.body));
+    } else {
+      throw Exception('Failed to create user');
     }
   }
 }
