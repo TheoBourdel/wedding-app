@@ -263,9 +263,13 @@ class _ServiceListViewState extends State<ServiceListView> {
         color: Colors.transparent,
         child: InkWell(
           onTap: _toggleFavorite,
-          borderRadius: const BorderRadius.all(Radius.circular(32.0)),
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
+          borderRadius: const BorderRadius.all(Radius.circular(12)),
+          child: Container(
+            decoration: const BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(12)),
+              color: Color.fromARGB(188, 255, 255, 255),
+            ),
+            padding: const EdgeInsets.all(10),
             child: AnimatedSwitcher(
               duration: const Duration(milliseconds: 300),
               transitionBuilder: (Widget child, Animation<double> animation) {
@@ -275,8 +279,8 @@ class _ServiceListViewState extends State<ServiceListView> {
                 );
               },
               child: _isFavorite
-                  ? Icon(Iconsax.archive_tick1, color: AppColors.pink500, size: 35.0, key: ValueKey<bool>(_isFavorite))
-                  : Icon(Iconsax.archive_add, size: 35.0, color: ServiceTheme.buildLightTheme().primaryColor, key: ValueKey<bool>(_isFavorite)),
+                  ? Icon(Iconsax.archive_tick1, color: AppColors.pink500, size: 25.0, key: ValueKey<bool>(_isFavorite))
+                  : Icon(Iconsax.archive_add, size: 25.0, color: ServiceTheme.buildLightTheme().primaryColor, key: ValueKey<bool>(_isFavorite)),
             ),
           ),
         ),

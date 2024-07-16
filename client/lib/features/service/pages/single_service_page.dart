@@ -2,7 +2,9 @@ import 'package:client/core/constant/constant.dart';
 import 'package:client/model/service.dart';
 import 'package:flutter/material.dart';
 import 'package:client/features/service/widgets/details/single_service_details.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:unicons/unicons.dart';
 import 'package:client/model/image.dart' as serviceImage;
 import '../../../core/theme/app_colors.dart';
@@ -85,11 +87,10 @@ class _DetailsPageState extends State<DetailsPage> {
     return Scaffold(
       body: Center(
         child: Container(
+          color: Colors.white,
           height: size.height,
           width: size.width,
-          decoration: BoxDecoration(
-            color: isDarkMode ? const Color(0xff06090d) : const Color(0xfff8f8f8),
-          ),
+
           child: Stack(
             children: [
               buildImageCarousel(size, defaultColor, secondColor),
@@ -107,15 +108,15 @@ class _DetailsPageState extends State<DetailsPage> {
                 child: InkWell(
                   onTap: () => Navigator.of(context).pop(),
                   child: Container(
-                    padding: const EdgeInsets.all(8),
+                    padding: const EdgeInsets.all(10),
                     decoration: const BoxDecoration(
-                      color: AppColors.pink,
-                      shape: BoxShape.circle,
+                      color: Color.fromARGB(188, 255, 255, 255),                               
+                      borderRadius: BorderRadius.all(Radius.circular(12)),
                     ),
-                    child: Icon(
-                      UniconsLine.arrow_left,
-                      color: secondColor,
-                      size: 24,
+                    child: const Icon(
+                      Iconsax.arrow_left,
+                      color: AppColors.pink500,
+                      size: 25,
                     ),
                   ),
                 ),
@@ -136,15 +137,14 @@ class _DetailsPageState extends State<DetailsPage> {
                           child: InkWell(
                             onTap: _openEditForm,
                             child: Container(
-                              padding: const EdgeInsets.all(8),
+                              padding: const EdgeInsets.all(10),
                               decoration: const BoxDecoration(
-                                color: AppColors.pink,
-                                shape: BoxShape.circle,
+                                color: Color.fromARGB(188, 255, 255, 255),                               borderRadius: BorderRadius.all(Radius.circular(12)),
                               ),
                               child: const Icon(
                                 UniconsLine.edit,
-                                color: Colors.white,
-                                size: 24,
+                                color: AppColors.pink500,
+                                size: 25,
                               ),
                             ),
                           ),
@@ -167,21 +167,20 @@ class _DetailsPageState extends State<DetailsPage> {
                                   ));
                                 } else {
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(content: Text('User ID is not available')),
+                                    const SnackBar(content: Text('User ID is not available')),
                                   );
                                 }
                               });
                             },
                             child: Container(
-                              padding: const EdgeInsets.all(8),
+                              padding: const EdgeInsets.all(10),
                               decoration: const BoxDecoration(
-                                color: AppColors.pink,
-                                shape: BoxShape.circle,
+                                color: Color.fromARGB(188, 255, 255, 255),                               borderRadius: BorderRadius.all(Radius.circular(12)),
                               ),
                               child: const Icon(
                                 UniconsLine.message,
-                                color: Colors.white,
-                                size: 24,
+                                color: AppColors.pink500,
+                                size: 25,
                               ),
                             ),
                           ),
@@ -218,7 +217,7 @@ class _DetailsPageState extends State<DetailsPage> {
           var img = images[index];
           var imagePath = apiUrl + (img.path!.startsWith('/') ? img.path! : '/${img.path!}');
           return ClipRRect(
-            borderRadius: BorderRadius.circular(15),
+            borderRadius: BorderRadius.circular(0),
             child: Image.network(
               imagePath,
               fit: BoxFit.cover,

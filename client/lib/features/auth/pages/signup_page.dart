@@ -46,6 +46,7 @@ class _SignUpPageState extends State<SignUpPage> {
           ),
         );
       } catch (e) {
+        print('error: $e');
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(e.toString()),
