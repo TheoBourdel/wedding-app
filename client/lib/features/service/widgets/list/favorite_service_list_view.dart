@@ -13,6 +13,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../model/favorite.dart';
 import '../../../../repository/favorite_repository.dart';
+import '../buttons/favorite_button.dart';
 
 class FavoriteServiceListView extends StatefulWidget {
   final VoidCallback? callback;
@@ -162,7 +163,10 @@ class _FavoriteServiceListViewState extends State<FavoriteServiceListView>  with
         child: Stack(
           children: [
             serviceCardContent(),
-            favoriteButton(),
+            FavoriteButton(
+              isFavorite: _isFavorite,
+              onTap: _toggleFavorite,
+            ),
           ],
         ),
       ),
@@ -253,39 +257,6 @@ class _FavoriteServiceListViewState extends State<FavoriteServiceListView>  with
           Text('${widget.serviceData?.price.toString() ?? '0'} €', textAlign: TextAlign.left, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 22)),
           Text('prix d\'estimation', style: TextStyle(fontSize: 14, color: Colors.grey.withOpacity(0.8))),
         ],
-      ),
-    );
-  }
-
-  Widget favoriteButton() {
-    return Positioned(
-      top: 8,
-      right: 8,
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: _toggleFavorite,
-          borderRadius: const BorderRadius.all(Radius.circular(12)),
-          child: Container(
-            decoration: const BoxDecoration(
-              borderRadius: BorderRadius.all(Radius.circular(12)),
-              color: Color.fromARGB(188, 255, 255, 255),
-            ),
-            padding: const EdgeInsets.all(10),
-            child: AnimatedSwitcher(
-              duration: const Duration(milliseconds: 300),
-              transitionBuilder: (Widget child, Animation<double> animation) {
-                return RotationTransition(
-                  turns: child.key == ValueKey<bool>(_isFavorite) ? Tween<double>(begin: 0.75, end: 1.0).animate(animation) : Tween<double>(begin: 1.0, end: 0.75).animate(animation),
-                  child: ScaleTransition(scale: animation, child: child),
-                );
-              },
-              child: _isFavorite
-                  ? Icon(Iconsax.archive_tick1, color: AppColors.pink500, size: 25.0, key: ValueKey<bool>(_isFavorite))
-                  : Icon(Iconsax.archive_add, size: 25.0, color: ServiceTheme.buildLightTheme().primaryColor, key: ValueKey<bool>(_isFavorite)),
-            ),
-          ),
-        ),
       ),
     );
   }
