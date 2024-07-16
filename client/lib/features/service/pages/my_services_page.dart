@@ -167,17 +167,7 @@ class ServiceList extends StatelessWidget {
     final int userId = JwtDecoder.decode(token)['sub'];
     var role = await getUserRole(userId);
 
-    if(role == "marry") {
-      return ServiceRepository().getServices().then((services) {
-        return services.where((service) {
-          bool categoryMatch = selectedCategoryId == null ||
-              service.CategoryID == selectedCategoryId;
-          bool nameMatch = searchQuery.isEmpty ||
-              service.name!.toLowerCase().contains(searchQuery.toLowerCase());
-          return categoryMatch && nameMatch;
-        }).toList();
-      });
-    }else if(role == "provider"){
+     if(role == "provider"){
       return ServiceRepository().getServicesByUserID(userId).then((services) {
         return services.where((service) {
           bool categoryMatch = selectedCategoryId == null ||
@@ -199,7 +189,6 @@ class ServiceList extends StatelessWidget {
       future: getServices(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
-          print('la');
           if (snapshot.hasData) {
             if(snapshot.data!.isEmpty) {
               return Center(

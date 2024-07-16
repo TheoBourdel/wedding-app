@@ -248,7 +248,7 @@ class ServiceList extends StatelessWidget {
         }).toList();
       });
     }else if(role == "provider"){
-      return ServiceRepository().getServicesByUserID(userId).then((services) {
+      return ServiceRepository().getServices().then((services) {
         return services.where((service) {
           bool categoryMatch = selectedCategoryId == null ||
               service.CategoryID == selectedCategoryId;
