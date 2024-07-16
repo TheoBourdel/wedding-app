@@ -5,6 +5,8 @@ import 'package:client/features/auth/bloc/auth_bloc.dart';
 import 'package:client/features/auth/bloc/auth_event.dart';
 import 'package:client/features/auth/bloc/auth_state.dart';
 import 'package:client/widgets/signout_page.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class SideMenuWidget extends StatefulWidget {
   final String currentPage;
@@ -17,6 +19,36 @@ class SideMenuWidget extends StatefulWidget {
 }
 
 class _SideMenuWidgetState extends State<SideMenuWidget> {
+  bool isPaymentEnabled = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchPaymentStatus();
+  }
+
+  void _fetchPaymentStatus() async {
+    final response = await http.get(Uri.parse('http://localhost:8080/api/payment-status'));
+    if (response.statusCode == 200) {
+      setState(() {
+        isPaymentEnabled = jsonDecode(response.body)['is_payment_enabled'];
+      });
+    }
+  }
+
+  void _togglePaymentStatus(bool newValue) async {
+    final response = await http.post(
+      Uri.parse('http://localhost:8080/api/payment-status/update'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'is_payment_enabled': newValue}),
+    );
+    if (response.statusCode == 200) {
+      setState(() {
+        isPaymentEnabled = newValue;
+      });
+    }
+  }
+
   void _onMenuItemSelected(BuildContext context, String pageTitle, int index) {
     if (index == 4) { // Assuming index 4 is for SignOut
       context.read<AuthBloc>().add(SignOutEvent());
@@ -40,9 +72,25 @@ class _SideMenuWidgetState extends State<SideMenuWidget> {
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 80, horizontal: 20),
         color: const Color(0xFF171821),
-        child: ListView.builder(
-          itemCount: data.menu.length,
-          itemBuilder: (context, index) => buildMenuEntry(data, index),
+        child: Column(
+          children: [
+            Expanded(
+              child: ListView.builder(
+                itemCount: data.menu.length,
+                itemBuilder: (context, index) => buildMenuEntry(data, index),
+              ),
+            ),
+            SwitchListTile(
+              title: Text(
+                'Enable Payment',
+                style: TextStyle(color: Colors.white),
+              ),
+              value: isPaymentEnabled,
+              onChanged: (bool value) {
+                _togglePaymentStatus(value);
+              },
+            ),
+          ],
         ),
       ),
     );

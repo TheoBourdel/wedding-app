@@ -14,9 +14,31 @@ import 'package:http/http.dart' as http;
 
 import '../../../repository/estimate_repository.dart';
 
-class EstimateInfoPage extends StatelessWidget {
+class EstimateInfoPage extends StatefulWidget {
   final Estimate estimate;
   const EstimateInfoPage({super.key, required this.estimate});
+
+  @override
+  _EstimateInfoPageState createState() => _EstimateInfoPageState();
+}
+
+class _EstimateInfoPageState extends State<EstimateInfoPage> {
+  bool isPaymentEnabled = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchPaymentStatus();
+  }
+
+  Future<void> _fetchPaymentStatus() async {
+    final response = await http.get(Uri.parse('http://localhost:8080/api/payment-status'));
+    if (response.statusCode == 200) {
+      setState(() {
+        isPaymentEnabled = jsonDecode(response.body)['is_payment_enabled'];
+      });
+    }
+  }
 
   Future<void> _startBraintreePayment(BuildContext context, userId) async {
     print("Starting Braintree payment...");
@@ -25,12 +47,12 @@ class EstimateInfoPage extends StatelessWidget {
       collectDeviceData: true,
       requestThreeDSecureVerification: true,
       googlePaymentRequest: BraintreeGooglePaymentRequest(
-        totalPrice: estimate.price.toString(),
+        totalPrice: widget.estimate.price.toString(),
         currencyCode: 'EUR',
         billingAddressRequired: false,
       ),
       paypalRequest: BraintreePayPalRequest(
-        amount: estimate.price.toString(),
+        amount: widget.estimate.price.toString(),
         displayName: 'Example company',
       ),
       cardEnabled: true,
@@ -48,14 +70,14 @@ class EstimateInfoPage extends StatelessWidget {
   Future<void> _sendNonceToServer(BuildContext context, String nonce, userId) async {
     try {
       print('Sending nonce to server: $nonce');
-      await EstimateRepository.payEstimate(estimate.id, nonce);
+      await EstimateRepository.payEstimate(widget.estimate.id, nonce);
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Payment Successful')));
       context.read<EstimateBloc>().add(
           EstimateUpdateEvent(
-            estimate: estimate.copyWith(
+            estimate: widget.estimate.copyWith(
               status: 'accepted',
-              price: estimate.price,
-              content: estimate.content,
+              price: widget.estimate.price,
+              content: widget.estimate.content,
             ),
             userId: userId,
           )
@@ -68,145 +90,132 @@ class EstimateInfoPage extends StatelessWidget {
     }
   }
 
-  /*Future<void> _startCreditCardPayment(BuildContext context) async {
-    print("Starting Braintree credit card payment...");
-    var request = BraintreeCreditCardRequest(
-      cardNumber: '4111111111111111',
-      expirationMonth: '12',
-      expirationYear: '2025',
-      cvv: '123',
-    );
+  Widget? buttons() {
+    final authState = context.read<AuthBloc>().state;
+    final userRole = authState is Authenticated ? authState.userRole : null;
+    final userId = authState is Authenticated ? authState.userId : null;
 
-    BraintreePaymentMethodNonce? result = await Braintree.tokenizeCreditCard(
-      'sandbox_jybm8wfr_qsn76kgd9qtrkyv5',
-      request,
-    );
-
-    if (result != null) {
-      print('Nonce received: ${result.nonce}');
-      await _sendNonceToServer(context, result.nonce);
-    } else {
-      print('Payment was cancelled or failed.');
-    }
-  }*/
-
-  @override
-  Widget build(BuildContext context) {
-    Widget? buttons() {
-      final authState = context.read<AuthBloc>().state;
-      final userRole = authState is Authenticated ? authState.userRole : null;
-      final userId = authState is Authenticated ? authState.userId : null;
-
-      if (userRole == 'provider') {
-        if (estimate.status == 'requesting') {
-          return Column(
-            children: [
-              Button(
-                text: "Accepter",
-                onPressed: () {
-                  showModalBottomSheet(
-                    context: context,
-                    builder: (context) => EstimateBottomModalForm(
-                        estimate: estimate,
-                        userId: userId!,
-                        title: 'Creer'
-                    ),
-                  );
-                },
-              ),
-              const SizedBox(height: 10),
-              Button(
-                text: "Refuser",
-                isOutlined: true,
-                onPressed: () {
-                  context.read<EstimateBloc>().add(
-                      EstimateUpdateEvent(
-                        estimate: estimate.copyWith(
-                          status: 'canceled',
-                          price: estimate.price,
-                          content: estimate.content,
-                        ),
-                        userId: userId!,
-                      )
-                  );
-                  Navigator.pop(context);
-                },
-              ),
-            ],
-          );
-        }
-
-        if (estimate.status == 'pending') {
-          return Button(
-              text: "Modifier",
-              isOutlined: true,
+    if (userRole == 'provider') {
+      if (widget.estimate.status == 'requesting') {
+        return Column(
+          children: [
+            Button(
+              text: "Accepter",
               onPressed: () {
                 showModalBottomSheet(
                   context: context,
                   builder: (context) => EstimateBottomModalForm(
-                      estimate: estimate,
+                      estimate: widget.estimate,
                       userId: userId!,
-                      title: 'Modifier'
+                      title: 'Creer'
                   ),
                 );
-              }
-          );
-        }
-      } else if (userRole == 'marry') {
-        if (estimate.status == 'requesting') {
-          return Button(
-              text: "Annuler",
+              },
+            ),
+            const SizedBox(height: 10),
+            Button(
+              text: "Refuser",
               isOutlined: true,
               onPressed: () {
                 context.read<EstimateBloc>().add(
-                    EstimateDeleteEvent(
-                      estimateId: estimate.id,
+                    EstimateUpdateEvent(
+                      estimate: widget.estimate.copyWith(
+                        status: 'canceled',
+                        price: widget.estimate.price,
+                        content: widget.estimate.content,
+                      ),
                       userId: userId!,
                     )
                 );
                 Navigator.pop(context);
-              }
-          );
-        }
-
-        if (estimate.status == 'pending') {
-          return Column(
-            children: [
-              Button(
-                text: "Confirmer et payer",
-                onPressed: () => _startBraintreePayment(context, userId),
-              ),
-              const SizedBox(height: 10),
-              Button(
-                text: "Refuser",
-                isOutlined: true,
-                onPressed: () {
-                  context.read<EstimateBloc>().add(
-                      EstimateUpdateEvent(
-                        estimate: estimate.copyWith(
-                          status: 'canceled',
-                          price: estimate.price,
-                          content: estimate.content,
-                        ),
-                        userId: userId!,
-                      )
-                  );
-                  Navigator.pop(context);
-                },
-              ),
-              SizedBox(height: 20),
-            ],
-          );
-        }
+              },
+            ),
+          ],
+        );
       }
-      return null;
-    }
 
+      if (widget.estimate.status == 'pending') {
+        return Button(
+            text: "Modifier",
+            isOutlined: true,
+            onPressed: () {
+              showModalBottomSheet(
+                context: context,
+                builder: (context) => EstimateBottomModalForm(
+                    estimate: widget.estimate,
+                    userId: userId!,
+                    title: 'Modifier'
+                ),
+              );
+            }
+        );
+      }
+    } else if (userRole == 'marry') {
+      if (widget.estimate.status == 'requesting') {
+        return Button(
+            text: "Annuler",
+            isOutlined: true,
+            onPressed: () {
+              context.read<EstimateBloc>().add(
+                  EstimateDeleteEvent(
+                    estimateId: widget.estimate.id,
+                    userId: userId!,
+                  )
+              );
+              Navigator.pop(context);
+            }
+        );
+      }
+
+      if (widget.estimate.status == 'pending') {
+        return Column(
+          children: [
+            Button(
+              text: "Confirmer et payer",
+              onPressed: isPaymentEnabled ? () => _startBraintreePayment(context, userId) : null,
+              color: isPaymentEnabled ? null : Colors.grey,
+            ),
+            if (!isPaymentEnabled)
+              Padding(
+                padding: const EdgeInsets.only(top: 8.0),
+                child: Text(
+                  'Paiement n\'est pas possible, revenez plus tard',
+                  style: TextStyle(color: Colors.red),
+                ),
+              ),
+            const SizedBox(height: 10),
+            Button(
+              text: "Refuser",
+              isOutlined: true,
+              onPressed: () {
+                context.read<EstimateBloc>().add(
+                    EstimateUpdateEvent(
+                      estimate: widget.estimate.copyWith(
+                        status: 'canceled',
+                        price: widget.estimate.price,
+                        content: widget.estimate.content,
+                      ),
+                      userId: userId!,
+                    )
+                );
+                Navigator.pop(context);
+              },
+            ),
+            SizedBox(height: 20),
+          ],
+        );
+      }
+    }
+    return null;
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Information du devis"),
         actions: [
-          if (estimate.status != 'requesting')
+          if (widget.estimate.status != 'requesting')
             IconButton(
                 icon: const Icon(Iconsax.document_download),
                 onPressed: () {}
@@ -226,14 +235,14 @@ class EstimateInfoPage extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      estimate.service!.name!,
+                      widget.estimate.service!.name!,
                       style: const TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     Text(
-                      estimate.createdAt.toString().substring(0, 10),
+                      widget.estimate.createdAt.toString().substring(0, 10),
                       style: const TextStyle(
                         fontSize: 14,
                         color: Colors.grey,
@@ -241,13 +250,13 @@ class EstimateInfoPage extends StatelessWidget {
                     ),
                     const SizedBox(height: 20),
                     Text(
-                      estimate.content,
+                      widget.estimate.content,
                       style: const TextStyle(
                         fontSize: 16,
                       ),
                     ),
                     const Spacer(),
-                    if (estimate.status != 'requesting')
+                    if (widget.estimate.status != 'requesting')
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -259,7 +268,7 @@ class EstimateInfoPage extends StatelessWidget {
                             ),
                           ),
                           Text(
-                            "${estimate.price} €",
+                            "${widget.estimate.price} €",
                             style: const TextStyle(
                               fontSize: 30,
                               fontWeight: FontWeight.bold,
