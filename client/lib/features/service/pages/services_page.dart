@@ -9,7 +9,7 @@ import 'package:iconsax/iconsax.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../model/category.dart';
 import '../../../repository/category_repository.dart';
-import '../widgets/services_list_view.dart';
+import '../widgets/list/services_list_view.dart';
 import '../widgets/services_theme.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:shared_preferences/shared_preferences.dart';

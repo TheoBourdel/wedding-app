@@ -8,7 +8,7 @@ import 'package:client/model/service.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../model/category.dart';
 import '../../../repository/category_repository.dart';
-import '../widgets/my_service_list_view.dart';
+import '../widgets/list/my_service_list_view.dart';
 import '../widgets/services_theme.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:shared_preferences/shared_preferences.dart';
