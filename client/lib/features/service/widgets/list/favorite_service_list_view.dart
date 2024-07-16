@@ -7,130 +7,51 @@ import 'package:client/model/image.dart' as service_image;
 import 'package:client/core/constant/constant.dart';
 import 'package:client/features/service/pages/single_service_page.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:jwt_decoder/jwt_decoder.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../core/theme/app_colors.dart';
-import '../../../../model/favorite.dart';
-import '../../../../repository/favorite_repository.dart';
 
 class FavoriteServiceListView extends StatefulWidget {
   final VoidCallback? callback;
-  final List<Service> services;
+  final Service? serviceData;
   final AnimationController? animationController;
   final Animation<double>? animation;
-  final Function(int)? onFavoriteToggled;
 
   const FavoriteServiceListView({
     super.key,
-    required this.services,
+    this.serviceData,
     this.animationController,
     this.animation,
     this.callback,
-    this.onFavoriteToggled,
   });
 
   @override
+  // ignore: library_private_types_in_public_api
   _FavoriteServiceListViewState createState() => _FavoriteServiceListViewState();
 }
 
-class _FavoriteServiceListViewState extends State<FavoriteServiceListView> with SingleTickerProviderStateMixin {
-  List<Service> displayedServices = [];
-  late AnimationController _opacityController;
-
-  @override
-  void initState() {
-    super.initState();
-    displayedServices = widget.services;
-    _opacityController = AnimationController(
-      duration: const Duration(milliseconds: 300),
-      vsync: this,
-    );
-  }
-
-  @override
-  void dispose() {
-    _opacityController.dispose();
-    super.dispose();
-  }
-
-  void _toggleFavorite(int serviceId) {
-    setState(() {
-      displayedServices.removeWhere((service) => service.id == serviceId);
-    });
-
-    if (widget.onFavoriteToggled != null) {
-      widget.onFavoriteToggled!(serviceId);
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: displayedServices.length,
-      itemBuilder: (context, index) {
-        return ServiceItem(
-          serviceData: displayedServices[index],
-          onFavoriteToggled: _toggleFavorite,
-          animationController: _opacityController,
-        );
-      },
-    );
-  }
-}
-
-class ServiceItem extends StatefulWidget {
-  final Service serviceData;
-  final Function(int) onFavoriteToggled;
-  final AnimationController animationController;
-
-  const ServiceItem({
-    super.key,
-    required this.serviceData,
-    required this.onFavoriteToggled,
-    required this.animationController,
-  });
-
-  @override
-  _ServiceItemState createState() => _ServiceItemState();
-}
-
-class _ServiceItemState extends State<ServiceItem> with SingleTickerProviderStateMixin {
+class _FavoriteServiceListViewState extends State<FavoriteServiceListView> {
   List<service_image.Image> images = [];
-  bool _isFavorite = false;
-  late Animation<double> _opacityAnimation;
   bool _isImagesLoaded = false;
+  final bool _isFavorite = false;
+
+  @override
+  void didUpdateWidget(covariant FavoriteServiceListView oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.serviceData != oldWidget.serviceData) {
+      _isImagesLoaded = false;
+      _loadImages();
+    }
+  }
 
   @override
   void initState() {
     super.initState();
-    _opacityAnimation = Tween<double>(begin: 1.0, end: 0.0).animate(widget.animationController);
     _loadImages();
-    _checkIfFavorite();
-  }
-
-  void _checkIfFavorite() async {
-    try {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      final String token = prefs.getString('token')!;
-      final int userId = JwtDecoder.decode(token)['sub'];
-      List<Favorite> favorites = await FavoriteRepository.getFavoritesByUserId(userId);
-      for (var favorite in favorites) {
-        if (favorite.ServiceID == widget.serviceData.id) {
-          setState(() {
-            _isFavorite = true;
-          });
-          break;
-        }
-      }
-    } catch (e) {
-      print('Failed to load favorites: $e');
-    }
   }
 
   void _loadImages() async {
     if (!_isImagesLoaded) {
-      var serviceId = widget.serviceData.id;
+      var serviceId = widget.serviceData?.id;
       if (serviceId != null) {
         List<service_image.Image> loadedImages = await ImageRepository().getServiceImages(serviceId);
         setState(() {
@@ -141,40 +62,34 @@ class _ServiceItemState extends State<ServiceItem> with SingleTickerProviderStat
     }
   }
 
-  void _toggleFavorite() {
-    setState(() {
-      _isFavorite = !_isFavorite;
-      if (!_isFavorite) {
-        widget.animationController.reverse().then((_) {
-          if (widget.serviceData.id != null) {
-            widget.onFavoriteToggled(widget.serviceData.id!);
-          }
-        });
-      }
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
-    return SizeTransition(
-      sizeFactor: _opacityAnimation,
-      axis: Axis.vertical,
-      child: Padding(
-        padding: const EdgeInsets.only(left: 24, right: 24, top: 8, bottom: 16),
-        child: InkWell(
-          onTap: () {
-            if (widget.serviceData.id != null) {
-              Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => DetailsPage(
-                  size: MediaQuery.of(context).size,
-                  serviceData: widget.serviceData,
-                ),
-              ));
-            }
-          },
-          child: serviceCard(context),
-        ),
-      ),
+    return AnimatedBuilder(
+      animation: widget.animationController!,
+      builder: (BuildContext context, Widget? child) {
+        return FadeTransition(
+          opacity: widget.animation!,
+          child: Transform(
+            transform: Matrix4.translationValues(0.0, 50 * (1.0 - widget.animation!.value), 0.0),
+            child: Padding(
+              padding: const EdgeInsets.only(left: 24, right: 24, top: 8, bottom: 16),
+              child: InkWell(
+                onTap: () {
+                  if (widget.serviceData?.id != null) {
+                    Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => DetailsPage(
+                        size: MediaQuery.of(context).size,
+                        serviceData: widget.serviceData!,
+                      ),
+                    ));
+                  }
+                },
+                child: serviceCard(context),
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -192,7 +107,7 @@ class _ServiceItemState extends State<ServiceItem> with SingleTickerProviderStat
         child: Stack(
           children: [
             serviceCardContent(),
-            //favoriteButton(),
+            favoriteButton(),
           ],
         ),
       ),
@@ -239,8 +154,8 @@ class _ServiceItemState extends State<ServiceItem> with SingleTickerProviderStat
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(widget.serviceData.name ?? 'Service Name', textAlign: TextAlign.left, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 22)),
-            Text(widget.serviceData.localisation ?? 'No localisation', style: TextStyle(fontSize: 14, color: Colors.grey.withOpacity(0.8))),
+            Text(widget.serviceData?.name ?? 'Service Name', textAlign: TextAlign.left, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 22)),
+            Text(widget.serviceData?.localisation ?? 'No localisation', style: TextStyle(fontSize: 14, color: Colors.grey.withOpacity(0.8))),
             ratingBar(),
           ],
         ),
@@ -280,7 +195,7 @@ class _ServiceItemState extends State<ServiceItem> with SingleTickerProviderStat
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          Text('${widget.serviceData.price.toString()} €', textAlign: TextAlign.left, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 22)),
+          Text('${widget.serviceData?.price.toString() ?? '0'} €', textAlign: TextAlign.left, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 22)),
           Text('prix d\'estimation', style: TextStyle(fontSize: 14, color: Colors.grey.withOpacity(0.8))),
         ],
       ),
@@ -294,21 +209,25 @@ class _ServiceItemState extends State<ServiceItem> with SingleTickerProviderStat
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          onTap: _toggleFavorite,
-          borderRadius: const BorderRadius.all(Radius.circular(32.0)),
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
+          //onTap: _toggleFavorite,
+          borderRadius: const BorderRadius.all(Radius.circular(12)),
+          child: Container(
+            decoration: const BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(12)),
+              color: Color.fromARGB(188, 255, 255, 255),
+            ),
+            padding: const EdgeInsets.all(10),
             child: AnimatedSwitcher(
               duration: const Duration(milliseconds: 300),
               transitionBuilder: (Widget child, Animation<double> animation) {
                 return RotationTransition(
-                  turns: child.key == ValueKey<bool>(_isFavorite) ? Tween<double>(begin: 0.75, end: 1.0).animate(animation) : Tween<double>(begin: 1.0, end: 0.75).animate(animation),
+                  turns: child.key == const ValueKey<bool>(false) ? Tween<double>(begin: 0.75, end: 1.0).animate(animation) : Tween<double>(begin: 1.0, end: 0.75).animate(animation),
                   child: ScaleTransition(scale: animation, child: child),
                 );
               },
               child: _isFavorite
-                  ? Icon(Iconsax.archive_tick1, color: AppColors.pink500, size: 35.0, key: ValueKey<bool>(_isFavorite))
-                  : Icon(Iconsax.archive_add, size: 35.0, color: ServiceTheme.buildLightTheme().primaryColor, key: ValueKey<bool>(_isFavorite)),
+                  ? Icon(Iconsax.archive_tick1, color: AppColors.pink500, size: 25.0, key: ValueKey<bool>(_isFavorite))
+                  : Icon(Iconsax.archive_add, size: 25.0, color: ServiceTheme.buildLightTheme().primaryColor, key: ValueKey<bool>(_isFavorite)),
             ),
           ),
         ),

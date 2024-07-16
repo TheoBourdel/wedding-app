@@ -9,6 +9,7 @@ import 'package:client/model/service.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../model/category.dart';
 import '../../../repository/category_repository.dart';
+import '../widgets/list/my_service_list_view.dart';
 import '../widgets/services_theme.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -17,6 +18,7 @@ class MyFavoritePage extends StatefulWidget {
   const MyFavoritePage({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _MyFavoritePageState createState() => _MyFavoritePageState();
 }
 
@@ -75,7 +77,7 @@ class _MyFavoritePageState extends State<MyFavoritePage> with TickerProviderStat
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Mes Prestations",
+                      "Prestations Enregistrés",
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.w600,
@@ -146,14 +148,9 @@ class ServiceList extends StatelessWidget {
   final int? selectedCategoryId;
   final AnimationController? animationController;
 
-  const ServiceList({
-    super.key,
-    required this.searchQuery,
-    required this.selectedCategoryId,
-    this.animationController,
-  });
+  const ServiceList({super.key, required this.searchQuery, required this.selectedCategoryId, this.animationController});
 
-  Future<String> getUserRole(int userId) async {
+  Future<String> getUserRole(userId) async {
     final UserRepository userRepository = UserRepository();
     try {
       User user = await userRepository.getUser(userId);
@@ -169,19 +166,23 @@ class ServiceList extends StatelessWidget {
     final int userId = JwtDecoder.decode(token)['sub'];
     var role = await getUserRole(userId);
 
-    if (role == "marry") {
-      return ServiceRepository.getFavoritesServicesByUserId(userId).then((services) {
+    if(role == "marry") {
+      return ServiceRepository().getServices().then((services) {
         return services.where((service) {
-          bool categoryMatch = selectedCategoryId == null || service.CategoryID == selectedCategoryId;
-          bool nameMatch = searchQuery.isEmpty || service.name!.toLowerCase().contains(searchQuery.toLowerCase());
+          bool categoryMatch = selectedCategoryId == null ||
+              service.CategoryID == selectedCategoryId;
+          bool nameMatch = searchQuery.isEmpty ||
+              service.name!.toLowerCase().contains(searchQuery.toLowerCase());
           return categoryMatch && nameMatch;
         }).toList();
       });
-    } else if (role == "provider") {
+    }else if(role == "provider"){
       return ServiceRepository().getServicesByUserID(userId).then((services) {
         return services.where((service) {
-          bool categoryMatch = selectedCategoryId == null || service.CategoryID == selectedCategoryId;
-          bool nameMatch = searchQuery.isEmpty || service.name!.toLowerCase().contains(searchQuery.toLowerCase());
+          bool categoryMatch = selectedCategoryId == null ||
+              service.CategoryID == selectedCategoryId;
+          bool nameMatch = searchQuery.isEmpty ||
+              service.name!.toLowerCase().contains(searchQuery.toLowerCase());
           return categoryMatch && nameMatch;
         }).toList();
       });
@@ -192,11 +193,6 @@ class ServiceList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print("getService");
-    getServices().then((services) {
-      print(services);
-    });
-
     return FutureBuilder<List<Service>>(
       future: getServices(),
       builder: (context, snapshot) {
@@ -224,7 +220,7 @@ class ServiceList extends StatelessWidget {
                 animationController?.forward();
                 return FavoriteServiceListView(
                   callback: () {},
-                  services: [snapshot.data![index]], // Pass a single service as a list
+                  serviceData: snapshot.data![index],
                   animation: animation,
                   animationController: animationController!,
                 );
