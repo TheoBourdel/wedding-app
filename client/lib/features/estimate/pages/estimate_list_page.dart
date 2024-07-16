@@ -19,25 +19,6 @@ class EstimateListPage extends StatelessWidget {
       child: Scaffold(
         backgroundColor: Colors.grey[100],
         appBar: AppBar(
-          excludeHeaderSemantics: true,
-          bottom: const TabBar(
-            indicatorColor: AppColors.pink500,
-            labelColor: AppColors.pink500,
-            tabs: [
-              Tab(
-                text: "Demandes",
-              ),
-              Tab(
-                text: "En attente",
-              ),
-              Tab(
-                text: "Confirmés",
-              ),
-              Tab(
-                text: "Annulés",
-              ),
-            ],
-          ),
           title: const Column(
             children: [
               Row(
@@ -62,6 +43,24 @@ class EstimateListPage extends StatelessWidget {
                     ],
                   )
                 ],
+              ),
+            ],
+          ),
+          bottom: const TabBar(
+            indicatorColor: AppColors.pink500,
+            labelColor: AppColors.pink500,
+            tabs: [
+              Tab(
+                text: "Demandes",
+              ),
+              Tab(
+                text: "En attente",
+              ),
+              Tab(
+                text: "Confirmés",
+              ),
+              Tab(
+                text: "Annulés",
               ),
             ],
           ),

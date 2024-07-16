@@ -197,6 +197,43 @@ class ServiceList extends StatelessWidget {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           if (snapshot.hasData) {
+            if(snapshot.data!.isEmpty) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Image.asset(
+                      'assets/images/no-services.png',
+                      width: 350,
+                      height: 350,
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.all(16.0),
+                      child: Column(
+                        children: [
+                          Text(
+                            'Vous n\'avez pas encore de prestation',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          SizedBox(height: 6),
+                          Text(
+                            'Cliquez sur le bouton + pour ajouter une prestation',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 16,
+                            ),
+                          ),
+                        ],
+                      )
+                    ),
+                  ],
+                ),
+              );
+            }
             return ListView.builder(
               itemCount: snapshot.data!.length,
               padding: const EdgeInsets.only(top: 8),
