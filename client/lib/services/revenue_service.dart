@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:client/provider/token_utils.dart';
 import 'package:http/http.dart' as http;
 import 'package:client/core/constant/constant.dart';
 
@@ -6,7 +7,14 @@ class RevenueService {
   final String _baseUrl = apiUrl;
 
   Future<List<Map<String, dynamic>>> fetchMonthlyRevenueByYear(int year) async {
-    final response = await http.get(Uri.parse('$_baseUrl/monthly_revenue?year=$year'));
+    String? token = await TokenUtils.getToken();
+
+    final response = await http.get(
+        Uri.parse('$_baseUrl/monthly_revenue?year=$year'),
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
+    );
 
     if (response.statusCode == 200) {
       List<dynamic> jsonResponse = jsonDecode(response.body);

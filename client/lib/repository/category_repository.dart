@@ -1,6 +1,7 @@
 import 'package:client/core/constant/constant.dart';
 import 'package:client/dto/category_dto.dart';
 import 'package:client/model/category.dart';
+import 'package:client/provider/token_utils.dart';
 import 'package:http/http.dart';
 import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -9,10 +10,14 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 class CategoryRepository {
   final String _baseUrl = dotenv.env['API_URL']!;
 
-
   Future createCategory(CategoryDto category) async {
+    String? token = await TokenUtils.getToken();
+
     final res = await post(
       Uri.parse('$_baseUrl/addcategory'),
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
       body: json.encode(category),
     );
 
@@ -24,10 +29,15 @@ class CategoryRepository {
   }
 
   Future updateCategory(CategoryDto category) async {
+    String? token = await TokenUtils.getToken();
+
     final id = category.id;
     try{
       Response res = await patch(
         Uri.parse('$_baseUrl/category/$id'),
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
         body: json.encode(category),
       );
 
@@ -41,25 +51,13 @@ class CategoryRepository {
     }
   }
 
-
-  /*Future<Category> getUserCategory(int userId) async {
-    Response res = await get(
-      Uri.parse('$_baseUrl/usercategory/$userId'),
-    );
-
-    if (res.statusCode == 200) {
-      Map<String, dynamic> decodedBody = jsonDecode(res.body);
-      Category category = Category.fromJson(decodedBody);
-      return category;
-    } else {
-      throw Exception(res.body);
-    }
-  }*/
-
-
   Future<List<Category>> getCategorys() async {
+    String? token = await TokenUtils.getToken();
     Response res = await get(
       Uri.parse('$_baseUrl/categorys'),
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
     );
 
     if (res.statusCode == 200) {
@@ -73,8 +71,13 @@ class CategoryRepository {
   }
 
   Future deleteCategory(int id) async {
+    String? token = await TokenUtils.getToken();
+
     final res = await delete(
       Uri.parse('$_baseUrl/category/$id'),
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
     );
 
     if (res.statusCode == 200) {

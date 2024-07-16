@@ -5,6 +5,7 @@ import 'package:client/core/error/failure.dart';
 import 'package:client/dto/organizer_dto.dart';
 import 'package:client/model/user.dart';
 import 'package:client/model/wedding.dart';
+import 'package:client/provider/token_utils.dart';
 import 'package:http/http.dart';
 import 'package:client/dto/wedding_dto.dart';
 
@@ -12,9 +13,13 @@ class WeddingRepository {
   final String _baseUrl = apiUrl;
 
   Future<User> addOrganizer(OrganizerDto user, int weddingId) async {
+    String? token = await TokenUtils.getToken();
 
     Response res = await post(
       Uri.parse('$_baseUrl/wedding/$weddingId/organizer'),
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
       body: user.toJson(),
     );
 
@@ -27,7 +32,14 @@ class WeddingRepository {
 
   static Future<List<Wedding>> getUserWedding(int userId) async {
     try {
-      final response = await get(Uri.parse('$apiUrl/userwedding/$userId'));
+      String? token = await TokenUtils.getToken();
+
+      final response = await get(
+          Uri.parse('$apiUrl/userwedding/$userId'),
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+      );
       
       if (response.statusCode < 200 || response.statusCode >= 400) {
         throw ApiException(
@@ -43,10 +55,15 @@ class WeddingRepository {
   }
   
   static Future createWedding(WeddingDto wedding, int userId) async {
+    String? token = await TokenUtils.getToken();
+
     try {
       final response = await post(
         Uri.parse('$apiUrl/user/$userId/wedding'),
         body: wedding.toJson(),
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
       );
 
       if (response.statusCode < 200 || response.statusCode >= 400) {
@@ -62,10 +79,15 @@ class WeddingRepository {
   }
 
   static Future updateWedding(Wedding wedding) async {
+    String? token = await TokenUtils.getToken();
+
     try {
       final response = await patch(
         Uri.parse('$apiUrl/wedding/${wedding.id}'),
         body: wedding.toJson(),
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
       );
 
       if (response.statusCode < 200 || response.statusCode >= 400) {
@@ -81,8 +103,13 @@ class WeddingRepository {
   }
 
   Future<List<Wedding>> getWeddings() async {
+    String? token = await TokenUtils.getToken();
+
     Response res = await get(
       Uri.parse('$_baseUrl/weddings'),
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
     );
 
     if (res.statusCode == 200) {
@@ -96,8 +123,13 @@ class WeddingRepository {
   }
 
   Future deleteWedding(int weddingId) async {
+    String? token = await TokenUtils.getToken();
+
     final res = await delete(
       Uri.parse('$_baseUrl/wedding/$weddingId'),
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
     );
 
     if (res.statusCode == 200) {

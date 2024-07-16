@@ -30,14 +30,15 @@ func UserRoutes(router *gin.Engine) {
 
 	// Auth & Admin
 	router.GET("/users", middelware.RequireAuthAndAdmin, userControllerPort.GetUsers)
+	router.DELETE("/users/:id", middelware.RequireAuthAndAdmin, userControllerPort.DeleteUser)
+	router.PATCH("/user/:userId",middelware.RequireAuthAndAdmin,  userControllerPort.UpdateUser)
 
 	// Auth
+	router.GET("/user/:id/weddingId",middelware.RequireAuth, userControllerPort.GetWeddingIdByUserId)
+	
 	router.POST("/user", userControllerPort.CreateUser)
 	router.GET("/user/:id", userControllerPort.GetUser)
 	router.POST("/user/:id/estimate", userControllerPort.CreateUserEstimate)
 	router.GET("/user/:id/estimates", userControllerPort.GetUserEstimates)
 	router.PUT("/user/:id/token", userControllerPort.UpdateUserFirebaseToken)
-	router.GET("/user/:id/weddingId", userControllerPort.GetWeddingIdByUserId)
-	router.PATCH("/user/:userId", userControllerPort.UpdateUser)
-	router.DELETE("/users/:id", userControllerPort.DeleteUser)
 }

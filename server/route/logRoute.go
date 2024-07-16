@@ -6,6 +6,7 @@ import (
 	"api/repository"
 	"api/service"
 	"github.com/gin-gonic/gin"
+	"api/middelware"
 )
 
 func LogRoutes(router *gin.Engine) {
@@ -13,6 +14,6 @@ func LogRoutes(router *gin.Engine) {
 	logService := service.NewLogService(logRepo)
 	logController := controller.NewLogController(logService)
 
-	router.GET("/logs", logController.GetAllLogs)
-	router.POST("/logs", logController.CreateLog)
+	router.GET("/logs", middelware.RequireAuth, logController.GetAllLogs)
+	router.POST("/logs", middelware.RequireAuth,logController.CreateLog)
 }

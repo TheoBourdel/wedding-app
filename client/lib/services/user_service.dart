@@ -28,7 +28,13 @@ class UserService {
   }
 
   Future<void> deleteUser(int id) async {
-    final response = await http.delete(Uri.parse('$_baseUrl/users/$id'));
+    String? token = await TokenUtils.getToken();
+    final response = await http.delete(
+        Uri.parse('$_baseUrl/users/$id'),
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+    );
 
     if (response.statusCode != 200) {
       throw Exception('Failed to delete user: ${response.body}');
@@ -36,7 +42,13 @@ class UserService {
   }
   Future<int> getWeddingIdByUserId(int userId) async {
     final url = '$_baseUrl/userwedding/$userId';
-    final response = await http.get(Uri.parse(url));
+    String? token = await TokenUtils.getToken();
+    final response = await http.get(
+        Uri.parse(url),
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+    );
 
     if (response.statusCode == 200) {
       final jsonResponse = jsonDecode(response.body);
@@ -46,10 +58,12 @@ class UserService {
     }
   }
   Future<User> createUser(String firstName, String lastName, String email, String role) async {
+    String? token = await TokenUtils.getToken();
     final response = await http.post(
       Uri.parse('$apiUrl/user'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer $token',
       },
       body: jsonEncode(<String, String>{
         'firstname': firstName,

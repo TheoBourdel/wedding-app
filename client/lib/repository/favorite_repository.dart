@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:client/core/constant/constant.dart';
 import 'package:client/model/favorite.dart';
+import 'package:client/provider/token_utils.dart';
 import 'package:http/http.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
@@ -9,8 +10,13 @@ class FavoriteRepository {
   final String _baseUrl = apiUrl;
 
   Future createFavorite(Favorite favorite) async {
+    String? token = await TokenUtils.getToken();
+
     final res = await post(
       Uri.parse('$_baseUrl/addFavorite'),
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
       body: json.encode(favorite),
     );
 
@@ -22,8 +28,13 @@ class FavoriteRepository {
   }
 
   Future<List<Favorite>> getFavoritesByUserID(int userId) async {
+    String? token = await TokenUtils.getToken();
+
     final res = await http.get(
       Uri.parse('$_baseUrl/user/$userId/favorites'),
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
     );
 
     if (res.statusCode == 200) {
@@ -35,10 +46,14 @@ class FavoriteRepository {
     }
   }
 
-
   Future<List<Favorite>> getFavorites() async {
+    String? token = await TokenUtils.getToken();
+
     Response res = await get(
       Uri.parse('$_baseUrl/favorites'),
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
     );
 
     if (res.statusCode == 200) {
@@ -52,8 +67,13 @@ class FavoriteRepository {
   }
 
   Future deleteFavorite(int id) async {
+    String? token = await TokenUtils.getToken();
+
     final res = await delete(
       Uri.parse('$_baseUrl/favorite/$id'),
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
     );
 
     if (res.statusCode == 204) {
@@ -64,8 +84,13 @@ class FavoriteRepository {
   }
 
   static Future<List<Favorite>> getFavoritesByUserId(int userId) async {
+    String? token = await TokenUtils.getToken();
+
     Response res = await get(
       Uri.parse('$apiUrl/user/$userId/favorites'),
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
     );
 
     if (res.statusCode == 200) {

@@ -5,6 +5,8 @@ import (
 	"api/service"
 	"api/config"
 	"github.com/gin-gonic/gin"
+	"api/middelware"
+
 )
 
 func HistoryRoutes(router *gin.Engine) {
@@ -13,5 +15,5 @@ func HistoryRoutes(router *gin.Engine) {
 		HistoryService: historyService,
 	}
 
-	router.GET("/weddingsByYear", historyController.GetWeddingsByYear)
+	router.GET("/weddingsByYear",middelware.RequireAuth, historyController.GetWeddingsByYear)
 }

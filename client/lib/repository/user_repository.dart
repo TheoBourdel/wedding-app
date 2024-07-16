@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:client/core/constant/constant.dart';
+import 'package:client/provider/token_utils.dart';
 import 'package:http/http.dart';
 import '../model/user.dart';
 
@@ -36,9 +37,14 @@ class UserRepository {
   }
 
   Future updateUser(User user) async {
+    String? token = await TokenUtils.getToken();
+
     try {
       Response res = await patch(
         Uri.parse('$_baseUrl/user/${user.id}'),
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
         body: user.toJson(),
       );
 

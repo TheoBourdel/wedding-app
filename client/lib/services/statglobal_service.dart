@@ -1,3 +1,4 @@
+import 'package:client/provider/token_utils.dart';
 import 'package:http/http.dart' as http;
 import 'package:client/core/constant/constant.dart';
 
@@ -5,7 +6,14 @@ class StatglobalService {
   final String _baseUrl = apiUrl;
 
   Future<int> fetchTotalProviders() async {
-    final response = await http.get(Uri.parse('$_baseUrl/total_providers'));
+    String? token = await TokenUtils.getToken();
+
+    final response = await http.get(
+        Uri.parse('$_baseUrl/total_providers'),
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+    );
 
     if (response.statusCode == 200) {
       return int.parse(response.body);
@@ -15,7 +23,13 @@ class StatglobalService {
   }
 
   Future<int> fetchTotalWeddings() async {
-    final response = await http.get(Uri.parse('$_baseUrl/total_weddings'));
+    String? token = await TokenUtils.getToken();
+    final response = await http.get(
+        Uri.parse('$_baseUrl/total_weddings'),
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+    );
 
     if (response.statusCode == 200) {
       return int.parse(response.body);
@@ -25,7 +39,13 @@ class StatglobalService {
   }
 
   Future<int> fetchTotalGuests() async {
-    final response = await http.get(Uri.parse('$_baseUrl/total_guests'));
+    String? token = await TokenUtils.getToken();
+    final response = await http.get(
+        Uri.parse('$_baseUrl/total_guests'),
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+    );
 
     if (response.statusCode == 200) {
       return int.parse(response.body);
@@ -35,7 +55,14 @@ class StatglobalService {
   }
 
   Future<double> fetchAverageBudget() async {
-    final response = await http.get(Uri.parse('$_baseUrl/average_budget'));
+    String? token = await TokenUtils.getToken();
+
+    final response = await http.get(
+        Uri.parse('$_baseUrl/average_budget'),
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+    );
 
     if (response.statusCode == 200) {
       return double.parse(response.body);
