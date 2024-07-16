@@ -17,7 +17,6 @@ class MyFavoritePage extends StatefulWidget {
   const MyFavoritePage({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
   _MyFavoritePageState createState() => _MyFavoritePageState();
 }
 
@@ -27,9 +26,6 @@ class _MyFavoritePageState extends State<MyFavoritePage> with TickerProviderStat
   List<Category> categories = [];
   int? selectedCategoryId;
   late Future<String> role;
-  bool _isImagesLoaded = false;
-  bool _isFavorite = false;
-  int? _favoriteId;
 
   @override
   void initState() {
@@ -150,9 +146,14 @@ class ServiceList extends StatelessWidget {
   final int? selectedCategoryId;
   final AnimationController? animationController;
 
-  const ServiceList({super.key, required this.searchQuery, required this.selectedCategoryId, this.animationController});
+  const ServiceList({
+    super.key,
+    required this.searchQuery,
+    required this.selectedCategoryId,
+    this.animationController,
+  });
 
-  Future<String> getUserRole(userId) async {
+  Future<String> getUserRole(int userId) async {
     final UserRepository userRepository = UserRepository();
     try {
       User user = await userRepository.getUser(userId);
@@ -168,23 +169,19 @@ class ServiceList extends StatelessWidget {
     final int userId = JwtDecoder.decode(token)['sub'];
     var role = await getUserRole(userId);
 
-    if(role == "marry") {
+    if (role == "marry") {
       return ServiceRepository.getFavoritesServicesByUserId(userId).then((services) {
         return services.where((service) {
-          bool categoryMatch = selectedCategoryId == null ||
-              service.CategoryID == selectedCategoryId;
-          bool nameMatch = searchQuery.isEmpty ||
-              service.name!.toLowerCase().contains(searchQuery.toLowerCase());
+          bool categoryMatch = selectedCategoryId == null || service.CategoryID == selectedCategoryId;
+          bool nameMatch = searchQuery.isEmpty || service.name!.toLowerCase().contains(searchQuery.toLowerCase());
           return categoryMatch && nameMatch;
         }).toList();
       });
-    }else if(role == "provider"){
+    } else if (role == "provider") {
       return ServiceRepository().getServicesByUserID(userId).then((services) {
         return services.where((service) {
-          bool categoryMatch = selectedCategoryId == null ||
-              service.CategoryID == selectedCategoryId;
-          bool nameMatch = searchQuery.isEmpty ||
-              service.name!.toLowerCase().contains(searchQuery.toLowerCase());
+          bool categoryMatch = selectedCategoryId == null || service.CategoryID == selectedCategoryId;
+          bool nameMatch = searchQuery.isEmpty || service.name!.toLowerCase().contains(searchQuery.toLowerCase());
           return categoryMatch && nameMatch;
         }).toList();
       });
@@ -195,6 +192,11 @@ class ServiceList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print("getService");
+    getServices().then((services) {
+      print(services);
+    });
+
     return FutureBuilder<List<Service>>(
       future: getServices(),
       builder: (context, snapshot) {
@@ -222,7 +224,7 @@ class ServiceList extends StatelessWidget {
                 animationController?.forward();
                 return FavoriteServiceListView(
                   callback: () {},
-                  serviceData: snapshot.data![index],
+                  services: [snapshot.data![index]], // Pass a single service as a list
                   animation: animation,
                   animationController: animationController!,
                 );
