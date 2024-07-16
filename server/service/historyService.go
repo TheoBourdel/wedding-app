@@ -27,7 +27,7 @@ func (s *HistoryService) WeddingsByYear(year int) ([]WeddingDetail, error) {
 		Where("EXTRACT(YEAR FROM created_at) = ?", year).
 		Scan(&weddings).Error
     if err != nil {
-    		log.Printf("Error fetching weddings: %v", err) // Ajoutez cette ligne pour logguer l'erreur
+    		log.Printf("Error fetching weddings: %v", err)
     		return nil, err
     }
 

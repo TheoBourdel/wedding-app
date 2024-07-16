@@ -6,7 +6,7 @@ class Button extends StatelessWidget {
   final String text;
   final bool isOutlined;
   
-  const Button({super.key, this.onPressed, required this.text, this.isOutlined = false});
+  const Button({super.key, this.onPressed, required this.text, this.isOutlined = false, MaterialColor? color});
 
   @override
   Widget build(BuildContext context) {
