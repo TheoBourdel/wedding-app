@@ -4,14 +4,18 @@ import (
 	"api/dto"
 	"api/model"
 	"api/repository"
+	"api/utils"
 	"fmt"
 	"strconv"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 type UserService struct {
 	UserRepository     repository.UserRepository
 	EstimateRepository repository.EstimateRepository
 	ServiceRepository  repository.ServiceRepository
+	PasswordGenerator  utils.PasswordGenerator
 }
 
 func (us *UserService) FindAll(page int, pageSize int, query string) []model.User {
@@ -97,9 +101,23 @@ func (us *UserService) GetUserEstimates(userId int) ([]model.Estimate, dto.HttpE
 }
 
 func (us *UserService) CreateUser(user model.User) (model.User, dto.HttpErrorDto) {
-	user, error := us.UserRepository.Create(user)
-	if error != (dto.HttpErrorDto{}) {
-		return model.User{}, error
+
+	password := us.PasswordGenerator.GenerateRandomPassword(bcrypt.DefaultCost)
+	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		return model.User{}, dto.HttpErrorDto{Message: "Error while hashing password", Code: 500}
+	}
+
+	_, err = us.UserRepository.FindOneBy("email", user.Email)
+	if err == (dto.HttpErrorDto{}) {
+		return model.User{}, dto.HttpErrorDto{Message: "L'email est déjà utilisé", Code: 400}
+	}
+
+	user.Password = string(hash)
+
+	user, err = us.UserRepository.Create(user)
+	if err != (dto.HttpErrorDto{}) {
+		return model.User{}, dto.HttpErrorDto{Message: "Error while creating user", Code: 500}
 	}
 
 	return user, dto.HttpErrorDto{}
@@ -131,7 +149,6 @@ func (us *UserService) UpdateUserFirebaseToken(userID uint, newToken string) (mo
 	return user, dto.HttpErrorDto{}
 }
 
-
 func NewUserService(userRepo repository.UserRepository) *UserService {
 	return &UserService{
 		UserRepository: userRepo,
@@ -146,4 +163,3 @@ func (us *UserService) UpdateUser(user model.User) (model.User, dto.HttpErrorDto
 
 	return user, dto.HttpErrorDto{}
 }
-

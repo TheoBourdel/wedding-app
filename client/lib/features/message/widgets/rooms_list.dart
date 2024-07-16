@@ -42,6 +42,44 @@ class RoomsView extends StatelessWidget {
                 if (state is RoomInitial) {
                   return const Center(child: CircularProgressIndicator());
                 } else if (state is RoomsLoaded) {
+                  if(state.rooms.length == 0) {
+                    return Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Image.asset(
+                            'assets/images/no-messages.png',
+                            width: 350,
+                            height: 350,
+                          ),
+                          const Padding(
+                            padding: EdgeInsets.all(16.0),
+                            child: Column(
+                              children: [
+                                Text(
+                                  'Vous n\'avez pas encore de messages',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                SizedBox(height: 6),
+                                Text(
+                                  'Vous aurez toutes vos conversations ici',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                  ),
+                                ),
+                              ],
+                            )
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+
                   return ListView.separated(
                     itemCount: state.rooms.length,
                     itemBuilder: (context, index) {

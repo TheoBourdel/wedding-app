@@ -25,112 +25,106 @@ AnimatedPadding buildServiceDetails(service, Color defaultColor,
               width: size.width,
               height: extendDetails ? size.height * 0.53 : size.height * 0.48,
               child: Padding(
-                padding: EdgeInsets.only(
-                  top: size.height * 0.02,
-                  left: size.width * 0.06,
-                  right: size.width * 0.08,
+                padding: EdgeInsets.symmetric(
+                  horizontal: size.width * 0.05,
+                  vertical: size.height * 0.02,
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            SizedBox(
-                              width: size.width * 0.65,
-                              child: FittedBox(
-                                fit: BoxFit.scaleDown,
-                                alignment: Alignment.centerLeft,
-                                child: Row(
-                                  children: [
-                                    Text(
-                                      service?.name,
-                                      maxLines: 1,
-                                      style: GoogleFonts.lato(
-                                        color: defaultColor,
-                                        fontSize: size.height * 0.035,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                    const SizedBox(width: 10),
-                                    // Container(
-                                    //   color: AppColors.pink500,
-                                    //   child: Padding(
-                                    //     padding: EdgeInsets.symmetric(
-                                    //       vertical: size.height * 0.005,
-                                    //       horizontal: size.width * 0.04,
-                                    //     ),
-                                    //     child: Text('service?.category.name')
-                                    //   ),
-                                    // )
-                                  ],
-                                )
-                              ),
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Icon(
-                                  Iconsax.location,
-                                  color: Colors.grey,
-                                  size: size.height * 0.02,
-                                ),
-                                const SizedBox(width: 10),
-                                Text(
-                                  service?.localisation,
-                                  style: const TextStyle(
-                                    fontSize: 14,
-                                    color: Colors.grey,
-                                  ),
-                                ),
-                                const SizedBox(width: 20),
-                                Icon(
-                                  Iconsax.sms,
-                                  color: Colors.grey,
-                                  size: size.height * 0.02,
-                                ),
-                                const SizedBox(width: 10),
-                                Text(
-                                  service?.mail,
-                                  style: const TextStyle(
-                                    fontSize: 14,
-                                    color: Colors.grey,
-                                  ),
-                                )
-                              ],
-                            ),
-                            const SizedBox(height: 20),
-                          ],
+                        Text(
+                          service?.name,
+                          maxLines: 1,
+                          style: GoogleFonts.lato(
+                            color: defaultColor,
+                            fontSize: size.height * 0.035,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const Spacer(),
+                        Text(
+                          '€${service!.price}',
+                          style: TextStyle(
+                            color: AppColors.pink500,
+                            fontSize: size.height * 0.035,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        )
+                      ],
+                    ),
+                    const SizedBox(height: 5),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Icon(
+                          Iconsax.location,
+                          color: Colors.grey,
+                          size: size.height * 0.02,
+                        ),
+                        const SizedBox(width: 5),
+                        Text(
+                          service?.localisation,
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: Colors.grey,
+                          ),
                         ),
                       ],
                     ),
-                    SizedBox(
-                      width: size.width * 0.8,
-                      height: extendDetails ? size.height * 0.4 : size.height * 0.35,
-                      child: SingleChildScrollView(
-                        padding: EdgeInsets.zero,
-                        child: Text(
-                          service?.description,
-                          style: GoogleFonts.poppins(
-                            color: Colors.grey[600],
-                            fontSize: size.height * 0.018,
-                            fontWeight: FontWeight.w400,
+                    const SizedBox(height: 5),
+                    Row(
+                      children: [
+                        Icon(
+                          Iconsax.call,
+                          color: Colors.grey,
+                          size: size.height * 0.02,
+                        ),
+                        const SizedBox(width: 5),
+                        Text(
+                          service?.phone,
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: Colors.grey,
                           ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 5),
+                    Row(
+                      children: [
+                        Icon(
+                          Iconsax.sms,
+                          color: Colors.grey,
+                          size: size.height * 0.02,
+                        ),
+                        const SizedBox(width: 5),
+                        Text(
+                          service?.mail,
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: Colors.grey,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                    SingleChildScrollView(
+                      padding: EdgeInsets.zero,
+                      child: Text(
+                        service!.description.toString(),
+                        style: TextStyle(
+                          color: Colors.grey[600],
+                          fontSize: size.height * 0.018,
+                          fontWeight: FontWeight.w400,
                         ),
                       ),
                     ),
                   ],
-                ),
+                ),        
               ),
             ),
-          ),
-          Divider(
-            color: defaultColor,
-            height: size.height * 0.01,
           ),
           SingleServiceDetailsBottom(
             price: service.price,

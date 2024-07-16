@@ -78,3 +78,7 @@ func (ws *FavoriteService) FindByUserID(userID uint64) ([]model.Favorite, error)
 	}
 	return favorites, nil
 }
+
+func (svc *FavoriteService) GetFavoriteServicesByUserId(userId int) ([]model.Service, error) {
+    return svc.FavoriteRepository.GetFavoriteServicesByUserId(userId)
+}

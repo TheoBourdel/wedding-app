@@ -1,28 +1,26 @@
 import 'dart:async';
+import 'package:client/features/service/widgets/list/favorite_service_list_view.dart';
 import 'package:client/features/service/widgets/service_form.dart';
 import 'package:client/model/user.dart';
 import 'package:client/repository/user_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:client/repository/service_repository.dart';
 import 'package:client/model/service.dart';
-import 'package:iconsax/iconsax.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../model/category.dart';
 import '../../../repository/category_repository.dart';
-import '../widgets/list/services_list_view.dart';
 import '../widgets/services_theme.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class ServicesScreen extends StatefulWidget {
-  const ServicesScreen({super.key});
+class MyFavoritePage extends StatefulWidget {
+  const MyFavoritePage({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
-  _ServicesScreenState createState() => _ServicesScreenState();
+  _MyFavoritePageState createState() => _MyFavoritePageState();
 }
 
-class _ServicesScreenState extends State<ServicesScreen> with TickerProviderStateMixin {
+class _MyFavoritePageState extends State<MyFavoritePage> with TickerProviderStateMixin {
   AnimationController? animationController;
   TextEditingController searchController = TextEditingController();
   List<Category> categories = [];
@@ -62,72 +60,6 @@ class _ServicesScreenState extends State<ServicesScreen> with TickerProviderStat
     super.dispose();
   }
 
-  Widget buildSearchBar(Function(String) onSearchChanged) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 10),
-      child: TextField(
-        controller: searchController,
-        decoration: InputDecoration(
-          labelText: 'Rechercher',
-          hintText: 'Entrez un nom',
-          prefixIcon: const Icon(Iconsax.search_normal_1),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: const BorderRadius.all(Radius.circular(20.0)),
-            borderSide: BorderSide(
-              color: Colors.grey[500]!,
-            ),
-          ),
-          focusedBorder: const OutlineInputBorder(
-            borderRadius: BorderRadius.all(Radius.circular(20.0)),
-            borderSide: BorderSide(
-              color: AppColors.pink500,
-            ),
-          ),
-        ),
-        onChanged: onSearchChanged,
-      ),
-    );
-  }
-
-  Widget buildCategorySelector(Function(int?) onCategoryChanged) {
-  return Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 20),
-    child: SizedBox(
-      height: 60,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        itemCount: categories.length,
-        itemBuilder: (context, index) {
-          return Padding(
-            padding: const EdgeInsets.only(right: 10),
-            child: ChoiceChip(
-              label: Text(categories[index].name),
-              backgroundColor: Colors.grey[100]!,
-              selectedColor: AppColors.pink500,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15),
-              ),
-              side: BorderSide(
-                color: selectedCategoryId == categories[index].id
-                  ? AppColors.pink500
-                  : Colors.grey[500]!,
-              ),
-              selected: selectedCategoryId == categories[index].id,
-              onSelected: (bool selected) {
-                setState(() {
-                  selectedCategoryId = selected ? categories[index].id : null;
-                });
-                onCategoryChanged(selected ? categories[index].id : null);
-              },
-            ),
-          );
-        },
-      ),
-    ),
-  );
-}
-
-
   @override
   Widget build(BuildContext context) {
     return Theme(
@@ -143,7 +75,7 @@ class _ServicesScreenState extends State<ServicesScreen> with TickerProviderStat
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Prestations",
+                      "Mes Prestations",
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.w600,
@@ -170,11 +102,6 @@ class _ServicesScreenState extends State<ServicesScreen> with TickerProviderStat
         ),
         body: Column(
           children: [
-            buildSearchBar((query) => setState(() {})),
-            buildCategorySelector((categoryId) {
-              selectedCategoryId = categoryId;
-              setState(() {});
-            }),
             Expanded(
               child: ServiceList(
                 searchQuery: searchController.text,
@@ -184,7 +111,7 @@ class _ServicesScreenState extends State<ServicesScreen> with TickerProviderStat
             ),
           ],
         ),
-        /*floatingActionButton: FutureBuilder<String>(
+        floatingActionButton: FutureBuilder<String>(
           future: role,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
@@ -208,7 +135,7 @@ class _ServicesScreenState extends State<ServicesScreen> with TickerProviderStat
             }
           },
         ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,*/
+        floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
       ),
     );
   }
@@ -219,9 +146,14 @@ class ServiceList extends StatelessWidget {
   final int? selectedCategoryId;
   final AnimationController? animationController;
 
-  const ServiceList({super.key, required this.searchQuery, required this.selectedCategoryId, this.animationController});
+  const ServiceList({
+    super.key,
+    required this.searchQuery,
+    required this.selectedCategoryId,
+    this.animationController,
+  });
 
-  Future<String> getUserRole(userId) async {
+  Future<String> getUserRole(int userId) async {
     final UserRepository userRepository = UserRepository();
     try {
       User user = await userRepository.getUser(userId);
@@ -237,23 +169,19 @@ class ServiceList extends StatelessWidget {
     final int userId = JwtDecoder.decode(token)['sub'];
     var role = await getUserRole(userId);
 
-    if(role == "marry") {
-      return ServiceRepository().getServices().then((services) {
+    if (role == "marry") {
+      return ServiceRepository.getFavoritesServicesByUserId(userId).then((services) {
         return services.where((service) {
-          bool categoryMatch = selectedCategoryId == null ||
-              service.CategoryID == selectedCategoryId;
-          bool nameMatch = searchQuery.isEmpty ||
-              service.name!.toLowerCase().contains(searchQuery.toLowerCase());
+          bool categoryMatch = selectedCategoryId == null || service.CategoryID == selectedCategoryId;
+          bool nameMatch = searchQuery.isEmpty || service.name!.toLowerCase().contains(searchQuery.toLowerCase());
           return categoryMatch && nameMatch;
         }).toList();
       });
-    }else if(role == "provider"){
+    } else if (role == "provider") {
       return ServiceRepository().getServicesByUserID(userId).then((services) {
         return services.where((service) {
-          bool categoryMatch = selectedCategoryId == null ||
-              service.CategoryID == selectedCategoryId;
-          bool nameMatch = searchQuery.isEmpty ||
-              service.name!.toLowerCase().contains(searchQuery.toLowerCase());
+          bool categoryMatch = selectedCategoryId == null || service.CategoryID == selectedCategoryId;
+          bool nameMatch = searchQuery.isEmpty || service.name!.toLowerCase().contains(searchQuery.toLowerCase());
           return categoryMatch && nameMatch;
         }).toList();
       });
@@ -264,6 +192,11 @@ class ServiceList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print("getService");
+    getServices().then((services) {
+      print(services);
+    });
+
     return FutureBuilder<List<Service>>(
       future: getServices(),
       builder: (context, snapshot) {
@@ -289,9 +222,9 @@ class ServiceList extends StatelessWidget {
                   ),
                 );
                 animationController?.forward();
-                return ServiceListView(
+                return FavoriteServiceListView(
                   callback: () {},
-                  serviceData: snapshot.data![index],
+                  services: [snapshot.data![index]], // Pass a single service as a list
                   animation: animation,
                   animationController: animationController!,
                 );

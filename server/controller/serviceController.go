@@ -214,11 +214,6 @@ func (wc *ServiceController) GetServicesByUserID(ctx *gin.Context) {
 		return
 	}
 
-	if len(services) == 0 {
-		ctx.JSON(http.StatusNotFound, gin.H{"error": "No services found for this user"})
-		return
-	}
-
 	ctx.JSON(http.StatusOK, services)
 }
 
