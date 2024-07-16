@@ -1,14 +1,19 @@
 import 'package:client/core/constant/constant.dart';
 import 'package:client/dto/create_estimate_dto.dart';
 import 'package:client/model/estimate.dart';
+import 'package:client/provider/token_utils.dart';
 import 'package:http/http.dart';
 import 'dart:convert';
 
 class EstimateRepository {
 
   static Future<Estimate> createEstimate(int userId, CreateEstimateDto estimateDto) async {
+    String? token = await TokenUtils.getToken();
     Response res = await post(
       Uri.parse('$apiUrl/user/$userId/estimate'),
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
       body: estimateDto.toJson(),
     );
 
@@ -20,8 +25,13 @@ class EstimateRepository {
   }
 
   static Future<List<Estimate>> getEstimates(int clientId) async {
+    String? token = await TokenUtils.getToken();
+
     Response res = await get(
       Uri.parse('$apiUrl/user/$clientId/estimates'),
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
     );
 
     if(res.statusCode == 200) {
@@ -37,12 +47,14 @@ class EstimateRepository {
     int estimateId = estimate.id;
     Map<String, dynamic> estimateJson = estimate.toJson();
     estimateJson.remove('Service');
-    
+    String? token = await TokenUtils.getToken();
+
     Response res = await patch(
       Uri.parse('$apiUrl/user/$userId/estimate/$estimateId'),
       body: jsonEncode(estimateJson),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer $token',
       },
     );
 
@@ -54,8 +66,13 @@ class EstimateRepository {
   }
 
   static Future<void> deleteEstimate(int userId, int estimateId) async {
+    String? token = await TokenUtils.getToken();
+
     Response res = await delete(
       Uri.parse('$apiUrl/user/$userId/estimate/$estimateId'),
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
     );
 
     if(res.statusCode != 204) {
@@ -64,10 +81,13 @@ class EstimateRepository {
   }
 
   static Future<void> payEstimate(int estimateId, String nonce) async {
+    String? token = await TokenUtils.getToken();
+
     final res = await post(
       Uri.parse('$apiUrl/pay'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer $token',
       },
       body: jsonEncode(<String, dynamic>{
         'estimate_id': estimateId,

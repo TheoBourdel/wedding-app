@@ -6,6 +6,7 @@ import 'package:client/model/message.dart';
 import 'package:client/model/room.dart';
 import 'package:client/model/room_with_users.dart';
 import 'package:client/model/user.dart';
+import 'package:client/provider/token_utils.dart';
 import 'package:http/http.dart' as http;
 // ignore: depend_on_referenced_packages
 import 'package:web_socket_channel/web_socket_channel.dart';
@@ -18,6 +19,8 @@ class RoomRepository {
   Stream<Message> get messageStream => _messageController.stream;
 
   Future<Room> createRoom(RoomDto roomDto, int userId, int otherUser) async {
+    String? token = await TokenUtils.getToken();
+
     roomDto = RoomDto(
       id: roomDto.id,
       name: roomDto.name,
@@ -26,7 +29,11 @@ class RoomRepository {
 
     final res = await http.post(
       Uri.parse('$_baseUrl/ws/createRoom'),
-      headers: {'Content-Type': 'application/json'},
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+
+      },
       body: json.encode(roomDto.toJson()),
     );
 
@@ -65,10 +72,14 @@ class RoomRepository {
   }
 
   Future<List<RoomWithUsers>> fetchRooms(int userId) async {
+    String? token = await TokenUtils.getToken();
 
-    print(_baseUrl);
-
-    final response = await http.get(Uri.parse('$_baseUrl/ws/users/$userId/rooms'));
+    final response = await http.get(
+        Uri.parse('$_baseUrl/ws/users/$userId/rooms'),
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+    );
     if (response.statusCode == 200) {
       if (response.body == "null") {
         return [];
@@ -82,6 +93,8 @@ class RoomRepository {
   }
 
   Future<String?> checkExistingRoom(int userId, int otherUserId) async {
+    String? token = await TokenUtils.getToken();
+
     final request = {
       "user1_id": userId,
       "user2_id": otherUserId
@@ -91,6 +104,8 @@ class RoomRepository {
       Uri.parse('$_baseUrl/ws/check-room-exists'),
       headers: {
         "Content-Type": "application/json",
+        'Authorization': 'Bearer $token',
+
       },
       body: json.encode(request),
     );

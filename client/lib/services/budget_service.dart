@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:client/core/constant/constant.dart';
+import 'package:client/provider/token_utils.dart';
 import 'package:http/http.dart' as http;
 import 'package:client/model/budget_model.dart';
 
@@ -11,10 +12,13 @@ class BudgetService {
       'wedding_id': weddingId,
       'category_budgets': categoryBudgets,
     });
-    print('Sending data to server: $body');
+    String? token = await TokenUtils.getToken();
     final response = await http.post(
       Uri.parse(url),
-      headers: {"Content-Type": "application/json"},
+      headers: {
+        "Content-Type": "application/json",
+        'Authorization': 'Bearer $token',
+      },
       body: body,
     );
 
@@ -24,7 +28,13 @@ class BudgetService {
   }
 
   Future<List<WeddingBudget>> getBudgets(int weddingId) async {
-    final response = await http.get(Uri.parse('$apiUrl/weddings/$weddingId/budgets'));
+    String? token = await TokenUtils.getToken();
+    final response = await http.get(
+        Uri.parse('$apiUrl/weddings/$weddingId/budgets'),
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+    );
 
     if (response.statusCode == 200) {
       List jsonResponse = jsonDecode(response.body) as List;
@@ -35,10 +45,13 @@ class BudgetService {
   }
 
   Future<WeddingBudget> createBudget(WeddingBudget budget) async {
-
+    String? token = await TokenUtils.getToken();
     final response = await http.post(
       Uri.parse('$apiUrl/budgets'),
-      headers: {"Content-Type": "application/json"},
+      headers: {
+        "Content-Type": "application/json",
+        'Authorization': 'Bearer $token',
+      },
       body: jsonEncode(budget.toJson()),
     );
 
@@ -52,12 +65,14 @@ class BudgetService {
   Future<void> updateBudget(WeddingBudget budget) async {
     final url = '$apiUrl/budgets/${budget.id}';
     final body = jsonEncode(budget);
-
-    print('Sending data to server: $body');
+    String? token = await TokenUtils.getToken();
 
     final response = await http.put(
       Uri.parse(url),
-      headers: {"Content-Type": "application/json"},
+      headers: {
+        "Content-Type": "application/json",
+        'Authorization': 'Bearer $token',
+      },
       body: body,
     );
 
@@ -67,7 +82,13 @@ class BudgetService {
   }
 
   Future<void> deleteBudget(int id) async {
-    final response = await http.delete(Uri.parse('$apiUrl/budgets/$id'));
+    String? token = await TokenUtils.getToken();
+    final response = await http.delete(
+        Uri.parse('$apiUrl/budgets/$id'),
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+    );
 
     if (response.statusCode != 204) {
       throw Exception('Failed to delete budget: ${response.body}');
@@ -75,7 +96,13 @@ class BudgetService {
   }
 
   Future<double> getTotalBudget(int weddingId) async {
-    final response = await http.get(Uri.parse('$apiUrl/weddings/$weddingId/total_budget'));
+    String? token = await TokenUtils.getToken();
+    final response = await http.get(
+        Uri.parse('$apiUrl/weddings/$weddingId/total_budget'),
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+    );
 
     if (response.statusCode == 200) {
       final jsonResponse = jsonDecode(response.body);

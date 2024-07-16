@@ -2,13 +2,19 @@ import 'dart:convert';
 
 import 'package:client/dto/organizer_dto.dart';
 import 'package:client/model/user.dart';
+import 'package:client/provider/token_utils.dart';
 import 'package:http/http.dart';
 import 'package:client/core/constant/constant.dart';
 
 class OrganizerRepository {
   static Future<List<User>> getOrganizers(int weddingId) async {
+    String? token = await TokenUtils.getToken();
+
     Response res = await get(
       Uri.parse('$apiUrl/wedding/$weddingId/organizers'),
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
     );
 
     if(res.statusCode == 200) {
@@ -21,10 +27,14 @@ class OrganizerRepository {
   }
 
   static Future<User> addOrganizer(OrganizerDto user, int weddingId) async {
+    String? token = await TokenUtils.getToken();
 
     Response res = await post(
       Uri.parse('$apiUrl/wedding/$weddingId/organizer'),
       body: user.toJson(),
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
     );
 
     if (res.statusCode == 200) {
@@ -35,8 +45,13 @@ class OrganizerRepository {
   }
 
   static Future<void> deleteOrganizer(int weddingId, int userId) async {
+    String? token = await TokenUtils.getToken();
+
     Response res = await delete(
       Uri.parse('$apiUrl/wedding/$weddingId/organizer/$userId'),
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
     );
     
     if(res.statusCode != 204) {
