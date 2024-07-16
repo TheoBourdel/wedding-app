@@ -62,8 +62,6 @@ class _DetailsPageState extends State<DetailsPage> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final String token = prefs.getString('token')!;
     final Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
-    print("le rolee");
-    print(decodedToken["role"]);
     return decodedToken['role'] ?? 'unknown';
   }
 
@@ -71,8 +69,6 @@ class _DetailsPageState extends State<DetailsPage> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final String token = prefs.getString('token')!;
     final Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
-    print("le suub");
-    print(decodedToken["sub"]);
     return decodedToken['sub'] ?? 'unknown';
   }
 
