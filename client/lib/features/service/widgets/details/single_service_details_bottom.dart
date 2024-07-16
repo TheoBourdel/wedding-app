@@ -44,6 +44,8 @@ class _SingleServiceDetailsBottomState
     extends State<SingleServiceDetailsBottom> {
   int userId = 0;
   late Future<String> role;
+  bool _isNavigated = false;
+
 
   final UserRepository userRepository = UserRepository();
   final formKey = GlobalKey<FormState>();
@@ -115,26 +117,52 @@ class _SingleServiceDetailsBottomState
         bool isProvider = snapshot.hasData && snapshot.data == "provider";
         return BlocListener<RoomBloc, RoomState>(
           listener: (context, state) async {
-            if (state is RoomCreated) {
-              final token = await getTokenOfOtherUser(widget.service.UserID);
-              if (token != null) {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ChatForm(
-                      currentChat: state.room.name,
-                      roomId: state.room.id.toString(),
-                      userId: userId,
-                      token: token,
+            if(!_isNavigated){
+              if (state is RoomCreated) {
+                final token = await getTokenOfOtherUser(widget.service.UserID);
+                if (token != null) {
+                  setState(() {
+                    _isNavigated = true;
+                  });
+
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ChatForm(
+                        currentChat: state.room.name,
+                        roomId: state.room.id.toString(),
+                        userId: userId,
+                        token: token,
+                      ),
                     ),
-                  ),
+                  );
+                }
+              } else if (state is RoomError) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Failed to join room: ${state.message}')),
                 );
+              } else if (state is RoomJoined) {
+                print('uuuuuuuu${state.room.id.toString()}');
+                final token = await getTokenOfOtherUser(widget.service.UserID);
+                if (token != null) {
+                  setState(() {
+                    _isNavigated = true;
+                  });
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ChatForm(
+                        currentChat: state.room.name,
+                        roomId: state.room.id.toString(),
+                        userId: userId,
+                        token: token,
+                      ),
+                    ),
+                  );
+                }
               }
-            } else if (state is RoomError) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Failed to join room: ${state.message}')),
-              );
             }
+
           },
           child: Padding(
             padding: EdgeInsets.only(

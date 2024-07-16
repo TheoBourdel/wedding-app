@@ -32,35 +32,6 @@ func NewHandler(h *Hub) *Handler {
 	}
 }
 
-// func (h *Handler) CreateRoom(c *gin.Context) {
-// 	var req model.CreateRoomReq
-// 	if err := c.ShouldBindJSON(&req); err != nil {
-// 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-// 		return
-// 	}
-
-// 	room := model.Room{
-// 		RoomName: req.Name,
-// 	}
-
-// 	if h.RoomService == nil {
-// 		log.Fatal("RoomService is not initialized")
-// 	}
-
-// 	createdRoom, err := h.RoomService.CreateRoom(room)
-// 	if err.Code != 0 {
-// 		log.Printf("Failed to save message: %s", err.Message)
-// 	}
-
-// 	h.hub.Rooms[fmt.Sprintf("%d", createdRoom.ID)] = &Room{
-// 		ID:           fmt.Sprintf("%d", createdRoom.ID),
-// 		Name:         createdRoom.RoomName,
-// 		SessionChats: make(map[string]*SessionChat),
-// 	}
-
-// 	c.JSON(http.StatusOK, createdRoom)
-// }
-
 func (h *Handler) CreateRoom(c *gin.Context) {
 	var req model.CreateRoomReq
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -253,4 +224,29 @@ func parseUint(s string) uint {
 		return 0
 	}
 	return uint(u)
+}
+
+
+func (h *Handler) CheckRoomExistsForUsers(c *gin.Context) {
+	var req struct {
+		User1ID uint `json:"user1_id"`
+		User2ID uint `json:"user2_id"`
+	}
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	_, room, errDto := h.RoomService.CheckRoomExistsForUsers(req.User1ID, req.User2ID)
+	if errDto != (dto.HttpErrorDto{}) {
+		c.JSON(errDto.Code, gin.H{"error": errDto.Message})
+		return
+	}
+
+	if room.ID != 0 {
+		c.JSON(http.StatusOK, gin.H{"exists": true, "room": room})
+	} else {
+		c.JSON(http.StatusOK, gin.H{"exists": false})
+	}
 }

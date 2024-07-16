@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:client/features/service/widgets/services_theme.dart';
@@ -6,6 +7,12 @@ import 'package:client/repository/image_repository.dart';
 import 'package:client/model/image.dart' as service_image;
 import 'package:client/core/constant/constant.dart';
 import 'package:client/features/service/pages/single_service_page.dart';
+import 'package:client/core/theme/app_colors.dart';
+import 'package:client/repository/favorite_repository.dart';
+import 'package:client/model/favorite.dart';
+import 'package:iconsax/iconsax.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ServiceListView extends StatefulWidget {
   final VoidCallback? callback;
@@ -29,6 +36,8 @@ class ServiceListView extends StatefulWidget {
 class _ServiceListViewState extends State<ServiceListView> {
   List<service_image.Image> images = [];
   bool _isImagesLoaded = false;
+  bool _isFavorite = false;
+  int? _favoriteId;
 
   @override
   void didUpdateWidget(covariant ServiceListView oldWidget) {
@@ -36,6 +45,7 @@ class _ServiceListViewState extends State<ServiceListView> {
     if (widget.serviceData != oldWidget.serviceData) {
       _isImagesLoaded = false;
       _loadImages();
+      _checkIfFavorite();
     }
   }
 
@@ -43,6 +53,7 @@ class _ServiceListViewState extends State<ServiceListView> {
   void initState() {
     super.initState();
     _loadImages();
+    _checkIfFavorite();
   }
 
   void _loadImages() async {
@@ -55,6 +66,52 @@ class _ServiceListViewState extends State<ServiceListView> {
           _isImagesLoaded = true;
         });
       }
+    }
+  }
+
+  void _checkIfFavorite() async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      final String token = prefs.getString('token')!;
+      final int userId = JwtDecoder.decode(token)['sub'];
+      List<Favorite> favorites = await FavoriteRepository.getFavoritesByUserId(userId);
+      for (var favorite in favorites) {
+        if (favorite.ServiceID == widget.serviceData?.id) {
+          setState(() {
+            _isFavorite = true;
+            _favoriteId = favorite.id;
+          });
+          break;
+        }
+      }
+    } catch (e) {
+      print('Failed to load favorites: $e');
+    }
+  }
+
+  void _toggleFavorite() async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      final String token = prefs.getString('token')!;
+      final int userId = JwtDecoder.decode(token)['sub'];
+      int? serviceId = widget.serviceData!.id;
+
+      if (_isFavorite) {
+        await FavoriteRepository().deleteFavorite(_favoriteId!);
+        setState(() {
+          _isFavorite = false;
+          _favoriteId = null;
+        });
+      } else {
+        Favorite favorite = Favorite(UserID: userId, ServiceID: serviceId);
+        Favorite newFavorite = await FavoriteRepository().createFavorite(favorite);
+        setState(() {
+          _isFavorite = true;
+          _favoriteId = newFavorite.id;
+        });
+      }
+    } catch (e) {
+      print('Failed to toggle favorite: $e');
     }
   }
 
@@ -205,13 +262,22 @@ class _ServiceListViewState extends State<ServiceListView> {
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          onTap: () {
-            // Define what should happen when the icon is tapped
-          },
+          onTap: _toggleFavorite,
           borderRadius: const BorderRadius.all(Radius.circular(32.0)),
           child: Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Icon(Icons.favorite_border, color: ServiceTheme.buildLightTheme().primaryColor),
+            child: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 300),
+              transitionBuilder: (Widget child, Animation<double> animation) {
+                return RotationTransition(
+                  turns: child.key == ValueKey<bool>(_isFavorite) ? Tween<double>(begin: 0.75, end: 1.0).animate(animation) : Tween<double>(begin: 1.0, end: 0.75).animate(animation),
+                  child: ScaleTransition(scale: animation, child: child),
+                );
+              },
+              child: _isFavorite
+                  ? Icon(Iconsax.archive_tick1, color: AppColors.pink500, size: 35.0, key: ValueKey<bool>(_isFavorite))
+                  : Icon(Iconsax.archive_add, size: 35.0, color: ServiceTheme.buildLightTheme().primaryColor, key: ValueKey<bool>(_isFavorite)),
+            ),
           ),
         ),
       ),

@@ -33,6 +33,7 @@ class ChatForm extends StatefulWidget {
 class _ChatState extends State<ChatForm> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _messageController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
 
   WebSocketChannel? channel;
   late StreamSubscription roomBlocSubscription;
@@ -60,7 +61,8 @@ class _ChatState extends State<ChatForm> {
         }
       }
     });
-  //join the other user
+    //join the other user
+
     context.read<RoomBloc>().add(JoinRoomEvent(roomId: widget.roomId, userId: widget.userId));
   }
 
@@ -70,6 +72,7 @@ class _ChatState extends State<ChatForm> {
     messageSubscription.cancel();
     roomRepository.closeConnection();
     _messageController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -84,7 +87,20 @@ class _ChatState extends State<ChatForm> {
 
       context.read<MessageBloc>().add(SendMessageEvent(messageDto: messageDto, token: widget.token));
       _messageController.clear();
+      _scrollToBottom();
     }
+  }
+
+  void _scrollToBottom() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scrollController.hasClients) {
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      }
+    });
   }
 
   @override
@@ -101,10 +117,12 @@ class _ChatState extends State<ChatForm> {
               child: BlocBuilder<MessageBloc, MessageState>(
                 builder: (context, state) {
                   if (state is MessagesLoaded) {
+                    WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
                     if (state.messages.isEmpty) {
                       return const Center(child: Text('No messages'));
                     }
                     return ListView.builder(
+                      controller: _scrollController,
                       itemCount: state.messages.length,
                       itemBuilder: (context, index) {
                         final message = state.messages[index];
@@ -155,9 +173,9 @@ class _ChatState extends State<ChatForm> {
                 key: _formKey,
                 child: Row(
                   children: [
-                      Expanded(
+                    Expanded(
                       child: TextFormField(
-                      controller: _messageController,
+                        controller: _messageController,
                         decoration: InputDecoration(
                           labelText: 'Message',
                           border: OutlineInputBorder(
@@ -179,7 +197,7 @@ class _ChatState extends State<ChatForm> {
                           return null;
                         },
                       ),
-                      ),
+                    ),
                     const SizedBox(height: 8),
                     ElevatedButton(
                       onPressed: _sendMessage,

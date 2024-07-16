@@ -9,7 +9,6 @@ class TokenUtils {
       throw Exception("Token not found in SharedPreferences");
     }
     Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
-    print(decodedToken);
     return decodedToken['sub'];
   }
 

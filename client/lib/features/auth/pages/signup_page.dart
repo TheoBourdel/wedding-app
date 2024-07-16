@@ -46,7 +46,12 @@ class _SignUpPageState extends State<SignUpPage> {
           ),
         );
       } catch (e) {
-        // Show error toast
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(e.toString()),
+            backgroundColor: Colors.red,
+          ),
+        );
       }
     }
   }

@@ -1,11 +1,12 @@
 import 'package:client/features/auth/bloc/auth_bloc.dart';
 import 'package:client/features/auth/bloc/auth_state.dart';
 import 'package:client/features/estimate/pages/estimate_page.dart';
+import 'package:client/features/message/pages/message_list_page.dart';
 import 'package:client/features/profile/pages/profile_page.dart';
+import 'package:client/features/service/pages/my_services_page.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:client/core/theme/app_colors.dart';
-import 'package:client/features/message/pages/message_list_page.dart';
 import 'package:client/features/wedding/pages/wedding_page.dart';
 import 'package:client/repository/user_repository.dart';
 import 'package:client/features/service/pages/services_page.dart';
@@ -40,7 +41,6 @@ class _BottomNavigationState extends State<BottomNavigation> {
     List<BottomNavigationBarItem> destinations = [];
     List<Widget> screens = [];
 
-
     if (role == 'marry' || role == 'organizer' || role == 'provider') {
       screens.add(ServicesScreen());
       destinations.add(const BottomNavigationBarItem(
@@ -62,7 +62,7 @@ class _BottomNavigationState extends State<BottomNavigation> {
         icon: Icon(Iconsax.briefcase),
         label: "Prestations",
       ));
-      screens.add(ServicesScreen());
+      screens.add(const MyServicesPage());
 
     } else if (role == 'marry' || role == 'organizer') {
       destinations.add(const BottomNavigationBarItem(

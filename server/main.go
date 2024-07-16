@@ -7,6 +7,7 @@ import (
 	"api/ws"
 	"strings"
 	"time"
+	"api/logs"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -28,6 +29,7 @@ func init() {
 func main() {
 	// Create a new router
 	router := gin.Default()
+	router.Use(logs.LoggerMiddleware(config.DB))
 
 	// Configure CORS middleware with dynamic origin check
 	router.Use(cors.New(cors.Config{
@@ -55,6 +57,9 @@ func main() {
 	route.EstimateRoutes(router)
 	route.OrganizerRoutes(router)
 	route.BudgetRoutes(router)
+	route.FavoriteRoutes(router)
+	route.LogRoutes(router)
+
 
 	// WebSocket
 	hub := ws.NewHub()
