@@ -1,3 +1,5 @@
+import 'package:client/model/category.dart';
+
 class Service {
   final int? id;
   final String? name;
@@ -9,6 +11,7 @@ class Service {
   final int? price;
   final int UserID;
   final int? CategoryID;
+  final Category category;
   final String? createdAt;
   final String? updatedAt;
   final String? deletedAt;
@@ -24,6 +27,7 @@ class Service {
     required this.price,
     required this.UserID,
     required this.CategoryID,
+    required this.category,
     this.createdAt,
     this.updatedAt,
     this.deletedAt,
@@ -41,6 +45,7 @@ class Service {
       price: json['Price'] as int?,
       UserID: json['UserID'] as int,
       CategoryID: json['CategoryID'] as int?,
+      category: Category.fromJson(json['Category']),
       createdAt: json['CreatedAt'] as String?,
       updatedAt: json['UpdatedAt'] as String?,
       deletedAt: json['DeletedAt'] as String?,
@@ -59,6 +64,7 @@ class Service {
       'Price': price.toString(),
       'UserID': UserID.toString(),
       'CategoryID': CategoryID.toString(),
+      'Category': category.toJson(),
       'CreatedAt': createdAt,
       'UpdatedAt': updatedAt,
       'DeletedAt': deletedAt,

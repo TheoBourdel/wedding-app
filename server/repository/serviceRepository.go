@@ -52,7 +52,7 @@ func (wr *ServiceRepository) Create(service model.Service) (model.Service, dto.H
 func (wr *ServiceRepository) FindOneBy(field string, value string) (model.Service, dto.HttpErrorDto) {
 	var service model.Service
 
-	result := config.DB.Where(field+" = ?", value).First(&service)
+	result := config.DB.Preload("Category").Where(field+" = ?", value).First(&service)
 	if result.RowsAffected == 0 {
 		return model.Service{}, dto.HttpErrorDto{Message: "Service not found", Code: 404}
 	}
@@ -93,8 +93,7 @@ func (wr *ServiceRepository) Update(id uint64, updatedService model.Service) err
 
 func (wr *ServiceRepository) FindByUserID(userID uint64) ([]model.Service, dto.HttpErrorDto) {
 	var services []model.Service
-	result := config.DB.Where("user_id = ?", userID).Find(&services)
-	fmt.Println("resultttttttt", result.RowsAffected)
+	result := config.DB.Preload("Category").Where("user_id = ?", userID).Find(&services)
 	if result.Error != nil {
 		return nil, dto.HttpErrorDto{Message: "Error fetching services", Code: 500}
 	}

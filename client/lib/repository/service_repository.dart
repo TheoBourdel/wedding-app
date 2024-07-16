@@ -60,7 +60,6 @@ class ServiceRepository {
     final res = await http.get(
       Uri.parse('$_baseUrl/user/$userId/services'),
     );
-
     if (res.statusCode == 200) {
       final List<dynamic> decodedBody = jsonDecode(res.body);
       final List<Service> services = decodedBody.map((serviceJson) => Service.fromJson(serviceJson)).toList();
