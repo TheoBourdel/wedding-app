@@ -12,6 +12,7 @@ import 'package:iconsax/iconsax.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 
+import '../../../core/constant/constant.dart';
 import '../../../repository/estimate_repository.dart';
 
 class EstimateInfoPage extends StatefulWidget {
@@ -32,7 +33,7 @@ class _EstimateInfoPageState extends State<EstimateInfoPage> {
   }
 
   Future<void> _fetchPaymentStatus() async {
-    final response = await http.get(Uri.parse('http://localhost:8080/api/payment-status'));
+    final response = await http.get(Uri.parse('$apiUrl/api/payment-status'));
     if (response.statusCode == 200) {
       setState(() {
         isPaymentEnabled = jsonDecode(response.body)['is_payment_enabled'];
