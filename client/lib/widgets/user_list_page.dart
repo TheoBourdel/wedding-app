@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:client/model/user.dart';
 import 'package:client/services/user_service.dart';
+import 'package:flutter/services.dart'; // Import pour utiliser le presse-papiers
 
 class UserListPage extends StatefulWidget {
   const UserListPage({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
   _UserListPageState createState() => _UserListPageState();
 }
 
@@ -23,7 +23,9 @@ class _UserListPageState extends State<UserListPage> {
   }
 
   void fetchUsers() {
-    futureUsers = UserService().fetchUsers(page: currentPage, pageSize: pageSize, query: query);
+    setState(() {
+      futureUsers = UserService().fetchUsers(page: currentPage, pageSize: pageSize, query: query);
+    });
   }
 
   Future<void> _deleteUser(int id) async {
@@ -31,7 +33,6 @@ class _UserListPageState extends State<UserListPage> {
       await UserService().deleteUser(id);
       fetchUsers();
     } catch (e) {
-      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Erreur lors de la suppression: $e'),
@@ -64,11 +65,146 @@ class _UserListPageState extends State<UserListPage> {
     });
   }
 
+  Future<void> _createUser() async {
+    final TextEditingController firstNameController = TextEditingController();
+    final TextEditingController lastNameController = TextEditingController();
+    final TextEditingController emailController = TextEditingController();
+    String selectedRole = 'admin';
+
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Créer un nouvel utilisateur'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                TextField(
+                  controller: firstNameController,
+                  decoration: const InputDecoration(
+                    labelText: 'Prénom',
+                  ),
+                ),
+                TextField(
+                  controller: lastNameController,
+                  decoration: const InputDecoration(
+                    labelText: 'Nom de famille',
+                  ),
+                ),
+                TextField(
+                  controller: emailController,
+                  decoration: const InputDecoration(
+                    labelText: 'Email',
+                  ),
+                ),
+                DropdownButton<String>(
+                  value: selectedRole,
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      selectedRole = newValue!;
+                    });
+                  },
+                  items: <String>['admin', 'marry', 'provider']
+                      .map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                ),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Annuler'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Créer'),
+              onPressed: () async {
+                try {
+                  // Créez l'utilisateur sans générer le mot de passe côté client
+                  final newUser = await UserService().createUser(
+                    firstNameController.text,
+                    lastNameController.text,
+                    emailController.text,
+                    selectedRole,
+                  );
+                  fetchUsers();
+                  Navigator.of(context).pop();
+                  _showPasswordDialog(newUser.password);  // Afficher le mot de passe généré
+                } catch (e) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Erreur lors de la création: $e'),
+                    ),
+                  );
+                }
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showPasswordDialog(String password) {
+    showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Utilisateur créé avec succès'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                const Text('Mot de passe généré :'),
+                Text(
+                  password,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Copier le mot de passe'),
+              onPressed: () {
+                Clipboard.setData(ClipboardData(text: password));
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Mot de passe copié dans le presse-papiers'),
+                  ),
+                );
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Fermer'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Liste des utilisateurs'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.add),
+            onPressed: _createUser,
+          ),
+        ],
       ),
       body: Column(
         children: [

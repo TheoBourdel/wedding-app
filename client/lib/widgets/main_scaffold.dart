@@ -3,8 +3,15 @@ import 'side_menu_widget.dart';
 
 class MainScaffold extends StatelessWidget {
   final Widget content;
+  final String currentPage;
+  final ValueChanged<String> onPageSelected;
 
-  const MainScaffold({super.key, required this.content});
+  const MainScaffold({
+    super.key,
+    required this.content,
+    required this.currentPage,
+    required this.onPageSelected,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -12,19 +19,23 @@ class MainScaffold extends StatelessWidget {
 
     return Scaffold(
       drawer: !isDesktop
-          ? const SizedBox(
+          ? SizedBox(
         width: 250,
-        child: SideMenuWidget(),
+        child: SideMenuWidget(
+          currentPage: currentPage,
+          onPageSelected: onPageSelected,
+        ),
       )
           : null,
       body: SafeArea(
         child: Row(
           children: [
             if (isDesktop)
-              const Expanded(
+              Expanded(
                 flex: 2,
-                child: SizedBox(
-                  child: SideMenuWidget(),
+                child: SideMenuWidget(
+                  currentPage: currentPage,
+                  onPageSelected: onPageSelected,
                 ),
               ),
             Expanded(

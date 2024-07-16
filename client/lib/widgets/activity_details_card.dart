@@ -42,7 +42,7 @@ class _ActivityDetailsCardState extends State<ActivityDetailsCard> {
       StatglobalModel(
         icon: 'assets/images/inviter.png',
         value: totalGuests.toString(),
-        title: 'Invité',
+        title: 'Nouveau inscrit',
       ),
       StatglobalModel(
         icon: 'assets/images/budget.png',
