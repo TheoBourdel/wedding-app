@@ -102,9 +102,11 @@ class _FavoriteServiceListViewState extends State<FavoriteServiceListView>  with
         _isFavorite = false;
         _favoriteId = null;
       });
-      if (widget.onFavoriteToggled != null) {
-        _opacityController.forward().then((_) => widget.onFavoriteToggled!(serviceId!));
-      }
+      _opacityController.forward().then((_) {
+        if (widget.onFavoriteToggled != null) {
+          widget.onFavoriteToggled!(serviceId!);
+        }
+      });
 
     } catch (e) {
       print('Failed to toggle favorite: $e');
@@ -113,32 +115,36 @@ class _FavoriteServiceListViewState extends State<FavoriteServiceListView>  with
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: widget.animationController!,
-      builder: (BuildContext context, Widget? child) {
-        return FadeTransition(
-          opacity: widget.animation!,
-          child: Transform(
-            transform: Matrix4.translationValues(0.0, 50 * (1.0 - widget.animation!.value), 0.0),
-            child: Padding(
-              padding: const EdgeInsets.only(left: 24, right: 24, top: 8, bottom: 16),
-              child: InkWell(
-                onTap: () {
-                  if (widget.serviceData?.id != null) {
-                    Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => DetailsPage(
-                        size: MediaQuery.of(context).size,
-                        serviceData: widget.serviceData!,
-                      ),
-                    ));
-                  }
-                },
-                child: serviceCard(context),
+    return SizeTransition(
+      sizeFactor: _opacityAnimation,
+      axis: Axis.vertical,
+      child: AnimatedBuilder(
+        animation: widget.animationController!,
+        builder: (BuildContext context, Widget? child) {
+          return FadeTransition(
+            opacity: widget.animation!,
+            child: Transform(
+              transform: Matrix4.translationValues(0.0, 50 * (1.0 - widget.animation!.value), 0.0),
+              child: Padding(
+                padding: const EdgeInsets.only(left: 24, right: 24, top: 8, bottom: 16),
+                child: InkWell(
+                  onTap: () {
+                    if (widget.serviceData?.id != null) {
+                      Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => DetailsPage(
+                          size: MediaQuery.of(context).size,
+                          serviceData: widget.serviceData!,
+                        ),
+                      ));
+                    }
+                  },
+                  child: serviceCard(context),
+                ),
               ),
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 
