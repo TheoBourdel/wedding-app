@@ -65,6 +65,9 @@ class RoomRepository {
   }
 
   Future<List<RoomWithUsers>> fetchRooms(int userId) async {
+
+    print(_baseUrl);
+
     final response = await http.get(Uri.parse('$_baseUrl/ws/users/$userId/rooms'));
     if (response.statusCode == 200) {
       if (response.body == "null") {
@@ -76,6 +79,29 @@ class RoomRepository {
     } else {
       return [];
     }
+  }
+
+  Future<String?> checkExistingRoom(int userId, int otherUserId) async {
+    final request = {
+      "user1_id": userId,
+      "user2_id": otherUserId
+    };
+
+    final response = await http.post(
+      Uri.parse('$_baseUrl/ws/check-room-exists'),
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: json.encode(request),
+    );
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      if (data['exists']) {
+        return data['room']['ID'].toString();
+      }
+    }
+    return null;
   }
 
   Future<List<User>> getSessionChats(int roomId) async {

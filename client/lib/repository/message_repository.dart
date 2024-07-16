@@ -5,9 +5,11 @@ import 'package:client/model/message.dart';
 import 'package:http/http.dart' as http;
 // ignore: depend_on_referenced_packages
 import 'package:web_socket_channel/web_socket_channel.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class MessageRepository {
-  final String _baseUrl = apiUrl;
+  final String _baseUrl = dotenv.env['API_URL']!;
+
   WebSocketChannel? channel;
 
   Future<void> sendMessage(MessageDto messageDto, String token) async {

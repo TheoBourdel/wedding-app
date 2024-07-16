@@ -4,6 +4,7 @@ import (
 	"api/dto"
 	"api/model"
 	"api/repository"
+	"fmt"
 	"os"
 	"time"
 
@@ -25,9 +26,9 @@ func (as *AuthService) SignUp(body model.User) (model.User, dto.HttpErrorDto) {
 		return model.User{}, dto.HttpErrorDto{Message: "Invalid role", Code: 400}
 	}
 
-	_, error := as.UserRepository.FindOneBy("email", body.Email)
-	if error == (dto.HttpErrorDto{}) {
-		return model.User{}, dto.HttpErrorDto{Message: "L'email est déjà utilisé", Code: 400}
+	_, err = as.UserRepository.FindOneBy("email", body.Email)
+	if err.Error() != "User not found" {
+		return model.User{}, dto.HttpErrorDto{Message: "Email already exists", Code: 400}
 	}
 
 	user := model.User{
@@ -38,10 +39,12 @@ func (as *AuthService) SignUp(body model.User) (model.User, dto.HttpErrorDto) {
 		Role:      body.Role,
 	}
 
-	user, error = as.UserRepository.Create(user)
-	if error != (dto.HttpErrorDto{}) {
-		return model.User{}, error
+	user, err = as.UserRepository.Create(user)
+	if err != (dto.HttpErrorDto{}) {
+		fmt.Println("Error while creating user: ", err)
+		return model.User{}, dto.HttpErrorDto{Message: "Error while creating user", Code: 500}
 	}
+	//fmt.Println("laaaaaaaaaaa : ", user)
 
 	return user, dto.HttpErrorDto{}
 }

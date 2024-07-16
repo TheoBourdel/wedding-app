@@ -8,6 +8,7 @@ import 'package:client/features/estimate/bloc/estimate_bloc.dart';
 import 'package:client/features/estimate/bloc/estimate_event.dart';
 import 'package:client/features/organizer/bloc/organizer_bloc.dart';
 import 'package:client/features/profile/bloc/profile_bloc.dart';
+import 'package:client/features/profile/pages/profile_page.dart';
 import 'package:client/features/service/bloc/service_bloc.dart';
 import 'package:client/features/wedding/bloc/wedding_bloc.dart';
 import 'package:client/firebase_options.dart';
@@ -36,8 +37,6 @@ import 'package:universal_platform/universal_platform.dart';
 import 'package:client/features/budget/pages/budget.dart';
 import 'package:client/features/budget/pages/category_budget_page.dart';
 
-
-
 class LocaleProvider with ChangeNotifier {
   Locale _currentLocale = const Locale('en');
   Locale get currentLocale => _currentLocale;
@@ -62,18 +61,14 @@ class HexColor extends Color {
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load();
-  //Stripe.publishableKey = dotenv.env['STRIPE_PUBLISHABLE_KEY']!;
+  await dotenv.load(fileName: ".env");
 
   if (Platform.isAndroid) {
-    print('Running on Android');
     await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
     FirebaseApi firebaseApi = FirebaseApi();
     await firebaseApi.initNotifications();
     await firebaseApi.initPushNotifications();
   }
-
-
-
 
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String localeCode = prefs.getString('locale_code') ?? 'en';
@@ -156,11 +151,11 @@ class MyApp extends StatelessWidget {
             theme: AppTheme.lightTheme,
             localizationsDelegates: AppLocalizations.localizationsDelegates,
             supportedLocales: AppLocalizations.supportedLocales,
-            routes: {
-              '/': (context) => const AuthScreen(),
-              '/dashboard': (context) => const MainScreen(),
-              '/home': (context) => const BottomNavigation(),
-            },
+            home: const AuthScreen(),
+            // routes: {
+            //   '/dashboard': (context) => const MainScreen(),
+            //   '/home': (context) => const BottomNavigation(),
+            // },
           ),
         ),
       )
@@ -173,54 +168,56 @@ class AuthScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AuthBloc, AuthState>(
-      builder: (context, state) {
-
-        if (state is AuthInitial || state is AuthUnauthenticated) {
-
-          return const SignInPage();
-        }
-
-        if (state is AuthLoading) {
-          return const SafeArea(
-            child: Scaffold(
-              body: Center(
-                child: CircularProgressIndicator(),
-              ),
-            ),
-          );
-        }
-
-        if (state is Authenticated) {
-          if (UniversalPlatform.isWeb ) {
-            if(state.userRole == 'admin'){
-              Future.microtask(() => Navigator.pushReplacementNamed(context, '/dashboard'));
-            } else {
-              //context.read<AuthBloc>().add(const SignOutEvent());
-              return const SignInPage(
-                errorMessage: 'Access denied: You must be an admin to use this application on the web.',
-              );
-              /*Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => const SignInPage()),
-              );*/
-            }
-          } else {
-            Future.microtask(() => Navigator.pushReplacementNamed(context, '/home'));
-          }
-          return const SizedBox();
-        }
-
+    return BlocListener<AuthBloc, AuthState>(
+      listener: (context, state) {
         if (state is AuthError) {
-          return const SafeArea(
-            child: Scaffold(
-              body: Text('Error'),
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.message),
+              backgroundColor: Colors.red,
             ),
           );
         }
-
-        return const SizedBox();
       },
+      child: BlocBuilder<AuthBloc, AuthState>(
+        builder: (context, state) {
+          if (state is AuthInitial || state is AuthUnauthenticated) {
+            return const SignInPage();
+          }
+
+          if (state is AuthLoading) {
+            return const SafeArea(
+              child: Scaffold(
+                body: Center(
+                  child: CircularProgressIndicator(),
+                ),
+              ),
+            );
+          }
+
+          if (state is Authenticated) {
+            if (UniversalPlatform.isWeb) {
+              if (state.userRole == 'admin') {
+                return const MainScreen();
+                //Future.microtask(() => Navigator.pushReplacementNamed(context, '/dashboard'));
+              } else {
+                return const SignInPage(
+                  errorMessage: 'Access denied: You must be an admin to use this application on the web.',
+                );
+              }
+            } else {
+              return const BottomNavigation();
+              //Future.microtask(() => Navigator.pushReplacementNamed(context, '/home'));
+            }
+          }
+
+          if (state is AuthError) {
+            return const SignInPage();
+          }
+
+          return const SizedBox();
+        },
+      ),
     );
   }
 }

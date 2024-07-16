@@ -3,10 +3,12 @@ import 'package:client/dto/image_dto.dart';
 import 'package:client/model/image.dart';
 import 'package:http/http.dart';
 import 'dart:convert';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 
 class ImageRepository {
-  final String _baseUrl = apiUrl;
+  final String _baseUrl = dotenv.env['API_URL']!;
+
 
   Future createImage(ImageDto image) async {
     final res = await post(

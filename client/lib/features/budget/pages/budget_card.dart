@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:client/model/budget_model.dart';
-import 'package:iconsax/iconsax.dart';
 
 class BudgetCard extends StatelessWidget {
   final WeddingBudget budget;
@@ -8,21 +7,26 @@ class BudgetCard extends StatelessWidget {
   final TextEditingController controller;
   final Function(double) onUpdate;
   final Function() onDelete;
-  final Function() onTap; // Ajoutez ce callback
+  final Function() onTap;
 
-  BudgetCard({
+  const BudgetCard({
+    super.key, 
     required this.budget,
     required this.categoryName,
     required this.controller,
     required this.onUpdate,
     required this.onDelete,
-    required this.onTap, // Ajoutez ce paramètre
+    required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
+    double remainingAmount = budget.amount - budget.amountPaid;
+
     return InkWell(
-      onTap: onTap, // Connectez le callback ici
+      onTap: () {
+        budget.paid ? null : onTap();
+      },
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
@@ -32,54 +36,56 @@ class BudgetCard extends StatelessWidget {
           padding: const EdgeInsets.all(15),
           child: Row(
             children: [
-              Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: Colors.pink[50],
-                ),
-                child: const Padding(
-                  padding: EdgeInsets.all(10),
-                  child: Icon(
-                    Iconsax.money,
-                    size: 30,
-                    color: Colors.pink,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 15),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          categoryName,
-                          style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Text(
-                          '€${budget.amount.toStringAsFixed(2)}',
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.green,
-                          ),
-                        ),
-                      ],
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    categoryName,
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
                     ),
-                  ],
-                ),
+                  ),
+                  Text(
+                    '${budget.amount.toStringAsFixed(2)}€',
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w400,
+                      color: Colors.grey,
+                    ),
+                  )
+                ],
               ),
-              IconButton(
-                icon: Icon(Icons.delete, color: Colors.red),
-                onPressed: onDelete,
-              ),
+              const Spacer(),
+              Column(
+                children: [
+                  budget.paid ?
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text(
+                        'Tu as payé : ${budget.amountPaid.toStringAsFixed(2)}€',
+                      ),
+                      Text(
+                        '${remainingAmount.toStringAsFixed(2)}€',
+                        style: TextStyle(
+                          color: remainingAmount >= 0 ? Colors.green : Colors.red,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20,
+                        ),
+                      )
+                    ],
+                  ) : const SizedBox.shrink(),
+                  budget.paid ? 
+                  const SizedBox.shrink() : 
+                  IconButton(
+                    icon: const Icon(Icons.delete),
+                    onPressed: onDelete,
+                  ),
+                ],
+              )
             ],
-          ),
+          )
         ),
       ),
     );

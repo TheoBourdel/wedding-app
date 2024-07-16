@@ -1,6 +1,7 @@
 import 'package:client/core/theme/app_colors.dart';
 import 'package:client/dto/signup_user_dto.dart';
 import 'package:client/features/auth/widgets/auth_field.dart';
+import 'package:client/main.dart';
 import 'package:client/repository/auth_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:client/features/auth/pages/signin_page.dart';
@@ -40,13 +41,17 @@ class _SignUpPageState extends State<SignUpPage> {
         await authRepository.signUp(user);
         
         // ignore: use_build_context_synchronously
-        Navigator.pushReplacement(context,
-          MaterialPageRoute(
-            builder: (context) => const SignInPage()
-          ),
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const AuthScreen()),
         );
       } catch (e) {
-        // Show error toast
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(e.toString()),
+            backgroundColor: Colors.red,
+          ),
+        );
       }
     }
   }
@@ -166,7 +171,7 @@ class _SignUpPageState extends State<SignUpPage> {
                             onPressed: () {
                               Navigator.pushReplacement(
                                 context,
-                                MaterialPageRoute(builder: (context) => const SignInPage()),
+                                MaterialPageRoute(builder: (context) => const AuthScreen()),
                               );
                             },
                             child: const Text(

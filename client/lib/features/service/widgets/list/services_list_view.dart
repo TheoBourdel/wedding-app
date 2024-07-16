@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:client/features/service/widgets/services_theme.dart';
@@ -6,12 +7,19 @@ import 'package:client/repository/image_repository.dart';
 import 'package:client/model/image.dart' as service_image;
 import 'package:client/core/constant/constant.dart';
 import 'package:client/features/service/pages/single_service_page.dart';
+import 'package:client/core/theme/app_colors.dart';
+import 'package:client/repository/favorite_repository.dart';
+import 'package:client/model/favorite.dart';
+import 'package:iconsax/iconsax.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ServiceListView extends StatefulWidget {
   final VoidCallback? callback;
   final Service? serviceData;
   final AnimationController? animationController;
   final Animation<double>? animation;
+  final Function(int)? onFavoriteToggled;
 
   const ServiceListView({
     super.key,
@@ -19,16 +27,20 @@ class ServiceListView extends StatefulWidget {
     this.animationController,
     this.animation,
     this.callback,
+    this.onFavoriteToggled,
   });
 
   @override
-  // ignore: library_private_types_in_public_api
   _ServiceListViewState createState() => _ServiceListViewState();
 }
 
-class _ServiceListViewState extends State<ServiceListView> {
+class _ServiceListViewState extends State<ServiceListView> with SingleTickerProviderStateMixin {
   List<service_image.Image> images = [];
   bool _isImagesLoaded = false;
+  bool _isFavorite = false;
+  int? _favoriteId;
+  late AnimationController _opacityController;
+  late Animation<double> _opacityAnimation;
 
   @override
   void didUpdateWidget(covariant ServiceListView oldWidget) {
@@ -36,6 +48,7 @@ class _ServiceListViewState extends State<ServiceListView> {
     if (widget.serviceData != oldWidget.serviceData) {
       _isImagesLoaded = false;
       _loadImages();
+      _checkIfFavorite();
     }
   }
 
@@ -43,6 +56,15 @@ class _ServiceListViewState extends State<ServiceListView> {
   void initState() {
     super.initState();
     _loadImages();
+    _checkIfFavorite();
+    _opacityController = AnimationController(duration: const Duration(milliseconds: 300), vsync: this);
+    _opacityAnimation = Tween<double>(begin: 1.0, end: 0.0).animate(_opacityController);
+  }
+
+  @override
+  void dispose() {
+    _opacityController.dispose();
+    super.dispose();
   }
 
   void _loadImages() async {
@@ -58,34 +80,87 @@ class _ServiceListViewState extends State<ServiceListView> {
     }
   }
 
+  void _checkIfFavorite() async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      final String token = prefs.getString('token')!;
+      final int userId = JwtDecoder.decode(token)['sub'];
+      List<Favorite> favorites = await FavoriteRepository.getFavoritesByUserId(userId);
+      for (var favorite in favorites) {
+        if (favorite.ServiceID == widget.serviceData?.id) {
+          setState(() {
+            _isFavorite = true;
+            _favoriteId = favorite.id;
+          });
+          break;
+        }
+      }
+    } catch (e) {
+      print('Failed to load favorites: $e');
+    }
+  }
+
+  void _toggleFavorite() async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      final String token = prefs.getString('token')!;
+      final int userId = JwtDecoder.decode(token)['sub'];
+      int? serviceId = widget.serviceData!.id;
+
+      if (_isFavorite) {
+        await FavoriteRepository().deleteFavorite(_favoriteId!);
+        setState(() {
+          _isFavorite = false;
+          _favoriteId = null;
+        });
+        if (widget.onFavoriteToggled != null) {
+          _opacityController.forward().then((_) => widget.onFavoriteToggled!(serviceId!));
+        }
+      } else {
+        Favorite favorite = Favorite(UserID: userId, ServiceID: serviceId);
+        Favorite newFavorite = await FavoriteRepository().createFavorite(favorite);
+        setState(() {
+          _isFavorite = true;
+          _favoriteId = newFavorite.id;
+        });
+      }
+    } catch (e) {
+      print('Failed to toggle favorite: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: widget.animationController!,
-      builder: (BuildContext context, Widget? child) {
-        return FadeTransition(
-          opacity: widget.animation!,
-          child: Transform(
-            transform: Matrix4.translationValues(0.0, 50 * (1.0 - widget.animation!.value), 0.0),
-            child: Padding(
-              padding: const EdgeInsets.only(left: 24, right: 24, top: 8, bottom: 16),
-              child: InkWell(
-                onTap: () {
-                  if (widget.serviceData?.id != null) {
-                    Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => DetailsPage(
-                        size: MediaQuery.of(context).size,
-                        serviceData: widget.serviceData!,
-                      ),
-                    ));
-                  }
-                },
-                child: serviceCard(context),
+    return AnimatedOpacity(
+      opacity: _opacityAnimation.value,
+      duration: const Duration(milliseconds: 300),
+      child: AnimatedBuilder(
+        animation: widget.animationController!,
+        builder: (BuildContext context, Widget? child) {
+          return FadeTransition(
+            opacity: widget.animation!,
+            child: Transform(
+              transform: Matrix4.translationValues(0.0, 50 * (1.0 - widget.animation!.value), 0.0),
+              child: Padding(
+                padding: const EdgeInsets.only(left: 24, right: 24, top: 8, bottom: 16),
+                child: InkWell(
+                  onTap: () {
+                    if (widget.serviceData?.id != null) {
+                      Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => DetailsPage(
+                          size: MediaQuery.of(context).size,
+                          serviceData: widget.serviceData!,
+                        ),
+                      ));
+                    }
+                  },
+                  child: serviceCard(context),
+                ),
               ),
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 
@@ -205,13 +280,26 @@ class _ServiceListViewState extends State<ServiceListView> {
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          onTap: () {
-            // Define what should happen when the icon is tapped
-          },
-          borderRadius: const BorderRadius.all(Radius.circular(32.0)),
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Icon(Icons.favorite_border, color: ServiceTheme.buildLightTheme().primaryColor),
+          onTap: _toggleFavorite,
+          borderRadius: const BorderRadius.all(Radius.circular(12)),
+          child: Container(
+            decoration: const BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(12)),
+              color: Color.fromARGB(188, 255, 255, 255),
+            ),
+            padding: const EdgeInsets.all(10),
+            child: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 300),
+              transitionBuilder: (Widget child, Animation<double> animation) {
+                return RotationTransition(
+                  turns: child.key == ValueKey<bool>(_isFavorite) ? Tween<double>(begin: 0.75, end: 1.0).animate(animation) : Tween<double>(begin: 1.0, end: 0.75).animate(animation),
+                  child: ScaleTransition(scale: animation, child: child),
+                );
+              },
+              child: _isFavorite
+                  ? Icon(Iconsax.archive_tick1, color: AppColors.pink500, size: 25.0, key: ValueKey<bool>(_isFavorite))
+                  : Icon(Iconsax.archive_add, size: 25.0, color: ServiceTheme.buildLightTheme().primaryColor, key: ValueKey<bool>(_isFavorite)),
+            ),
           ),
         ),
       ),

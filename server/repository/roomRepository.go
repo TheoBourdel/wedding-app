@@ -76,32 +76,6 @@ func (repo *RoomRepository) GetParticipantsByRoomID(roomID uint) ([]model.User, 
 
 }
 
-// func (repo *RoomRepository) GetRoomsByUserID(userID uint) ([]model.RoomWithUsers, dto.HttpErrorDto) {
-// 	var rooms []model.RoomWithUsers
-
-// 	// Subquery to find rooms the user is part of
-// 	subQuery := repo.DB.
-// 		// Table("room_participants").
-// 		Select("room_id").
-// 		Where("user_id = ?", userID)
-
-// 	// Main query to find users in those rooms, excluding the given user
-// 	result := repo.DB.
-// 		Table("rooms").
-// 		Select("rooms.id as room_id, rooms.room_name, users.id as user_id, users.firstname, users.lastname, users.email").
-// 		Joins("INNER JOIN room_participants ON room_participants.room_id = rooms.id").
-// 		Joins("INNER JOIN users ON room_participants.user_id = users.id").
-// 		Where("rooms.id IN (?)", subQuery).
-// 		Where("users.id != ?", userID).
-// 		Scan(&rooms)
-
-// 	if result.Error != nil {
-// 		return nil, dto.HttpErrorDto{Message: "Error fetching rooms and users", Code: 500}
-// 	}
-
-// 	return rooms, dto.HttpErrorDto{}
-// }
-
 func (repo *RoomRepository) GetRoomsByUserID(userID uint) ([]model.RoomWithUsers, dto.HttpErrorDto) {
 	var rooms []model.Room
 
@@ -164,4 +138,24 @@ func (s *RoomRepository) AddParticipant(participant model.RoomParticipant) error
 		return err
 	}
 	return nil
+}
+
+func (s *RoomRepository) CheckRoomExistsForUsers(user1ID, user2ID uint) (bool, model.Room, dto.HttpErrorDto) {
+	var room model.Room
+	err := s.DB.Raw(`
+		SELECT r.*
+		FROM rooms r
+		JOIN room_participants rp1 ON rp1.room_id = r.id
+		JOIN room_participants rp2 ON rp2.room_id = r.id
+		WHERE rp1.user_id = ? AND rp2.user_id = ?`, user1ID, user2ID).Scan(&room).Error
+
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return false, model.Room{}, dto.HttpErrorDto{}
+		}
+		return false, model.Room{}, dto.HttpErrorDto{
+			Message: "Internal server error",
+		}
+	}
+	return true, room, dto.HttpErrorDto{}
 }

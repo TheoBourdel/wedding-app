@@ -1,11 +1,9 @@
 package repository
 
 import (
+	"api/config"
 	"api/dto"
 	"api/model"
-    "github.com/sethvargo/go-password/password"
-	"api/config"
-    "golang.org/x/crypto/bcrypt"
 	"fmt"
 
 	"gorm.io/gorm"
@@ -38,27 +36,13 @@ func (ur *UserRepository) FindAll(page int, pageSize int, query string) []model.
 }
 
 func (ur *UserRepository) Create(user model.User) (model.User, dto.HttpErrorDto) {
-    var existingUser model.User
-    if err := ur.DB.Where("email = ?", user.Email).First(&existingUser).Error; err == nil {
-        return model.User{}, dto.HttpErrorDto{Message: "Email already exists", Code: 400}
-    }
-    pass, err := password.Generate(10, 2, 0, false, false)
-    if err != nil {
-        return model.User{}, dto.HttpErrorDto{Message: "Error generating password", Code: 500}
-    }
-    hashedPassword, err := bcrypt.GenerateFromPassword([]byte(pass), bcrypt.DefaultCost)
-    if err != nil {
-        return model.User{}, dto.HttpErrorDto{Message: "Error while hashing password", Code: 500}
-    }
-    user.Password = string(hashedPassword)
-    result := ur.DB.Create(&user)
-    if result.Error != nil {
-        return model.User{}, dto.HttpErrorDto{Message: "Error while creating user", Code: 500}
-    }
-    user.Password = pass
-    return user, dto.HttpErrorDto{}
-}
+	result := config.DB.Create(&user)
+	if result.Error != nil {
+		return model.User{}, dto.HttpErrorDto{Message: "Error while creating user", Code: 500}
+	}
 
+	return user, dto.HttpErrorDto{}
+}
 
 func (ur *UserRepository) FindOneBy(field string, value any) (model.User, dto.HttpErrorDto) {
 	var user model.User

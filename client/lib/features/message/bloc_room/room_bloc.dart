@@ -26,16 +26,24 @@ class RoomBloc extends Bloc<RoomEvent, RoomState> {
     });
 
     on<CreateRoomEvent>((event, emit) async {
+      final ifRoomExistDataId = await roomRepository.checkExistingRoom(event.userId, event.otherUser);
       emit(RoomLoading());
       try {
-        final roomDto = RoomDto(name: event.roomName);
-        final room = await roomRepository.createRoom(roomDto, event.userId, event.otherUser);
-        await roomRepository.joinRoom(room.id.toString(), event.userId);
-        emit(RoomCreated(room));
+        if(ifRoomExistDataId != null) {
+          final message = await roomRepository.joinRoom(ifRoomExistDataId, event.userId);
+          emit(RoomJoined(Room(id:int.parse(ifRoomExistDataId), name: ''), message));
+        } else {
+          final roomDto = RoomDto(name: event.roomName);
+          final room = await roomRepository.createRoom(roomDto, event.userId, event.otherUser);
+          await roomRepository.joinRoom(room.id.toString(), event.userId);
+          emit(RoomCreated(room));
+        }
       } catch (e) {
         emit(RoomError(e.toString()));
       }
     });
+
+
 
     on<JoinRoomEvent>((event, emit) async {
       try {

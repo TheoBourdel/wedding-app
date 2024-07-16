@@ -51,11 +51,7 @@ class BudgetService {
 
   Future<void> updateBudget(WeddingBudget budget) async {
     final url = '$apiUrl/budgets/${budget.id}';
-    final body = jsonEncode({
-      'wedding_id': budget.weddingId,
-      'category_id': budget.categoryId,
-      'amount': budget.amount,
-    });
+    final body = jsonEncode(budget);
 
     print('Sending data to server: $body');
 

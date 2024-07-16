@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:provider/provider.dart';
 import 'package:client/data/side_menu_data.dart';
 import 'package:client/features/auth/bloc/auth_bloc.dart';
 import 'package:client/features/auth/bloc/auth_event.dart';
@@ -7,6 +7,8 @@ import 'package:client/features/auth/bloc/auth_state.dart';
 import 'package:client/widgets/signout_page.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:client/main.dart';
 
 class SideMenuWidget extends StatefulWidget {
   final String currentPage;
@@ -20,11 +22,13 @@ class SideMenuWidget extends StatefulWidget {
 
 class _SideMenuWidgetState extends State<SideMenuWidget> {
   bool isPaymentEnabled = false;
+  bool _isSwitched = false;
 
   @override
   void initState() {
     super.initState();
     _fetchPaymentStatus();
+    _loadSwitchValue();
   }
 
   void _fetchPaymentStatus() async {
@@ -49,8 +53,15 @@ class _SideMenuWidgetState extends State<SideMenuWidget> {
     }
   }
 
+  void _loadSwitchValue() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _isSwitched = prefs.getString('flipping_value') == 'enabled';
+    });
+  }
+
   void _onMenuItemSelected(BuildContext context, String pageTitle, int index) {
-    if (index == 4) { // Assuming index 4 is for SignOut
+    if (index == 5) {
       context.read<AuthBloc>().add(SignOutEvent());
     } else {
       widget.onPageSelected(pageTitle);
@@ -60,7 +71,6 @@ class _SideMenuWidgetState extends State<SideMenuWidget> {
   @override
   Widget build(BuildContext context) {
     final data = SideMenuData();
-
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
         if (state is AuthUnauthenticated) {
@@ -128,6 +138,40 @@ class _SideMenuWidgetState extends State<SideMenuWidget> {
             )
           ],
         ),
+      ),
+    );
+  }
+
+  Widget buildSwitch(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 5),
+      decoration: BoxDecoration(
+        borderRadius: const BorderRadius.all(
+          Radius.circular(6.0),
+        ),
+        color: Colors.transparent,
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 13, vertical: 7),
+            child: Text(
+              'Activer/Désactiver',
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.white,
+              ),
+            ),
+          ),
+          Switch(
+            value: _isSwitched,
+            onChanged: (value) async {
+
+            },
+            activeColor: Colors.pink,
+          ),
+        ],
       ),
     );
   }

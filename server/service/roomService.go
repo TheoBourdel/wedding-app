@@ -78,3 +78,7 @@ func (svc *RoomService) AddParticipant(participant model.RoomParticipant) dto.Ht
 	}
 	return dto.HttpErrorDto{}
 }
+
+func (svc *RoomService) CheckRoomExistsForUsers(user1ID, user2ID uint) (bool, model.Room, dto.HttpErrorDto) {
+	return svc.Repo.CheckRoomExistsForUsers(user1ID, user2ID)
+}

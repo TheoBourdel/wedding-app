@@ -60,7 +60,6 @@ class ServiceRepository {
     final res = await http.get(
       Uri.parse('$_baseUrl/user/$userId/services'),
     );
-
     if (res.statusCode == 200) {
       final List<dynamic> decodedBody = jsonDecode(res.body);
       final List<Service> services = decodedBody.map((serviceJson) => Service.fromJson(serviceJson)).toList();
@@ -141,6 +140,20 @@ class ServiceRepository {
 
     if (res.statusCode == 200) {
       return Service.fromJson(jsonDecode(res.body));
+    } else {
+      throw Exception(res.body);
+    }
+  }
+
+  static Future<List<Service>> getFavoritesServicesByUserId(int userId) async {
+    Response res = await get(
+      Uri.parse('$apiUrl/user/$userId/favorites/services'),
+    );
+
+    if (res.statusCode == 200) {
+      final List<dynamic> decodedBody = jsonDecode(res.body);
+      final List<Service> services = decodedBody.map((serviceJson) => Service.fromJson(serviceJson)).toList();
+      return services;
     } else {
       throw Exception(res.body);
     }

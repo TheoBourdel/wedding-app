@@ -26,12 +26,6 @@ class OrganizerPage extends StatelessWidget {
           return OrganizerListPage(organizers: state.organizers, weddingId: weddingId);
         }
 
-        if(state.status == OrganizerStatus.failure) {
-          return Center(
-            child: Text(state.error.toString()),
-          );
-        }
-
         return const SizedBox();
       }
     );

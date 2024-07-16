@@ -18,7 +18,7 @@ class MessageListPage extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Gérer Messages",
+                      "Conversations",
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.w600,
