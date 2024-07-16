@@ -270,7 +270,7 @@ class _FavoriteServiceListViewState extends State<FavoriteServiceListView>  with
               duration: const Duration(milliseconds: 300),
               transitionBuilder: (Widget child, Animation<double> animation) {
                 return RotationTransition(
-                  turns: child.key == const ValueKey<bool>(true) ? Tween<double>(begin: 0.75, end: 1.0).animate(animation) : Tween<double>(begin: 1.0, end: 0.75).animate(animation),
+                  turns: child.key == ValueKey<bool>(_isFavorite) ? Tween<double>(begin: 0.75, end: 1.0).animate(animation) : Tween<double>(begin: 1.0, end: 0.75).animate(animation),
                   child: ScaleTransition(scale: animation, child: child),
                 );
               },
