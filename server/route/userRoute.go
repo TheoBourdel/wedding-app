@@ -1,10 +1,10 @@
 package route
 
 import (
+	"api/config"
 	"api/controller"
 	"api/middelware"
 	"api/port/controller_port"
-	"api/config"
 	"api/repository"
 	"api/service"
 
@@ -31,11 +31,11 @@ func UserRoutes(router *gin.Engine) {
 	// Auth & Admin
 	router.GET("/users", middelware.RequireAuthAndAdmin, userControllerPort.GetUsers)
 	router.DELETE("/users/:id", middelware.RequireAuthAndAdmin, userControllerPort.DeleteUser)
-	router.PATCH("/user/:userId",middelware.RequireAuthAndAdmin,  userControllerPort.UpdateUser)
+	router.PATCH("/user/:userId", middelware.RequireAuth, userControllerPort.UpdateUser)
 
 	// Auth
-	router.GET("/user/:id/weddingId",middelware.RequireAuth, userControllerPort.GetWeddingIdByUserId)
-	
+	router.GET("/user/:id/weddingId", middelware.RequireAuth, userControllerPort.GetWeddingIdByUserId)
+
 	router.POST("/user", userControllerPort.CreateUser)
 	router.GET("/user/:id", userControllerPort.GetUser)
 	router.POST("/user/:id/estimate", userControllerPort.CreateUserEstimate)
