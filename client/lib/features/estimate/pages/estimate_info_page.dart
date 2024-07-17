@@ -16,6 +16,7 @@ import 'package:client/services/budget_service.dart';
 import 'package:client/shared/widget/button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_braintree/flutter_braintree.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:provider/provider.dart';
 import '../../../repository/estimate_repository.dart';
@@ -54,8 +55,7 @@ class _EstimateInfoPageState extends State<EstimateInfoPage> {
     if(suffisantAmount) {
       print("Starting Braintree payment...");
       var request = BraintreeDropInRequest(
-        // a mettre dans le .env
-        tokenizationKey: 'sandbox_jybm8wfr_qsn76kgd9qtrkyv5',
+        tokenizationKey: dotenv.env['TOKENIZATION_KEY'],
         collectDeviceData: true,
         requestThreeDSecureVerification: true,
         googlePaymentRequest: BraintreeGooglePaymentRequest(

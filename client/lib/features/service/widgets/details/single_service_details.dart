@@ -51,7 +51,7 @@ AnimatedPadding buildServiceDetails(service, Color defaultColor,
                       children: [
                         Icon(
                           Iconsax.location,
-                          color: Colors.grey,
+                          color: AppColors.pink,
                           size: size.height * 0.02,
                         ),
                         const SizedBox(width: 5),
@@ -69,7 +69,7 @@ AnimatedPadding buildServiceDetails(service, Color defaultColor,
                       children: [
                         Icon(
                           Iconsax.call,
-                          color: Colors.grey,
+                          color: AppColors.pink,
                           size: size.height * 0.02,
                         ),
                         const SizedBox(width: 5),
@@ -87,7 +87,7 @@ AnimatedPadding buildServiceDetails(service, Color defaultColor,
                       children: [
                         Icon(
                           Iconsax.sms,
-                          color: Colors.grey,
+                          color: AppColors.pink,
                           size: size.height * 0.02,
                         ),
                         const SizedBox(width: 5),
