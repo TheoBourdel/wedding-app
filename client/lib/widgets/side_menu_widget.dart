@@ -1,3 +1,4 @@
+import 'package:client/core/constant/constant.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
@@ -33,7 +34,7 @@ class _SideMenuWidgetState extends State<SideMenuWidget> {
   }
 
   void _fetchPaymentStatus() async {
-    final response = await http.get(Uri.parse('http://localhost:8080/api/payment-status'));
+    final response = await http.get(Uri.parse('$apiUrl/api/payment-status'));
     if (response.statusCode == 200) {
       setState(() {
         isPaymentEnabled = jsonDecode(response.body)['is_payment_enabled'];
@@ -43,7 +44,7 @@ class _SideMenuWidgetState extends State<SideMenuWidget> {
 
   void _togglePaymentStatus(bool newValue) async {
     final response = await http.post(
-      Uri.parse('http://localhost:8080/api/payment-status/update'),
+      Uri.parse('$apiUrl/api/payment-status/update'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({'is_payment_enabled': newValue}),
     );
