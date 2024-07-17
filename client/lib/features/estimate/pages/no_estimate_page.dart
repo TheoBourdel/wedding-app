@@ -17,7 +17,7 @@ class NoEstimatePage extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Gérer vos devis",
+                      "Gestion des devis",
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.w600,
