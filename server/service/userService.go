@@ -119,7 +119,7 @@ func (us *UserService) CreateUser(user model.User) (model.User, dto.HttpErrorDto
 	if err != (dto.HttpErrorDto{}) {
 		return model.User{}, dto.HttpErrorDto{Message: "Error while creating user", Code: 500}
 	}
-
+    user.Password = password
 	return user, dto.HttpErrorDto{}
 }
 

@@ -45,7 +45,7 @@ class _RevenueTableState extends State<RevenueTable> {
   @override
   Widget build(BuildContext context) {
     int currentYear = DateTime.now().year;
-    List<int> years = List<int>.generate(5, (index) => currentYear - index).reversed.toList();
+    List<int> years = List<int>.generate(2, (index) => currentYear - index).reversed.toList();
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -67,7 +67,7 @@ class _RevenueTableState extends State<RevenueTable> {
         ),
         const SizedBox(height: 16),
         Container(
-          height: 400, // Hauteur fixe pour le tableau
+          height: 400,
           child: FutureBuilder<List<Map<String, dynamic>>>(
             future: _revenueDataFuture,
             builder: (context, snapshot) {
@@ -80,7 +80,7 @@ class _RevenueTableState extends State<RevenueTable> {
               } else {
                 final revenueData = snapshot.data!;
                 return SingleChildScrollView(
-                  scrollDirection: Axis.vertical, // Défilement vertical si nécessaire
+                  scrollDirection: Axis.vertical,
                   child: SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: DataTable(
@@ -88,7 +88,7 @@ class _RevenueTableState extends State<RevenueTable> {
                         DataColumn(label: Text('Année')),
                         DataColumn(label: Text('Mois')),
                         DataColumn(label: Text('Chiffre d\'affaires')),
-                        DataColumn(label: Text('Plus de détails')), // Nouvelle colonne
+                        DataColumn(label: Text('Plus de détails')),
                       ],
                       rows: revenueData.map((data) {
                         return DataRow(

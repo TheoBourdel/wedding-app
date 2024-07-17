@@ -127,7 +127,6 @@ class _UserListPageState extends State<UserListPage> {
               child: const Text('Créer'),
               onPressed: () async {
                 try {
-                  // Créez l'utilisateur sans générer le mot de passe côté client
                   final newUser = await UserService().createUser(
                     firstNameController.text,
                     lastNameController.text,
@@ -136,7 +135,7 @@ class _UserListPageState extends State<UserListPage> {
                   );
                   fetchUsers();
                   Navigator.of(context).pop();
-                  _showPasswordDialog(newUser.password);  // Afficher le mot de passe généré
+                  _showPasswordDialog(newUser.password);
                 } catch (e) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(

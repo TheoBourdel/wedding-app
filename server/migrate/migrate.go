@@ -23,6 +23,7 @@ func main() {
 	config.DB.AutoMigrate(&model.WeddingBudget{})
 	config.DB.AutoMigrate(&model.Favorite{})
 	config.DB.AutoMigrate(&model.Log{})
+	config.DB.AutoMigrate(&model.PaymentSettings{})
 
 
 	fmt.Println("Migration has been processed!")
