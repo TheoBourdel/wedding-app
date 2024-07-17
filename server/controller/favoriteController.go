@@ -21,6 +21,15 @@ func (ctrl *FavoriteController) GetFavorites(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, favorites)
 }
 
+// CreateFavorite godoc
+// @Summary Create a favorite
+// @Description Create a favorite
+// @Tags favorites
+// @Accept json
+// @Produce json
+// @Param favorite body model.Favorite true "Favorite info"
+// @Security Bearer
+// @Router /addFavorite [post]
 func (ctrl *FavoriteController) CreateFavorite(ctx *gin.Context) {
 	var favorite model.Favorite
 	if err := ctx.ShouldBindJSON(&favorite); err != nil {
@@ -35,6 +44,15 @@ func (ctrl *FavoriteController) CreateFavorite(ctx *gin.Context) {
 	ctx.JSON(http.StatusCreated, createdFavorite)
 }
 
+// GetFavoriteByID godoc
+// @Summary Get a favorite by ID
+// @Description Get a favorite by ID
+// @Tags favorites
+// @Accept json
+// @Produce json
+// @Param id path int true "Favorite ID"
+// @Security Bearer
+// @Router /favorite/{id} [get]
 func (ctrl *FavoriteController) GetFavoriteByID(ctx *gin.Context) {
 	id, err := strconv.ParseUint(ctx.Param("id"), 10, 64)
 	if err != nil {
@@ -63,6 +81,15 @@ func (ctrl *FavoriteController) DeleteFavoriteByID(ctx *gin.Context) {
 	ctx.Status(http.StatusNoContent)
 }
 
+// UpdateFavorite godoc
+// @Summary Update a favorite
+// @Description Update a favorite by ID
+// @Tags favorites
+// @Accept json
+// @Produce json
+// @Param id path int true "Favorite ID"
+// @Security Bearer
+// @Router /favorite/{id} [patch]
 func (ctrl *FavoriteController) UpdateFavorite(ctx *gin.Context) {
 	id, err := strconv.ParseUint(ctx.Param("id"), 10, 64)
 	if err != nil {

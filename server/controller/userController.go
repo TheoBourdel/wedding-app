@@ -61,6 +61,15 @@ func (uc *UserController) CreateUserEstimate(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, estimate)
 }
 
+// GetUserEstimates godoc
+// @Summary Get all estimates for a user
+// @Description Get all estimates for a user
+// @Tags users
+// @Accept json
+// @Produce json
+// @Param id path int true "User ID"
+// @Security Bearer
+// @Router /user/{id}/estimates [get]
 func (uc *UserController) GetUserEstimates(ctx *gin.Context) {
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
@@ -77,6 +86,15 @@ func (uc *UserController) GetUserEstimates(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, estimates)
 }
 
+// CreateUser godoc
+// @Summary Create a user
+// @Description Create a new user
+// @Tags users
+// @Accept json
+// @Produce json
+// @Param user body model.User true "User object"
+// @Success 201 {object} model.User
+// @Router /user [post]
 func (uc *UserController) CreateUser(ctx *gin.Context) {
 	var body model.User
 	if ctx.Bind(&body) != nil {

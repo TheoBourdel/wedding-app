@@ -28,6 +28,17 @@ type EstimateController struct {
 	WeddingRepository  repository.WeddingRepository
 }
 
+// UpdateEstimate godoc
+// @Summary Update an estimate
+// @Description Update an estimate
+// @Tags estimates
+// @Accept json
+// @Produce json
+// @Param userId path int true "User ID"
+// @Param estimateId path int true "Estimate ID"
+// @Param estimate body model.Estimate true "Estimate info"
+// @Security Bearer
+// @Router /user/{userId}/estimate/{estimateId} [patch]
 func (ec *EstimateController) UpdateEstimate(ctx *gin.Context) {
 	userId, _ := strconv.Atoi(ctx.Param("userId"))
 	estimateId, _ := strconv.Atoi(ctx.Param("estimateId"))

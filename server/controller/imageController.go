@@ -41,7 +41,6 @@ func (wc *ImageController) GetImages(ctx *gin.Context) {
 // @Param image body model.Image true "Image object to be created"
 // @Success 201 {object} model.Image
 // @Failure 400 {string} string "Invalid request"
-
 // @Router /images [post]
 func (wc *ImageController) CreateImage(ctx *gin.Context) {
 	var image model.Image
