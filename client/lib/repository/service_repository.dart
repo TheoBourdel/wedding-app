@@ -182,8 +182,12 @@ class ServiceRepository {
   }
 
   static Future<List<Service>> getFavoritesServicesByUserId(int userId) async {
+    String? token = await TokenUtils.getToken();
     Response res = await get(
       Uri.parse('$apiUrl/user/$userId/favorites/services'),
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
     );
 
     if (res.statusCode == 200) {
