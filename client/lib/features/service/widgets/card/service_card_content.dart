@@ -86,7 +86,7 @@ class ServiceCardContent extends StatelessWidget {
             itemPadding: EdgeInsets.zero,
             onRatingUpdate: (rating) {},
           ),
-          Text('5 notations', style: TextStyle(fontSize: 14, color: Colors.grey.withOpacity(0.8))),
+          Text('4/5', style: TextStyle(fontSize: 14, color: Colors.grey.withOpacity(0.8))),
         ],
       ),
     );
