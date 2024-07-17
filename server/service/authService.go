@@ -28,7 +28,7 @@ func (as *AuthService) SignUp(body model.User) (model.User, dto.HttpErrorDto) {
 
 	_, err = as.UserRepository.FindOneBy("email", body.Email)
 	if err.Error() != "User not found" {
-		return model.User{}, dto.HttpErrorDto{Message: "Email already exists", Code: 400}
+		return model.User{}, dto.HttpErrorDto{Message: "Email déjà existant", Code: 400}
 	}
 
 	user := model.User{
@@ -60,7 +60,7 @@ func (as *AuthService) SignIn(body dto.SignInDto) (string, dto.HttpErrorDto) {
 
 	err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(body.Password))
 	if err != nil {
-		return "", dto.HttpErrorDto{Message: "Invalid password", Code: 401}
+		return "", dto.HttpErrorDto{Message: "Email ou mot de passe erroné", Code: 401}
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
