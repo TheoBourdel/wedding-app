@@ -83,7 +83,6 @@ class _DetailsPageState extends State<DetailsPage> {
     return Scaffold(
       body: Center(
         child: Container(
-          color: Colors.white,
           height: size.height,
           width: size.width,
           child: Stack(

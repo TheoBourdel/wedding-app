@@ -43,15 +43,6 @@ AnimatedPadding buildServiceDetails(service, Color defaultColor,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
-                        const Spacer(),
-                        Text(
-                          '€${service!.price}',
-                          style: TextStyle(
-                            color: AppColors.pink500,
-                            fontSize: size.height * 0.035,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        )
                       ],
                     ),
                     const SizedBox(height: 5),
