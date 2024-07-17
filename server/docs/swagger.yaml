@@ -237,12 +237,115 @@ definitions:
           $ref: '#/definitions/model.User'
         type: array
     type: object
+  model.WeddingBudget:
+    properties:
+      amount:
+        type: number
+      amount_paid:
+        type: number
+      category_id:
+        type: integer
+      created_at:
+        type: string
+      deleted_at:
+        type: string
+      id:
+        type: integer
+      paid:
+        type: boolean
+      updated_at:
+        type: string
+      wedding_id:
+        type: integer
+    type: object
 info:
   contact: {}
   description: API pour le challenge de l'ESGI
   title: Challenge APIIIII
   version: "1.0"
 paths:
+  /addFavorite:
+    post:
+      consumes:
+      - application/json
+      description: Create a favorite
+      parameters:
+      - description: Favorite info
+        in: body
+        name: favorite
+        required: true
+        schema:
+          $ref: '#/definitions/model.Favorite'
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - Bearer: []
+      summary: Create a favorite
+      tags:
+      - favorites
+  /budgets:
+    post:
+      consumes:
+      - application/json
+      description: Create a budget for a wedding
+      parameters:
+      - description: Wedding ID
+        in: path
+        name: wedding_id
+        required: true
+        type: integer
+      - description: budget info
+        in: body
+        name: budget
+        required: true
+        schema:
+          $ref: '#/definitions/model.WeddingBudget'
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - Bearer: []
+      summary: Create a budget
+      tags:
+      - budget
+  /budgets/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a budget by ID
+      parameters:
+      - description: Budget ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - Bearer: []
+      summary: Delete a budget
+      tags:
+      - budget
+    put:
+      consumes:
+      - application/json
+      description: Update a budget by ID
+      parameters:
+      - description: Budget ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - Bearer: []
+      summary: Update a budget
+      tags:
+      - budget
   /categorys:
     get:
       consumes:
@@ -361,6 +464,43 @@ paths:
       summary: Update a category by ID
       tags:
       - categorys
+  /favorite/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get a favorite by ID
+      parameters:
+      - description: Favorite ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - Bearer: []
+      summary: Get a favorite by ID
+      tags:
+      - favorites
+    patch:
+      consumes:
+      - application/json
+      description: Update a favorite by ID
+      parameters:
+      - description: Favorite ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - Bearer: []
+      summary: Update a favorite
+      tags:
+      - favorites
   /images:
     get:
       consumes:
@@ -381,7 +521,32 @@ paths:
       tags:
       - images
     post:
-      responses: {}
+      consumes:
+      - application/json
+      description: Create a new image
+      parameters:
+      - description: Image object to be created
+        in: body
+        name: image
+        required: true
+        schema:
+          $ref: '#/definitions/model.Image'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/model.Image'
+        "400":
+          description: Invalid request
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Create a new image
+      tags:
+      - images
   /images/{id}:
     delete:
       consumes:
@@ -784,6 +949,47 @@ paths:
       summary: Sign up
       tags:
       - auth
+  /user:
+    post:
+      consumes:
+      - application/json
+      description: Create a new user
+      parameters:
+      - description: User object
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/model.User'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/model.User'
+      summary: Create a user
+      tags:
+      - users
+  /user/{id}/estimates:
+    get:
+      consumes:
+      - application/json
+      description: Get all estimates for a user
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - Bearer: []
+      summary: Get all estimates for a user
+      tags:
+      - users
   /user/{id}/favorites:
     get:
       consumes:
@@ -842,6 +1048,36 @@ paths:
       summary: Get services by user ID
       tags:
       - services
+  /user/{userId}/estimate/{estimateId}:
+    patch:
+      consumes:
+      - application/json
+      description: Update an estimate
+      parameters:
+      - description: User ID
+        in: path
+        name: userId
+        required: true
+        type: integer
+      - description: Estimate ID
+        in: path
+        name: estimateId
+        required: true
+        type: integer
+      - description: Estimate info
+        in: body
+        name: estimate
+        required: true
+        schema:
+          $ref: '#/definitions/model.Estimate'
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - Bearer: []
+      summary: Update an estimate
+      tags:
+      - estimates
   /users:
     get:
       consumes:
@@ -1042,6 +1278,44 @@ paths:
       summary: Add a wedding organizer
       tags:
       - weddings
+  /weddings/{wedding_id}/budgets:
+    get:
+      consumes:
+      - application/json
+      description: Get all budgets for a wedding
+      parameters:
+      - description: Wedding ID
+        in: path
+        name: wedding_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - Bearer: []
+      summary: Get budgets by wedding ID
+      tags:
+      - budget
+  /weddings/{wedding_id}/total_budget:
+    get:
+      consumes:
+      - application/json
+      description: Get total budget for a wedding
+      parameters:
+      - description: Wedding ID
+        in: path
+        name: wedding_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - Bearer: []
+      summary: Get total budget
+      tags:
+      - budget
   /weddings/user/{userId}:
     get:
       consumes:
