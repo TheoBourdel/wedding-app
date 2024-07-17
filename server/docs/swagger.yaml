@@ -1,5 +1,11 @@
-basePath: /
 definitions:
+  dto.SignInDto:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
   gorm.DeletedAt:
     properties:
       time:
@@ -10,16 +16,64 @@ definitions:
     type: object
   model.Category:
     properties:
+      created_at:
+        type: string
+      deleted_at:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  model.Estimate:
+    properties:
+      client:
+        $ref: '#/definitions/model.User'
+      clientID:
+        type: integer
+      content:
+        type: string
       createdAt:
         type: string
       deletedAt:
         $ref: '#/definitions/gorm.DeletedAt'
       id:
         type: integer
-      name:
+      price:
+        type: number
+      provider:
+        $ref: '#/definitions/model.User'
+      providerID:
+        type: integer
+      service:
+        $ref: '#/definitions/model.Service'
+      serviceID:
+        type: integer
+      status:
         type: string
       updatedAt:
         type: string
+    type: object
+  model.Favorite:
+    properties:
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      id:
+        type: integer
+      service:
+        $ref: '#/definitions/model.Service'
+      serviceID:
+        type: integer
+      updatedAt:
+        type: string
+      user:
+        $ref: '#/definitions/model.User'
+      userID:
+        type: integer
     type: object
   model.Image:
     properties:
@@ -38,6 +92,27 @@ definitions:
       updatedAt:
         type: string
     type: object
+  model.Message:
+    properties:
+      content:
+        type: string
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      id:
+        type: integer
+      room:
+        $ref: '#/definitions/model.Room'
+      roomID:
+        type: integer
+      updatedAt:
+        type: string
+      user:
+        $ref: '#/definitions/model.User'
+      userID:
+        type: integer
+    type: object
   model.Role:
     enum:
     - admin
@@ -48,6 +123,23 @@ definitions:
     - Admin
     - Provider
     - Marry
+  model.Room:
+    properties:
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      id:
+        type: integer
+      messages:
+        items:
+          $ref: '#/definitions/model.Message'
+        type: array
+      roomName:
+        type: string
+      updatedAt:
+        type: string
+    type: object
   model.Service:
     properties:
       category:
@@ -60,8 +152,16 @@ definitions:
         $ref: '#/definitions/gorm.DeletedAt'
       description:
         type: string
+      estimates:
+        items:
+          $ref: '#/definitions/model.Estimate'
+        type: array
       id:
         type: integer
+      images:
+        items:
+          $ref: '#/definitions/model.Image'
+        type: array
       localisation:
         type: string
       mail:
@@ -87,10 +187,16 @@ definitions:
         type: string
       Firstname:
         type: string
+      androidToken:
+        type: string
       createdAt:
         type: string
       deletedAt:
         $ref: '#/definitions/gorm.DeletedAt'
+      estimates:
+        items:
+          $ref: '#/definitions/model.Estimate'
+        type: array
       id:
         type: integer
       lastname:
@@ -114,19 +220,15 @@ definitions:
         type: number
       createdAt:
         type: string
+      date:
+        type: string
       deletedAt:
         $ref: '#/definitions/gorm.DeletedAt'
-      description:
-        type: string
       email:
         type: string
       id:
         type: integer
-      name:
-        type: string
       phone:
-        type: string
-      profileImage:
         type: string
       updatedAt:
         type: string
@@ -135,11 +237,10 @@ definitions:
           $ref: '#/definitions/model.User'
         type: array
     type: object
-host: localhost:8080
 info:
   contact: {}
   description: API pour le challenge de l'ESGI
-  title: Challenge API
+  title: Challenge APIIIII
   version: "1.0"
 paths:
   /categorys:
@@ -156,6 +257,8 @@ paths:
             items:
               $ref: '#/definitions/model.Category'
             type: array
+      security:
+      - Bearer: []
       summary: Get all categorys
       tags:
       - categorys
@@ -189,6 +292,8 @@ paths:
           description: Internal server error
           schema:
             type: string
+      security:
+      - Bearer: []
       summary: Delete a category by ID
       tags:
       - categorys
@@ -213,6 +318,8 @@ paths:
           description: Category not found
           schema:
             type: string
+      security:
+      - Bearer: []
       summary: Get a category by ID
       tags:
       - categorys
@@ -249,6 +356,8 @@ paths:
           description: Internal server error
           schema:
             type: string
+      security:
+      - Bearer: []
       summary: Update a category by ID
       tags:
       - categorys
@@ -266,6 +375,8 @@ paths:
             items:
               $ref: '#/definitions/model.Image'
             type: array
+      security:
+      - Bearer: []
       summary: Get all images
       tags:
       - images
@@ -299,6 +410,8 @@ paths:
           description: Internal server error
           schema:
             type: string
+      security:
+      - Bearer: []
       summary: Delete a image by ID
       tags:
       - images
@@ -323,6 +436,8 @@ paths:
           description: Image not found
           schema:
             type: string
+      security:
+      - Bearer: []
       summary: Get a image by ID
       tags:
       - images
@@ -359,9 +474,68 @@ paths:
           description: Internal server error
           schema:
             type: string
+      security:
+      - Bearer: []
       summary: Update a image by ID
       tags:
       - images
+  /images/upload:
+    post:
+      consumes:
+      - multipart/form-data
+      description: Uploads an image file and saves it to the server
+      parameters:
+      - description: Image file
+        in: formData
+        name: image
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Invalid request
+          schema:
+            type: string
+        "500":
+          description: Server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Upload an image file
+      tags:
+      - images
+  /room/{room_id}/messages:
+    get:
+      consumes:
+      - application/json
+      description: Get a list of messages for a specified room
+      parameters:
+      - description: Room ID
+        in: path
+        name: room_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Message'
+            type: array
+      security:
+      - Bearer: []
+      summary: Get messages by room ID
+      tags:
+      - messages
   /services:
     get:
       consumes:
@@ -376,6 +550,8 @@ paths:
             items:
               $ref: '#/definitions/model.Service'
             type: array
+      security:
+      - Bearer: []
       summary: Get all services
       tags:
       - services
@@ -409,6 +585,8 @@ paths:
           description: Internal server error
           schema:
             type: string
+      security:
+      - Bearer: []
       summary: Delete a service by ID
       tags:
       - services
@@ -433,6 +611,8 @@ paths:
           description: Service not found
           schema:
             type: string
+      security:
+      - Bearer: []
       summary: Get a service by ID
       tags:
       - services
@@ -469,7 +649,71 @@ paths:
           description: Internal server error
           schema:
             type: string
+      security:
+      - Bearer: []
       summary: Update a service by ID
+      tags:
+      - services
+  /services/{id}/images:
+    get:
+      consumes:
+      - application/json
+      description: Get all images associated with a specific service
+      parameters:
+      - description: Service ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Image'
+            type: array
+        "404":
+          description: Service not found
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Get images for a service
+      tags:
+      - services
+  /services/search:
+    get:
+      consumes:
+      - application/json
+      description: Search for services that match a specific name
+      parameters:
+      - description: Service Name
+        in: query
+        name: name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Service'
+            type: array
+        "400":
+          description: Service name is required
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Search services by name
       tags:
       - services
   /signin:
@@ -477,6 +721,13 @@ paths:
       consumes:
       - application/json
       description: Sign in a user
+      parameters:
+      - description: signin info
+        in: body
+        name: signinDto
+        required: true
+        schema:
+          $ref: '#/definitions/dto.SignInDto'
       produces:
       - application/json
       responses:
@@ -533,6 +784,64 @@ paths:
       summary: Sign up
       tags:
       - auth
+  /user/{id}/favorites:
+    get:
+      consumes:
+      - application/json
+      description: Get all favorites associated with a specific user ID
+      parameters:
+      - description: User ID
+        in: path
+        name: userId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Favorite'
+            type: array
+        "404":
+          description: No favorites found for this user
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Get favorites by user ID
+      tags:
+      - favorites
+  /user/{id}/services:
+    get:
+      consumes:
+      - application/json
+      description: Get all services associated with a specific user ID
+      parameters:
+      - description: User ID
+        in: path
+        name: userId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Service'
+            type: array
+        "404":
+          description: No services found for this user
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Get services by user ID
+      tags:
+      - services
   /users:
     get:
       consumes:
@@ -547,6 +856,8 @@ paths:
             items:
               $ref: '#/definitions/model.User'
             type: array
+      security:
+      - BearerAuth: []
       summary: Get all users
       tags:
       - users
@@ -573,6 +884,8 @@ paths:
           description: Invalid request
           schema:
             type: string
+      security:
+      - Bearer: []
       summary: Create a new wedding
       tags:
       - weddings
@@ -590,6 +903,12 @@ paths:
             items:
               $ref: '#/definitions/model.Wedding'
             type: array
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+      security:
+      - Bearer: []
       summary: Get all weddings
       tags:
       - weddings
@@ -621,6 +940,8 @@ paths:
           description: Internal server error
           schema:
             type: string
+      security:
+      - Bearer: []
       summary: Delete a wedding by ID
       tags:
       - weddings
@@ -645,6 +966,8 @@ paths:
           description: Wedding not found
           schema:
             type: string
+      security:
+      - Bearer: []
       summary: Get a wedding by ID
       tags:
       - weddings
@@ -681,6 +1004,8 @@ paths:
           description: Internal server error
           schema:
             type: string
+      security:
+      - Bearer: []
       summary: Update a wedding by ID
       tags:
       - weddings
@@ -712,6 +1037,8 @@ paths:
           description: Invalid request
           schema:
             type: string
+      security:
+      - Bearer: []
       summary: Add a wedding organizer
       tags:
       - weddings
@@ -737,7 +1064,14 @@ paths:
           description: Wedding not found
           schema:
             type: string
+      security:
+      - Bearer: []
       summary: Get a wedding by User ID
       tags:
       - weddings
+securityDefinitions:
+  Bearer:
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"

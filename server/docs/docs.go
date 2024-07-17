@@ -2,7 +2,6 @@
 package docs
 
 import "github.com/swaggo/swag"
-import "os"
 
 const docTemplate = `{
     "schemes": {{ marshal .Schemes }},
@@ -18,6 +17,11 @@ const docTemplate = `{
     "paths": {
         "/categorys": {
             "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "Get a list of all categorys",
                 "consumes": [
                     "application/json"
@@ -47,6 +51,11 @@ const docTemplate = `{
         },
         "/categorys/{id}": {
             "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "Get a category by its ID",
                 "consumes": [
                     "application/json"
@@ -83,6 +92,11 @@ const docTemplate = `{
                 }
             },
             "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "Update a category by its ID",
                 "consumes": [
                     "application/json"
@@ -137,6 +151,11 @@ const docTemplate = `{
                 }
             },
             "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "Delete a category by its ID",
                 "consumes": [
                     "application/json"
@@ -184,6 +203,11 @@ const docTemplate = `{
         },
         "/images": {
             "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "Get a list of all images",
                 "consumes": [
                     "application/json"
@@ -211,8 +235,63 @@ const docTemplate = `{
                 "responses": {}
             }
         },
+        "/images/upload": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Uploads an image file and saves it to the server",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "images"
+                ],
+                "summary": "Upload an image file",
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "Image file",
+                        "name": "image",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/images/{id}": {
             "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "Get a image by its ID",
                 "consumes": [
                     "application/json"
@@ -249,6 +328,11 @@ const docTemplate = `{
                 }
             },
             "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "Update a image by its ID",
                 "consumes": [
                     "application/json"
@@ -303,6 +387,11 @@ const docTemplate = `{
                 }
             },
             "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "Delete a image by its ID",
                 "consumes": [
                     "application/json"
@@ -348,8 +437,53 @@ const docTemplate = `{
                 }
             }
         },
+        "/room/{room_id}/messages": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Get a list of messages for a specified room",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "messages"
+                ],
+                "summary": "Get messages by room ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Room ID",
+                        "name": "room_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.Message"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/services": {
             "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "Get a list of all services",
                 "consumes": [
                     "application/json"
@@ -377,8 +511,65 @@ const docTemplate = `{
                 "responses": {}
             }
         },
+        "/services/search": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Search for services that match a specific name",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "services"
+                ],
+                "summary": "Search services by name",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Service Name",
+                        "name": "name",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.Service"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Service name is required",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/services/{id}": {
             "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "Get a service by its ID",
                 "consumes": [
                     "application/json"
@@ -415,6 +606,11 @@ const docTemplate = `{
                 }
             },
             "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "Update a service by its ID",
                 "consumes": [
                     "application/json"
@@ -469,6 +665,11 @@ const docTemplate = `{
                 }
             },
             "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "Delete a service by its ID",
                 "consumes": [
                     "application/json"
@@ -514,6 +715,52 @@ const docTemplate = `{
                 }
             }
         },
+        "/services/{id}/images": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Get all images associated with a specific service",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "services"
+                ],
+                "summary": "Get images for a service",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Service ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.Image"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Service not found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/signin": {
             "post": {
                 "description": "Sign in a user",
@@ -527,6 +774,17 @@ const docTemplate = `{
                     "auth"
                 ],
                 "summary": "Sign in",
+                "parameters": [
+                    {
+                        "description": "signin info",
+                        "name": "signinDto",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.SignInDto"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK"
@@ -607,8 +865,105 @@ const docTemplate = `{
                 }
             }
         },
+        "/user/{id}/favorites": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Get all favorites associated with a specific user ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "favorites"
+                ],
+                "summary": "Get favorites by user ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "User ID",
+                        "name": "userId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.Favorite"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "No favorites found for this user",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/{id}/services": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Get all services associated with a specific user ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "services"
+                ],
+                "summary": "Get services by user ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "User ID",
+                        "name": "userId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.Service"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "No services found for this user",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/users": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Get a list of all users",
                 "consumes": [
                     "application/json"
@@ -635,6 +990,11 @@ const docTemplate = `{
         },
         "/wedding": {
             "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "Create a new wedding",
                 "consumes": [
                     "application/json"
@@ -675,6 +1035,11 @@ const docTemplate = `{
         },
         "/weddings": {
             "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "Get a list of all weddings",
                 "consumes": [
                     "application/json"
@@ -695,12 +1060,23 @@ const docTemplate = `{
                                 "$ref": "#/definitions/model.Wedding"
                             }
                         }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 }
             }
         },
         "/weddings/user/{userId}": {
             "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "Get a wedding by its User ID",
                 "consumes": [
                     "application/json"
@@ -739,6 +1115,11 @@ const docTemplate = `{
         },
         "/weddings/{id}": {
             "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "Get a wedding by its ID",
                 "consumes": [
                     "application/json"
@@ -775,6 +1156,11 @@ const docTemplate = `{
                 }
             },
             "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "Update a wedding by its ID",
                 "consumes": [
                     "application/json"
@@ -829,6 +1215,11 @@ const docTemplate = `{
                 }
             },
             "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "Delete a wedding by its ID",
                 "consumes": [
                     "application/json"
@@ -876,6 +1267,11 @@ const docTemplate = `{
         },
         "/weddings/{id}/organizer": {
             "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "Add a wedding organizer",
                 "consumes": [
                     "application/json"
@@ -923,6 +1319,17 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "dto.SignInDto": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                }
+            }
+        },
         "gorm.DeletedAt": {
             "type": "object",
             "properties": {
@@ -938,6 +1345,35 @@ const docTemplate = `{
         "model.Category": {
             "type": "object",
             "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "deleted_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.Estimate": {
+            "type": "object",
+            "properties": {
+                "client": {
+                    "$ref": "#/definitions/model.User"
+                },
+                "clientID": {
+                    "type": "integer"
+                },
+                "content": {
+                    "type": "string"
+                },
                 "createdAt": {
                     "type": "string"
                 },
@@ -947,11 +1383,55 @@ const docTemplate = `{
                 "id": {
                     "type": "integer"
                 },
-                "name": {
+                "price": {
+                    "type": "number"
+                },
+                "provider": {
+                    "$ref": "#/definitions/model.User"
+                },
+                "providerID": {
+                    "type": "integer"
+                },
+                "service": {
+                    "$ref": "#/definitions/model.Service"
+                },
+                "serviceID": {
+                    "type": "integer"
+                },
+                "status": {
                     "type": "string"
                 },
                 "updatedAt": {
                     "type": "string"
+                }
+            }
+        },
+        "model.Favorite": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "deletedAt": {
+                    "$ref": "#/definitions/gorm.DeletedAt"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "service": {
+                    "$ref": "#/definitions/model.Service"
+                },
+                "serviceID": {
+                    "type": "integer"
+                },
+                "updatedAt": {
+                    "type": "string"
+                },
+                "user": {
+                    "$ref": "#/definitions/model.User"
+                },
+                "userID": {
+                    "type": "integer"
                 }
             }
         },
@@ -981,6 +1461,38 @@ const docTemplate = `{
                 }
             }
         },
+        "model.Message": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "deletedAt": {
+                    "$ref": "#/definitions/gorm.DeletedAt"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "room": {
+                    "$ref": "#/definitions/model.Room"
+                },
+                "roomID": {
+                    "type": "integer"
+                },
+                "updatedAt": {
+                    "type": "string"
+                },
+                "user": {
+                    "$ref": "#/definitions/model.User"
+                },
+                "userID": {
+                    "type": "integer"
+                }
+            }
+        },
         "model.Role": {
             "type": "string",
             "enum": [
@@ -993,6 +1505,32 @@ const docTemplate = `{
                 "Provider",
                 "Marry"
             ]
+        },
+        "model.Room": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "deletedAt": {
+                    "$ref": "#/definitions/gorm.DeletedAt"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "messages": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Message"
+                    }
+                },
+                "roomName": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
         },
         "model.Service": {
             "type": "object",
@@ -1012,8 +1550,20 @@ const docTemplate = `{
                 "description": {
                     "type": "string"
                 },
+                "estimates": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Estimate"
+                    }
+                },
                 "id": {
                     "type": "integer"
+                },
+                "images": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Image"
+                    }
                 },
                 "localisation": {
                     "type": "string"
@@ -1053,11 +1603,20 @@ const docTemplate = `{
                 "Firstname": {
                     "type": "string"
                 },
+                "androidToken": {
+                    "type": "string"
+                },
                 "createdAt": {
                     "type": "string"
                 },
                 "deletedAt": {
                     "$ref": "#/definitions/gorm.DeletedAt"
+                },
+                "estimates": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Estimate"
+                    }
                 },
                 "id": {
                     "type": "integer"
@@ -1094,11 +1653,11 @@ const docTemplate = `{
                 "createdAt": {
                     "type": "string"
                 },
+                "date": {
+                    "type": "string"
+                },
                 "deletedAt": {
                     "$ref": "#/definitions/gorm.DeletedAt"
-                },
-                "description": {
-                    "type": "string"
                 },
                 "email": {
                     "type": "string"
@@ -1106,13 +1665,7 @@ const docTemplate = `{
                 "id": {
                     "type": "integer"
                 },
-                "name": {
-                    "type": "string"
-                },
                 "phone": {
-                    "type": "string"
-                },
-                "profileImage": {
                     "type": "string"
                 },
                 "updatedAt": {
@@ -1126,17 +1679,23 @@ const docTemplate = `{
                 }
             }
         }
+    },
+    "securityDefinitions": {
+        "Bearer": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+        }
     }
 }`
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
-	// Host:             "localhost:8080",
-    Host: os.Getenv("SERVER"),
-	BasePath:         "/",
+	Host:             "",
+	BasePath:         "",
 	Schemes:          []string{},
-	Title:            "Challenge API",
+	Title:            "Challenge APIIIII",
 	Description:      "API pour le challenge de l'ESGI",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,

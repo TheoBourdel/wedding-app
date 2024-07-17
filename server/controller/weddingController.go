@@ -32,7 +32,9 @@ func (e HttpErrorDto) Error() string {
 // @Tags weddings
 // @Accept json
 // @Produce json
+// @Security Bearer
 // @Success 200 {object} []model.Wedding
+// @Failure 401 {string} string "Unauthorized"
 // @Router /weddings [get]
 func (wc *WeddingController) GetWeddings(ctx *gin.Context) {
 	weddings := wc.WeddingService.FindAll()
@@ -47,6 +49,7 @@ func (wc *WeddingController) GetWeddings(ctx *gin.Context) {
 // @Tags weddings
 // @Accept json
 // @Produce json
+// @Security Bearer
 // @Param wedding body model.Wedding true "Wedding object to be created"
 // @Success 201 {object} model.Wedding
 // @Failure 400 {string} string "Invalid request"
@@ -81,6 +84,7 @@ func (wc *WeddingController) CreateWedding(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param id path int true "Wedding ID"
+// @Security Bearer
 // @Success 200 {object} model.Wedding
 // @Failure 404 {string} string "Wedding not found"
 // @Router /weddings/{id} [get]
@@ -107,6 +111,7 @@ func (wc *WeddingController) GetWeddingByID(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param id path int true "Wedding ID"
+// @Security Bearer
 // @Success 204 "No Content"
 // @Failure 400 {string} string "Invalid wedding ID"
 // @Failure 404 {string} string "Wedding not found"
@@ -134,6 +139,7 @@ func (wc *WeddingController) DeleteWeddingByID(ctx *gin.Context) {
 // @Tags weddings
 // @Accept json
 // @Produce json
+// @Security Bearer
 // @Param id path int true "Wedding ID"
 // @Param wedding body model.Wedding true "Updated wedding object"
 // @Success 204 "No Content"
@@ -178,6 +184,7 @@ func (wc *WeddingController) UpdateWedding(ctx *gin.Context) {
 // @Tags weddings
 // @Accept json
 // @Produce json
+// @Security Bearer
 // @Param id path int true "Wedding ID"
 // @Param user body model.User true "User object to be added as an organizer"
 // @Success 200 {object} model.User
@@ -212,6 +219,7 @@ func (wc *WeddingController) AddWeddingOrganizer(ctx *gin.Context) {
 // @Tags weddings
 // @Accept json
 // @Produce json
+// @Security Bearer
 // @Param userId path int true "User ID"
 // @Success 200 {object} model.Wedding
 // @Failure 404 {string} string "Wedding not found"

@@ -3,11 +3,11 @@ package main
 import (
 	"api/config"
 	_ "api/docs"
+	"api/logs"
 	"api/route"
 	"api/ws"
 	"strings"
 	"time"
-	"api/logs"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -20,10 +20,14 @@ func init() {
 	config.PostgresDatabaseConnection()
 }
 
-// @title Challenge API
+// @title Challenge APIIIII
 // @version 1.0
 // @description API pour le challenge de l'ESGI
-
+// @securityDefinitions.apikey Bearer
+// @in header
+// @name Authorization
+// @in header
+// @name Authorization
 // @host localhost:8080
 // @BasePath /
 func main() {

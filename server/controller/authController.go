@@ -53,6 +53,7 @@ func (ac *AuthController) SignUp(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Success 200
+// @Param signinDto body dto.SignInDto true "signin info"
 // @Failure 401 {string} string "Invalid password"
 // @Failure 404 {string} string "User not found"
 // @Failure 500 {string} string "Server error"

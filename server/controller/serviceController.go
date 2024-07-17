@@ -23,6 +23,7 @@ type ServiceController struct {
 // @Tags services
 // @Accept json
 // @Produce json
+// @Security Bearer
 // @Param id path int true "Service ID"
 // @Success 200 {object} []model.Image
 // @Failure 404 {string} string "Service not found"
@@ -56,6 +57,7 @@ func (wc *ServiceController) GetServiceImages(ctx *gin.Context) {
 // @Summary Get all services
 // @Description Get a list of all services
 // @Tags services
+// @Security Bearer
 // @Accept json
 // @Produce json
 // @Success 200 {object} []model.Service
@@ -70,6 +72,7 @@ func (wc *ServiceController) GetServices(ctx *gin.Context) {
 // CreateService godoc
 // @Summary Create a new service
 // @Description Create a new service
+// @Security Bearer
 // @Tags services
 // @Accept json
 // @Produce json
@@ -96,6 +99,7 @@ func (wc *ServiceController) CreateService(ctx *gin.Context) {
 
 // GetServiceByID godoc
 // @Summary Get a service by ID
+// @Security Bearer
 // @Description Get a service by its ID
 // @Tags services
 // @Accept json
@@ -127,6 +131,7 @@ func (wc *ServiceController) GetServiceByID(ctx *gin.Context) {
 // @Tags services
 // @Accept json
 // @Produce json
+// @Security Bearer
 // @Param id path int true "Service ID"
 // @Success 204 "No Content"
 // @Failure 400 {string} string "Invalid service ID"
@@ -150,6 +155,7 @@ func (wc *ServiceController) DeleteServiceByID(ctx *gin.Context) {
 }
 
 // UpdateService godoc
+// @Security Bearer
 // @Summary Update a service by ID
 // @Description Update a service by its ID
 // @Tags services
@@ -197,6 +203,7 @@ func (wc *ServiceController) UpdateService(ctx *gin.Context) {
 // @Tags services
 // @Accept json
 // @Produce json
+// @Security Bearer
 // @Param userId path int true "User ID"
 // @Success 200 {object} []model.Service
 // @Failure 404 {string} string "No services found for this user"
@@ -221,6 +228,7 @@ func (wc *ServiceController) GetServicesByUserID(ctx *gin.Context) {
 // @Summary Search services by name
 // @Description Search for services that match a specific name
 // @Tags services
+// @Security Bearer
 // @Accept json
 // @Produce json
 // @Param name query string true "Service Name"

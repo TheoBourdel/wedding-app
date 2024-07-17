@@ -20,6 +20,7 @@ type ImageController struct {
 // @Description Get a list of all images
 // @Tags images
 // @Accept json
+// @Security Bearer
 // @Produce json
 // @Success 200 {object} []model.Image
 // @Router /images [get]
@@ -35,6 +36,7 @@ func (wc *ImageController) GetImages(ctx *gin.Context) {
 // @Description Create a new image
 // @Tags images
 // @Accept json
+// @Security Bearer
 // @Produce json
 // @Param image body model.Image true "Image object to be created"
 // @Success 201 {object} model.Image
@@ -63,6 +65,7 @@ func (wc *ImageController) CreateImage(ctx *gin.Context) {
 // @Tags images
 // @Accept json
 // @Produce json
+// @Security Bearer
 // @Param id path int true "Image ID"
 // @Success 200 {object} model.Image
 // @Failure 404 {string} string "Image not found"
@@ -90,6 +93,7 @@ func (wc *ImageController) GetImageByID(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param id path int true "Image ID"
+// @Security Bearer
 // @Success 204 "No Content"
 // @Failure 400 {string} string "Invalid image ID"
 // @Failure 404 {string} string "Image not found"
@@ -117,6 +121,7 @@ func (wc *ImageController) DeleteImageByID(ctx *gin.Context) {
 // @Tags images
 // @Accept json
 // @Produce json
+// @Security Bearer
 // @Param id path int true "Image ID"
 // @Param image body model.Image true "Updated image object"
 // @Success 204 "No Content"
@@ -159,79 +164,38 @@ func (wc *ImageController) UpdateImage(ctx *gin.Context) {
 // @Tags images
 // @Accept multipart/form-data
 // @Produce json
+// @Security Bearer
 // @Param image formData file true "Image file"
 // @Success 200 {object} map[string]interface{}
 // @Failure 400 {string} string "Invalid request"
 // @Failure 500 {string} string "Server error"
 // @Router /images/upload [post]
-/*func (wc *ImageController) UploadImage(c *gin.Context) {
-    // Chemin de base pour les images uploadées
-    uploadPath := "uploads"
-
-    // Vérifiez si le dossier existe, sinon créez-le
-    if _, err := os.Stat(uploadPath); os.IsNotExist(err) {
-        // os.MkdirAll crée un dossier avec ses sous-dossiers si nécessaire
-        err := os.MkdirAll(uploadPath, os.ModePerm) // os.ModePerm donne les permissions nécessaires pour lire et écrire
-        if err != nil {
-            c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create upload directory"})
-            return
-        }
-    }
-
-    // Récupère le fichier à partir de la requête
-    file, err := c.FormFile("image")
-    if err != nil {
-        c.JSON(http.StatusBadRequest, gin.H{"error": "No file received"})
-        return
-    }
-
-    // Construit le chemin de sauvegarde complet
-    path := filepath.Join(uploadPath, file.Filename)
-
-    // Sauvegarde le fichier dans le chemin spécifié
-    if err := c.SaveUploadedFile(file, path); err != nil {
-        c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save the file"})
-        return
-    }
-
-    // Crée l'entrée de l'image dans la base de données
-    image := model.Image{Path: path}
-    savedImage, errDto := wc.ImageService.Create(image)
-    if errDto.Code != 0 {
-        c.JSON(errDto.Code, gin.H{"error": errDto.Message})
-        return
-    }
-
-    // Répond avec le chemin de l'image enregistrée
-    c.JSON(http.StatusOK, gin.H{"message": "File uploaded successfully", "path": savedImage.Path})
-}*/
-
 func (wc *ImageController) UploadImage(c *gin.Context) {
-    serviceIdStr := c.PostForm("serviceId")
-    serviceId, err := strconv.ParseUint(serviceIdStr, 10, 32)
-    if err != nil {
-        c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid service ID"})
-        return
-    }
+	serviceIdStr := c.PostForm("serviceId")
+	serviceId, err := strconv.ParseUint(serviceIdStr, 10, 32)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid service ID"})
+		return
+	}
 
-    file, err := c.FormFile("image")
-    if err != nil {
-        c.JSON(http.StatusBadRequest, gin.H{"error": "No file received"})
-        return
-    }
+	file, err := c.FormFile("image")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "No file received"})
+		return
+	}
 
-    path := "uploads/" + file.Filename
-    if err := c.SaveUploadedFile(file, path); err != nil {
-        c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save the file"})
-        return
-    }
+	path := "uploads/" + file.Filename
+	if err := c.SaveUploadedFile(file, path); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save the file"})
+		return
+	}
 
-    image := model.Image{Path: path, ServiceID: uint(serviceId)}
-    savedImage, errDto := wc.ImageService.Create(image)
-    if errDto.Code != 0 {
-        c.JSON(errDto.Code, gin.H{"error": errDto.Message})
-        return
-    }
+	image := model.Image{Path: path, ServiceID: uint(serviceId)}
+	savedImage, errDto := wc.ImageService.Create(image)
+	if errDto.Code != 0 {
+		c.JSON(errDto.Code, gin.H{"error": errDto.Message})
+		return
+	}
 
-    c.JSON(http.StatusOK, gin.H{"message": "File uploaded successfully", "path": savedImage.Path})
+	c.JSON(http.StatusOK, gin.H{"message": "File uploaded successfully", "path": savedImage.Path})
 }

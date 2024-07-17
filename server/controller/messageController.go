@@ -17,12 +17,11 @@ type MessageController struct {
 // @Summary Get messages by room ID
 // @Description Get a list of messages for a specified room
 // @Tags messages
+// @Security Bearer
 // @Accept json
 // @Produce json
 // @Param room_id path int true "Room ID"
 // @Success 200 {object} []model.Message
-// @Failure 400 {object} gin.H{"error": "invalid room ID provided"}
-// @Failure 500 {object} gin.H{"error": "failed to retrieve messages"}
 // @Router /room/{room_id}/messages [get]
 func (mc *MessageController) GetMessagesByRoomID(ctx *gin.Context) {
 	roomID, err := strconv.ParseUint(ctx.Param("id"), 10, 64)

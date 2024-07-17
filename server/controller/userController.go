@@ -24,9 +24,9 @@ type UserController struct {
 // @Tags users
 // @Accept json
 // @Produce json
+// @Security BearerAuth
 // @Success 200 {object} []model.User
 // @Router /users [get]
-
 func (uc *UserController) GetUsers(ctx *gin.Context) {
 	page, _ := strconv.Atoi(ctx.DefaultQuery("page", "1"))
 	pageSize, _ := strconv.Atoi(ctx.DefaultQuery("pageSize", "10"))
