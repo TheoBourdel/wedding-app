@@ -1,3 +1,4 @@
+// service_list_view.dart
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -14,6 +15,8 @@ import 'package:iconsax/iconsax.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:client/features/service/widgets/buttons/favorite_button.dart';
+import 'package:client/features/service/widgets/card/service_card.dart';
+import 'package:client/features/service/widgets/card/service_card_content.dart';
 
 class ServiceListView extends StatefulWidget {
   final VoidCallback? callback;
@@ -155,7 +158,15 @@ class _ServiceListViewState extends State<ServiceListView> with SingleTickerProv
                       ));
                     }
                   },
-                  child: serviceCard(context),
+                  child: ServiceCard(
+                    isFavorite: _isFavorite,
+                    onToggleFavorite: _toggleFavorite,
+                    loadImages: _loadImages,
+                    serviceCardContent: ServiceCardContent(
+                      imagePath: _getImagePath(),
+                      serviceDetails: _buildServiceDetails(),
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -165,63 +176,25 @@ class _ServiceListViewState extends State<ServiceListView> with SingleTickerProv
     );
   }
 
-  Widget serviceCard(BuildContext context) {
-    _loadImages();
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: const BorderRadius.all(Radius.circular(16.0)),
-        boxShadow: [
-          BoxShadow(color: Colors.grey.withOpacity(0.6), offset: const Offset(4, 4), blurRadius: 16),
-        ],
-      ),
-      child: ClipRRect(
-        borderRadius: const BorderRadius.all(Radius.circular(16.0)),
-        child: Stack(
-          children: [
-            serviceCardContent(),
-            FavoriteButton(
-              isFavorite: _isFavorite,
-              onTap: _toggleFavorite,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget serviceCardContent() {
+  String _getImagePath() {
     String defaultImage = '$apiUrl/uploads/presta.jpg';
-
-    String imagePath = (images.isNotEmpty && (images[0].path?.isNotEmpty ?? false))
+    return (images.isNotEmpty && (images[0].path?.isNotEmpty ?? false))
         ? apiUrl + (images[0].path!.startsWith('/') ? images[0].path! : '/${images[0].path!}')
         : defaultImage;
-
-    return Column(
-      children: [
-        AspectRatio(
-          aspectRatio: 2,
-          child: Image.network(imagePath, fit: BoxFit.cover),
-        ),
-        Container(
-          color: ServiceTheme.buildLightTheme().colorScheme.background,
-          child: serviceDetails(),
-        ),
-      ],
-    );
   }
 
-  Widget serviceDetails() {
+  Widget _buildServiceDetails() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        serviceInfo(),
-        priceInfo(),
+        _buildServiceInfo(),
+        _buildPriceInfo(),
       ],
     );
   }
 
-  Widget serviceInfo() {
+  Widget _buildServiceInfo() {
     return Expanded(
       child: Padding(
         padding: const EdgeInsets.only(left: 16, top: 8, bottom: 8),
@@ -231,14 +204,14 @@ class _ServiceListViewState extends State<ServiceListView> with SingleTickerProv
           children: [
             Text(widget.serviceData?.name ?? 'Service Name', textAlign: TextAlign.left, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 22)),
             Text(widget.serviceData?.localisation ?? 'No localisation', style: TextStyle(fontSize: 14, color: Colors.grey.withOpacity(0.8))),
-            ratingBar(),
+            _buildRatingBar(),
           ],
         ),
       ),
     );
   }
 
-  Widget ratingBar() {
+  Widget _buildRatingBar() {
     return Padding(
       padding: const EdgeInsets.only(top: 4),
       child: Row(
@@ -263,7 +236,7 @@ class _ServiceListViewState extends State<ServiceListView> with SingleTickerProv
     );
   }
 
-  Widget priceInfo() {
+  Widget _buildPriceInfo() {
     return Padding(
       padding: const EdgeInsets.only(right: 16, top: 8),
       child: Column(
