@@ -112,7 +112,7 @@ class WeddingInfoPage extends StatelessWidget {
                             const Spacer(),
                             if (userRole == "marry")
                               Padding(
-                                padding: const EdgeInsets.all(0),
+                                padding: const EdgeInsets.only(bottom: 20),
                                 child: Button(
                                   text: AppLocalizations.of(context)!.edit,
                                   onPressed: () {
