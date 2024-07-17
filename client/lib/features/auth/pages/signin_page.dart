@@ -50,7 +50,7 @@ class _SignInPageState extends State<SignInPage> {
             const SizedBox(height: 20),
             Input(hintText: 'Email', controller: emailController),
             const SizedBox(height: 20),
-            Input(hintText: 'Password', controller: passwordController, isObscureText: true),
+            Input(hintText: 'Mot-de-passe', controller: passwordController, isObscureText: true),
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {

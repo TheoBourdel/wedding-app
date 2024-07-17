@@ -104,7 +104,7 @@ class _SignUpPageState extends State<SignUpPage> {
                       AuthField(hintText: 'Email', controller: emailController),
                       const SizedBox(height: 20),
                       AuthField(
-                        hintText: 'Password',
+                        hintText: 'Mot-de-passe',
                         controller: passwordController,
                         isObscureText: true
                       ),
