@@ -71,10 +71,11 @@ class _RevenueTableState extends State<RevenueTable> {
           child: FutureBuilder<List<Map<String, dynamic>>>(
             future: _revenueDataFuture,
             builder: (context, snapshot) {
+            //  print( snapshot.data!.isEmpty);
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(child: CircularProgressIndicator());
               } else if (snapshot.hasError) {
-                return Center(child: Text('Erreur: ${snapshot.error}'));
+                return const Center(child: Text('Aucune donnée trouvée'));
               } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                 return const Center(child: Text('Aucune donnée trouvée'));
               } else {
