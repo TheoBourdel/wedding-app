@@ -1,20 +1,13 @@
-// service_list_view.dart
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'package:client/features/service/widgets/services_theme.dart';
 import 'package:client/model/service.dart';
 import 'package:client/repository/image_repository.dart';
 import 'package:client/model/image.dart' as service_image;
 import 'package:client/core/constant/constant.dart';
 import 'package:client/features/service/pages/single_service_page.dart';
-import 'package:client/core/theme/app_colors.dart';
 import 'package:client/repository/favorite_repository.dart';
 import 'package:client/model/favorite.dart';
-import 'package:iconsax/iconsax.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:client/features/service/widgets/buttons/favorite_button.dart';
 import 'package:client/features/service/widgets/card/service_card.dart';
 import 'package:client/features/service/widgets/card/service_card_content.dart';
 
@@ -163,8 +156,9 @@ class _ServiceListViewState extends State<ServiceListView> with SingleTickerProv
                     onToggleFavorite: _toggleFavorite,
                     loadImages: _loadImages,
                     serviceCardContent: ServiceCardContent(
-                      imagePath: _getImagePath(),
-                      serviceDetails: _buildServiceDetails(),
+                      images: images,
+                      serviceData: widget.serviceData,
+                      apiUrl: apiUrl,
                     ),
                   ),
                 ),
@@ -172,80 +166,6 @@ class _ServiceListViewState extends State<ServiceListView> with SingleTickerProv
             ),
           );
         },
-      ),
-    );
-  }
-
-  String _getImagePath() {
-    String defaultImage = '$apiUrl/uploads/presta.jpg';
-    return (images.isNotEmpty && (images[0].path?.isNotEmpty ?? false))
-        ? apiUrl + (images[0].path!.startsWith('/') ? images[0].path! : '/${images[0].path!}')
-        : defaultImage;
-  }
-
-  Widget _buildServiceDetails() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildServiceInfo(),
-        _buildPriceInfo(),
-      ],
-    );
-  }
-
-  Widget _buildServiceInfo() {
-    return Expanded(
-      child: Padding(
-        padding: const EdgeInsets.only(left: 16, top: 8, bottom: 8),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(widget.serviceData?.name ?? 'Service Name', textAlign: TextAlign.left, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 22)),
-            Text(widget.serviceData?.localisation ?? 'No localisation', style: TextStyle(fontSize: 14, color: Colors.grey.withOpacity(0.8))),
-            _buildRatingBar(),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildRatingBar() {
-    return Padding(
-      padding: const EdgeInsets.only(top: 4),
-      child: Row(
-        children: [
-          RatingBar(
-            initialRating: 4.0,
-            direction: Axis.horizontal,
-            allowHalfRating: true,
-            itemCount: 5,
-            itemSize: 24,
-            ratingWidget: RatingWidget(
-              full: Icon(Icons.star_rate_rounded, color: ServiceTheme.buildLightTheme().primaryColor),
-              half: Icon(Icons.star_half_rounded, color: ServiceTheme.buildLightTheme().primaryColor),
-              empty: Icon(Icons.star_border_rounded, color: ServiceTheme.buildLightTheme().primaryColor),
-            ),
-            itemPadding: EdgeInsets.zero,
-            onRatingUpdate: (rating) {},
-          ),
-          Text('5 Reviews', style: TextStyle(fontSize: 14, color: Colors.grey.withOpacity(0.8))),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildPriceInfo() {
-    return Padding(
-      padding: const EdgeInsets.only(right: 16, top: 8),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          Text('${widget.serviceData?.price.toString() ?? '0'} €', textAlign: TextAlign.left, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 22)),
-          Text('prix d\'estimation', style: TextStyle(fontSize: 14, color: Colors.grey.withOpacity(0.8))),
-        ],
       ),
     );
   }

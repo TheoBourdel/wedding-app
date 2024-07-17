@@ -146,8 +146,9 @@ class _FavoriteServiceListViewState extends State<FavoriteServiceListView>  with
                     onToggleFavorite: _toggleFavorite,
                     loadImages: _loadImages,
                     serviceCardContent: ServiceCardContent(
-                      imagePath: _getImagePath(),
-                      serviceDetails: _buildServiceDetails(),
+                      images: images,
+                      serviceData: widget.serviceData,
+                      apiUrl: apiUrl,
                     ),
                   ),
                 ),

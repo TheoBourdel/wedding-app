@@ -84,10 +84,11 @@ class _MyServiceListViewState extends State<MyServiceListView> {
                 },
                 child: ServiceCard(
                 loadImages: _loadImages,
-                serviceCardContent: ServiceCardContent(
-                  imagePath: _getImagePath(),
-                  serviceDetails: _buildServiceDetails(),
-                ),
+                  serviceCardContent: ServiceCardContent(
+                    images: images,
+                    serviceData: widget.serviceData,
+                    apiUrl: apiUrl,
+                  ),
               ),
               ),
             ),
