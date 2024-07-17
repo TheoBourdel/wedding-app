@@ -166,8 +166,12 @@ class ServiceRepository {
   }
 
   static Future<Service> getServiceById(int serviceId) async {
+    String? token = await TokenUtils.getToken();
     Response res = await get(
       Uri.parse('$apiUrl/service/$serviceId'),
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
     );
 
     if (res.statusCode == 200) {
