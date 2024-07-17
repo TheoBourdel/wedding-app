@@ -239,7 +239,7 @@ class ServiceList extends StatelessWidget {
     final int userId = JwtDecoder.decode(token)['sub'];
     var role = await getUserRole(userId);
 
-    if(role == "marry") {
+    if(role == "marry" || role == "organizer") {
       return ServiceRepository().getServices().then((services) {
         return services.where((service) {
           bool categoryMatch = selectedCategoryId == null ||

@@ -148,7 +148,7 @@ class _DetailsPageState extends State<DetailsPage> {
                         ),
                       );
                     }
-                    if (userRole == "marry") {
+                    if (userRole == "marry" || userRole == "organizer") {
                       actionButtons.add(
                         Positioned(
                           top: MediaQuery.of(context).padding.top + 10,
