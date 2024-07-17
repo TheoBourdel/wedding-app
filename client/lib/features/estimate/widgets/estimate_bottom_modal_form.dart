@@ -23,7 +23,6 @@ class _EstimateBottomModalFormState extends State<EstimateBottomModalForm> {
   final priceController = TextEditingController();
   final contentController = TextEditingController();
 
-
   @override
   void initState() {
     super.initState();
@@ -38,97 +37,97 @@ class _EstimateBottomModalFormState extends State<EstimateBottomModalForm> {
       width: MediaQuery.of(context).size.width,
       padding: const EdgeInsets.all(20),
       child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                '${widget.title} un devis',
-                style: const TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 5),
-              Text(
-                'Veuillez remplir les champs ci-dessous pour ${widget.title} un devis.',
-                style: const TextStyle(
-                  fontSize: 16,
-                  color: Colors.grey,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 20),
-              Form(
-                key: formKey,
-                child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            '${widget.title} un devis',
+            style: const TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 5),
+          Text(
+            'Veuillez remplir les champs ci-dessous pour ${widget.title} un devis.',
+            style: const TextStyle(
+              fontSize: 16,
+              color: Colors.grey,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 20),
+          Form(
+            key: formKey,
+            child: Column(
+              children: [
+                Row(
                   children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Input(
-                            hintText: 'Prix',
-                            controller: priceController,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 20),
-                    TextFormField(
-                      maxLines: 6,
-                      controller: contentController,
-                      decoration: const InputDecoration(
-                        hintText: 'Contenu',
-                        labelText: 'Contenu',
-                        labelStyle: TextStyle(
-                          color: AppColors.pink500,
-                        ),
+                    Expanded(
+                      child: Input(
+                        hintText: 'Prix',
+                        controller: priceController,
                       ),
-                      validator: (value) {
-                        if (value!.isEmpty) {
-                          return 'Le contenu est requis';
-                        }
-                        return null;
-                      },
                     ),
                   ],
                 ),
-              ),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () {
-                  if (formKey.currentState!.validate()) {
-                    context.read<EstimateBloc>().add(
-                      EstimateUpdateEvent(
-                        estimate: widget.estimate.copyWith(
-                          price: int.parse(priceController.text),
-                          content: contentController.text,
-                          status: 'pending',
-                        ),
-                        userId: widget.userId,
-                      ),
-                    );
-                    Navigator.pop(context);
-                    Navigator.pop(context);
-                  }
-                },
-                style: ElevatedButton.styleFrom(
-                  fixedSize: const Size(double.maxFinite, 60),
-                  backgroundColor: AppColors.pink,
-                  padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 10),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15),
+                const SizedBox(height: 20),
+                TextFormField(
+                  maxLines: 6,
+                  controller: contentController,
+                  decoration: const InputDecoration(
+                    hintText: 'Contenu',
+                    labelText: 'Contenu',
+                    labelStyle: TextStyle(
+                      color: AppColors.pink500,
+                    ),
                   ),
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return 'Le contenu est requis';
+                    }
+                    return null;
+                  },
                 ),
-                child: Text(
-                  widget.title,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
+          const SizedBox(height: 20),
+          ElevatedButton(
+            onPressed: () {
+              if (formKey.currentState!.validate()) {
+                context.read<EstimateBloc>().add(
+                  EstimateUpdateEvent(
+                    estimate: widget.estimate.copyWith(
+                      price: int.parse(priceController.text),
+                      content: contentController.text,
+                      status: 'pending',
+                    ),
+                    userId: widget.userId,
+                  ),
+                );
+                Navigator.pop(context);
+                Navigator.pop(context);
+              }
+            },
+            style: ElevatedButton.styleFrom(
+              fixedSize: const Size(double.maxFinite, 60),
+              backgroundColor: AppColors.pink,
+              padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 10),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15),
+              ),
+            ),
+            child: Text(
+              widget.title,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 20,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
