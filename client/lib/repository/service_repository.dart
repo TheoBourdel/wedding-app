@@ -94,7 +94,7 @@ class ServiceRepository {
   Future<List<Service>> getServices() async {
     String? token = await TokenUtils.getToken();
 
-    Response res = await get(
+    final res = await http.get(
       Uri.parse('$_baseUrl/services'),
       headers: {
         'Authorization': 'Bearer $token',
@@ -102,8 +102,8 @@ class ServiceRepository {
     );
 
     if (res.statusCode == 200) {
-      Iterable decodedBody = jsonDecode(res.body);
-      List<Service> services = decodedBody.map((serviceJson) => Service.fromJson(serviceJson)).toList();
+      final List<dynamic> decodedBody = jsonDecode(res.body);
+      final List<Service> services = decodedBody.map((serviceJson) => Service.fromJson(serviceJson)).toList();
 
       return services;
     } else {
