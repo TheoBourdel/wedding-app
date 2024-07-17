@@ -64,8 +64,6 @@ func (wc *ServiceController) GetServiceImages(ctx *gin.Context) {
 // @Router /services [get]
 func (wc *ServiceController) GetServices(ctx *gin.Context) {
 	services := wc.ServiceService.FindAll()
-
-	ctx.Header("Content-Type", "application/json")
 	ctx.JSON(http.StatusOK, services)
 }
 

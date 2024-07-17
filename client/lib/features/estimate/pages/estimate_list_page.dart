@@ -2,6 +2,7 @@ import 'package:client/core/theme/app_colors.dart';
 import 'package:client/features/estimate/widgets/estimate_card.dart';
 import 'package:client/model/estimate.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localization.dart';
 
 class EstimateListPage extends StatelessWidget {
   final List<Estimate> estimates;
@@ -19,7 +20,7 @@ class EstimateListPage extends StatelessWidget {
       child: Scaffold(
         backgroundColor: Colors.grey[100],
         appBar: AppBar(
-          title: const Column(
+          title: Column(
             children: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -28,15 +29,15 @@ class EstimateListPage extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "Gestion des devis",
-                        style: TextStyle(
+                        AppLocalizations.of(context)!.estimateHeader,
+                        style: const TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
                       Text(
-                        "Liste de vos devis",
-                        style: TextStyle(
+                        AppLocalizations.of(context)!.estimateHeaderSubtitle,
+                        style: const TextStyle(
                           fontSize: 16,
                         ),
                       ),
@@ -46,21 +47,21 @@ class EstimateListPage extends StatelessWidget {
               ),
             ],
           ),
-          bottom: const TabBar(
+          bottom: TabBar(
             indicatorColor: AppColors.pink500,
             labelColor: AppColors.pink500,
             tabs: [
               Tab(
-                text: "Demandes",
+                text: AppLocalizations.of(context)!.request,
               ),
               Tab(
-                text: "En attente",
+                text: AppLocalizations.of(context)!.pending,
               ),
               Tab(
-                text: "Confirmés",
+                text: AppLocalizations.of(context)!.confirmed,
               ),
               Tab(
-                text: "Annulés",
+                text: AppLocalizations.of(context)!.canceled,
               ),
             ],
           ),

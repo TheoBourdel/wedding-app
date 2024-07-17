@@ -5,6 +5,7 @@ import 'package:client/features/profile/pages/user_page.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localization.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -14,7 +15,7 @@ class ProfilePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         excludeHeaderSemantics: true,
-        title: const Column(
+        title: Column(
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -23,15 +24,15 @@ class ProfilePage extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Gérer votre profil",
-                      style: TextStyle(
+                      AppLocalizations.of(context)!.profileHeader,
+                      style: const TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
                     Text(
-                      "Les informations de votre profil",
-                      style: TextStyle(
+                      AppLocalizations.of(context)!.profileHeaderSubtitle,
+                      style: const TextStyle(
                         fontSize: 16,
                       ),
                     ),
@@ -86,19 +87,19 @@ class ProfilePage extends StatelessWidget {
                               ),
                             ),
                             const SizedBox(width: 10),
-                            const Column(
+                            Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  "Profil",
-                                  style: TextStyle(
+                                  AppLocalizations.of(context)!.profile,
+                                  style: const TextStyle(
                                     fontSize: 15,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
                                 Text(
-                                  "Modifier votre profil",
-                                  style: TextStyle(
+                                  AppLocalizations.of(context)!.editProfile,
+                                  style: const TextStyle(
                                     fontSize: 13,
                                   ),
                                 ),
@@ -136,19 +137,19 @@ class ProfilePage extends StatelessWidget {
                               ),
                             ),
                             const SizedBox(width: 10),
-                            const Column(
+                            Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  "Language",
-                                  style: TextStyle(
+                                  AppLocalizations.of(context)!.language,
+                                  style: const TextStyle(
                                     fontSize: 15,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
                                 Text(
-                                  "Change le language de l'application",
-                                  style: TextStyle(
+                                  AppLocalizations.of(context)!.editLanguage,
+                                  style: const TextStyle(
                                     fontSize: 13,
                                   ),
                                 ),
@@ -179,10 +180,10 @@ class ProfilePage extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(width: 10),
-                          const Column(
+                          Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
+                              const Text(
                                 "Notifications",
                                 style: TextStyle(
                                   fontSize: 15,
@@ -190,8 +191,8 @@ class ProfilePage extends StatelessWidget {
                                 ),
                               ),
                               Text(
-                                "Activer ou desactiver les notifications",
-                                style: TextStyle(
+                                AppLocalizations.of(context)!.editNotification,
+                                style: const TextStyle(
                                   fontSize: 13,
                                 ),
                               ),
@@ -232,19 +233,19 @@ class ProfilePage extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(width: 10),
-                        const Column(
+                        Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              "Deconnexion",
-                              style: TextStyle(
+                              AppLocalizations.of(context)!.disconnect,
+                              style: const TextStyle(
                                 fontSize: 15,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
                             Text(
-                              "Se deconnecter de votre compte",
-                              style: TextStyle(
+                              AppLocalizations.of(context)!.editDisconnect,
+                              style: const TextStyle(
                                 fontSize: 13,
                               ),
                             ),

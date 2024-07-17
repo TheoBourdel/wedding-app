@@ -7,6 +7,7 @@ import 'package:client/features/message/bloc_room/room_bloc.dart';
 import 'package:client/repository/room_repository.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_gen/gen_l10n/app_localization.dart';
 
 class RoomsView extends StatelessWidget {
   final UserRepository userRepository = UserRepository();
@@ -42,7 +43,7 @@ class RoomsView extends StatelessWidget {
                 if (state is RoomInitial) {
                   return const Center(child: CircularProgressIndicator());
                 } else if (state is RoomsLoaded) {
-                  if(state.rooms.length == 0) {
+                  if(state.rooms.isEmpty) {
                     return Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -52,23 +53,23 @@ class RoomsView extends StatelessWidget {
                             width: 350,
                             height: 350,
                           ),
-                          const Padding(
-                            padding: EdgeInsets.all(16.0),
+                          Padding(
+                            padding: const EdgeInsets.all(16.0),
                             child: Column(
                               children: [
                                 Text(
-                                  'Vous n\'avez pas encore de messages',
+                                  AppLocalizations.of(context)!.noConversation,
                                   textAlign: TextAlign.center,
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     fontSize: 22,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                                SizedBox(height: 6),
+                                const SizedBox(height: 6),
                                 Text(
-                                  'Vous aurez toutes vos conversations ici',
+                                  AppLocalizations.of(context)!.noConversationSubtitle,
                                   textAlign: TextAlign.center,
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     fontSize: 16,
                                   ),
                                 ),

@@ -5,6 +5,7 @@ import 'package:client/features/wedding/pages/no_wedding_page.dart';
 import 'package:client/features/wedding/pages/wedding_info_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localization.dart';
 
 class WeddingPage extends StatelessWidget {
   const WeddingPage({super.key});
@@ -18,7 +19,7 @@ class WeddingPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
-        title: const Column(
+        title: Column(
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -27,15 +28,15 @@ class WeddingPage extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Gérer votre mariage",
-                      style: TextStyle(
+                      AppLocalizations.of(context)!.weddingHeader,
+                      style: const TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
                     Text(
-                      "Votre mariage est dans : ",
-                      style: TextStyle(
+                      AppLocalizations.of(context)!.weddingHeaderSubtitle,
+                      style: const TextStyle(
                         fontSize: 16,
                       ),
                     ),

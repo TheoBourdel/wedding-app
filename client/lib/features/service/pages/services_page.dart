@@ -13,6 +13,7 @@ import '../widgets/list/services_list_view.dart';
 import '../widgets/services_theme.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_gen/gen_l10n/app_localization.dart';
 
 class ServicesScreen extends StatefulWidget {
   const ServicesScreen({super.key});
@@ -68,8 +69,8 @@ class _ServicesScreenState extends State<ServicesScreen> with TickerProviderStat
       child: TextField(
         controller: searchController,
         decoration: InputDecoration(
-          labelText: 'Rechercher',
-          hintText: 'Entrez un nom',
+          labelText: AppLocalizations.of(context)!.search,
+          hintText: AppLocalizations.of(context)!.searchSubtitle,
           prefixIcon: const Icon(Iconsax.search_normal_1),
           enabledBorder: OutlineInputBorder(
             borderRadius: const BorderRadius.all(Radius.circular(20.0)),
@@ -137,7 +138,7 @@ class _ServicesScreenState extends State<ServicesScreen> with TickerProviderStat
       child: Scaffold(
         backgroundColor: Colors.grey[100],
         appBar: AppBar(
-          title: const Row(
+          title: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Expanded(
@@ -145,15 +146,15 @@ class _ServicesScreenState extends State<ServicesScreen> with TickerProviderStat
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Prestations",
-                      style: TextStyle(
+                      AppLocalizations.of(context)!.services,
+                      style: const TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
                     Text(
-                      "Liste des prestations",
-                      style: TextStyle(
+                      AppLocalizations.of(context)!.servicesSubtitle,
+                      style: const TextStyle(
                         fontSize: 16,
                       ),
                     ),
@@ -186,31 +187,6 @@ class _ServicesScreenState extends State<ServicesScreen> with TickerProviderStat
             ),
           ],
         ),
-        /*floatingActionButton: FutureBuilder<String>(
-          future: role,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Container();
-            }
-            if (snapshot.hasData && snapshot.data == "provider") {
-              return FloatingActionButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const ServiceForm()),
-                  ).then((value) {
-                    setState(() {});
-                  });
-                },
-                backgroundColor: AppColors.pink,
-                child: const Icon(Icons.add, color: Colors.white),
-              );
-            } else {
-              return Container();
-            }
-          },
-        ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,*/
       ),
     );
   }

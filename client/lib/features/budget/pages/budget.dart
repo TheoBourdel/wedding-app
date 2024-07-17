@@ -4,6 +4,7 @@ import 'package:client/model/budget_model.dart';
 import 'package:client/services/budget_service.dart';
 import 'package:client/services/category_service.dart';
 import 'package:client/model/category.dart';
+import 'package:iconsax/iconsax.dart';
 import 'budget_card.dart'; // Assurez-vous d'importer le fichier contenant le widget BudgetCard
 import 'buildbudget_card.dart'; // Importez le nouveau fichier
 
@@ -205,49 +206,134 @@ class _BudgetManagementPageState extends State<BudgetManagementPage> {
             return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
             return const Center(child: Text('Erreur lors du chargement des budgets'));
-          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(child: Text('Aucun budget trouvé'));
           } else {
             final budgets = snapshot.data!;
             final totalAllocated = _calculateTotalAllocatedBudget(budgets);
             final remainingBudget = widget.budget - totalAllocated;
 
             return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
                   padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        '€$remainingBudget',
-                        style: const TextStyle(
-                          fontSize: 30,
-                          fontWeight: FontWeight.bold,
+                  child: Container(
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Budget total restant :',
+                          style: TextStyle(
+                            fontSize: 15,
+                            color: Colors.grey,
+                            fontWeight: FontWeight.w400
+                          ),
                         ),
-                      ),
-                      Text(
-                        'restant sur un budget de ${widget.budget} €',
-                        style: const TextStyle(
-                          fontSize: 16,
-                          color: Colors.grey,
+                        Row(
+                          textBaseline: TextBaseline.alphabetic,
+                          crossAxisAlignment: CrossAxisAlignment.baseline,
+                          children: [
+                            Text(
+                              '€$remainingBudget',
+                              style: const TextStyle(
+                                fontSize: 30,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              '/ €${widget.budget}',
+                              style: const TextStyle(
+                                fontSize: 16,
+                                color: Colors.grey,
+                              ),
+                            )
+                          ],
                         ),
-                      ),
-                      const SizedBox(height: 20),
-                      LinearProgressIndicator(
-                        value: totalAllocated / widget.budget,
-                        backgroundColor: Colors.grey[300],
-                        valueColor: const AlwaysStoppedAnimation<Color>(AppColors.pink500),
-                        minHeight: 10,
-                        borderRadius: BorderRadius.circular(10),
-                      )
-                    ],
-                  ),
+                        const SizedBox(height: 10),
+                        LinearProgressIndicator(
+                          value: totalAllocated / widget.budget,
+                          backgroundColor: Colors.grey[100],
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            totalAllocated > widget.budget ? Colors.red : Colors.green
+                          ),
+                          minHeight: 15,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        const SizedBox(height: 10),
+                        Row(
+                          children: [
+                            Icon(
+                              totalAllocated > widget.budget ? Iconsax.close_circle : Iconsax.tick_circle,
+                              color: totalAllocated > widget.budget ? Colors.red : Colors.green,
+                              size: 20,
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              totalAllocated > widget.budget ? 'Vous avez dépassé votre budget' : 'Vos dépenses totales sont toujours sur la bonne voie',
+                              style: TextStyle(
+                                color: totalAllocated > widget.budget ? Colors.red : Colors.green,
+                                fontSize: 12,
+                              ),
+                            )
+                          ],
+                        )
+                      ],
+                    ),
+                  )
                 ),
+                const Padding(
+                  padding: EdgeInsets.only(left: 20.0, right: 20),
+                  child: Text(
+                    'Mes budgets', 
+                    textAlign: TextAlign.left,
+                    style: TextStyle(
+                      fontSize: 18, 
+                      fontWeight: FontWeight.bold
+                    )
+                  )
+                ), 
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.all(16.0),
-                    child: ListView.builder(
+                    child: !snapshot.hasData || snapshot.data!.isEmpty
+                      ? Column(
+                        children: [
+                          Image.asset(
+                            'assets/images/no-budgets.png',
+                            width: 300,
+                            height: 300,
+                          ),
+                          const Padding(
+                            padding: EdgeInsets.all(16.0),
+                            child: Column(
+                              children: [
+                                Text(
+                                  'Vous n\'avez pas encore de budget',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                SizedBox(height: 6),
+                                Text(
+                                  'Cliquez sur le bouton + pour ajouter un budget',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                  ),
+                                ),
+                              ],
+                            )
+                          ),
+                        ],
+                      )
+                    : ListView.builder(
                     itemCount: budgets.length,
                     itemBuilder: (context, index) {
                       final budget = budgets[index];
@@ -331,7 +417,7 @@ class _BudgetManagementPageState extends State<BudgetManagementPage> {
                               });
                             },
                           ),
-                          SizedBox(height: 8),
+                          const SizedBox(height: 8),
                           TextField(
                             controller: amountController,
                             decoration: InputDecoration(
@@ -370,7 +456,7 @@ class _BudgetManagementPageState extends State<BudgetManagementPage> {
                   },
                 );
               },
-              child: Icon(Icons.add),
+              child: Icon(Icons.add, color: Colors.white,),
               backgroundColor: AppColors.pink500,
             );
           }
