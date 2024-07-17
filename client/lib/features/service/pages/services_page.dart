@@ -83,6 +83,8 @@ class _ServicesScreenState extends State<ServicesScreen> with TickerProviderStat
               color: AppColors.pink500,
             ),
           ),
+          fillColor: Colors.white,
+          filled: true,
         ),
         onChanged: onSearchChanged,
       ),
@@ -102,7 +104,7 @@ class _ServicesScreenState extends State<ServicesScreen> with TickerProviderStat
             padding: const EdgeInsets.only(right: 10),
             child: ChoiceChip(
               label: Text(categories[index].name),
-              backgroundColor: Colors.grey[100]!,
+              backgroundColor: Colors.white,
               selectedColor: AppColors.pink500,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(15),
@@ -110,7 +112,7 @@ class _ServicesScreenState extends State<ServicesScreen> with TickerProviderStat
               side: BorderSide(
                 color: selectedCategoryId == categories[index].id
                   ? AppColors.pink500
-                  : Colors.grey[500]!,
+                  : Colors.white,
               ),
               selected: selectedCategoryId == categories[index].id,
               onSelected: (bool selected) {
