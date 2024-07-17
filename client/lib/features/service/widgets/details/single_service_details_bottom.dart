@@ -206,12 +206,14 @@ class _SingleServiceDetailsBottomState
                       showModalBottomSheet(
                         context: context,
                         builder: (BuildContext context) {
-                          return Padding(
+                          return Container(
+                            width: MediaQuery.of(context).size.width,
                             padding: const EdgeInsets.all(20),
                             child: Wrap(
                               children: [
                                 Center(
                                   child: Column(
+                                    mainAxisSize: MainAxisSize.min,
                                     children: [
                                       const Text(
                                         'Demandez un devis',
