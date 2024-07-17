@@ -1,5 +1,6 @@
 import 'package:client/features/message/widgets/rooms_list.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localization.dart';
 
 class MessageListPage extends StatelessWidget {
   const MessageListPage({super.key});
@@ -9,7 +10,7 @@ class MessageListPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
-        title: const Column(
+        title: Column(
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -17,7 +18,7 @@ class MessageListPage extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                    const Text(
                       "Conversations",
                       style: TextStyle(
                         fontSize: 24,
@@ -25,8 +26,8 @@ class MessageListPage extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      "Liste de vos conversations",
-                      style: TextStyle(
+                      AppLocalizations.of(context)!.conversationHeaderSubtitle,
+                      style: const TextStyle(
                         fontSize: 16,
                       ),
                     ),

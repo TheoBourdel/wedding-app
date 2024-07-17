@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localization.dart';
 
 class NoRoomPage extends StatelessWidget {
   const NoRoomPage({super.key});
@@ -15,12 +16,12 @@ class NoRoomPage extends StatelessWidget {
               width: 350,
               height: 350,
             ),
-            const Padding(
+            Padding(
               padding: EdgeInsets.all(16.0),
               child: Column(
                 children: [
                   Text(
-                    'Vous n\'avez pas encore de messages',
+                    AppLocalizations.of(context)!.noConversation,
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 22,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localization.dart';
 
 class NoEstimatePage extends StatelessWidget {
   const NoEstimatePage({super.key});
@@ -8,7 +9,7 @@ class NoEstimatePage extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
-        title: const Column(
+        title: Column(
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -17,15 +18,15 @@ class NoEstimatePage extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Gestion des devis",
-                      style: TextStyle(
+                      AppLocalizations.of(context)!.estimateHeader,
+                      style: const TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
                     Text(
-                      "Liste de vos devis",
-                      style: TextStyle(
+                      AppLocalizations.of(context)!.estimateHeaderSubtitle,
+                      style: const TextStyle(
                         fontSize: 16,
                       ),
                     ),
@@ -55,22 +56,22 @@ class NoEstimatePage extends StatelessWidget {
                     width: 300,
                     height: 300,
                   ),
-                  const Padding(
-                    padding: EdgeInsets.all(16.0),
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
                     child: Column(
                       children: [
                         Text(
-                          'Vous n\'avez pas encore de devis',
-                          style: TextStyle(
+                          AppLocalizations.of(context)!.noEstimate,
+                          style: const TextStyle(
                             fontSize: 22,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        SizedBox(height: 6),
+                        const SizedBox(height: 6),
                         Text(
-                          'Vous retrouverez ici tous vos devis',
+                          AppLocalizations.of(context)!.noEstimateSubtitle,
                           textAlign: TextAlign.center,
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 16,
                           ),
                         ),

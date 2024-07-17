@@ -15,6 +15,7 @@ import 'package:client/services/budget_service.dart';
 import 'package:client/shared/widget/button.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localization.dart';
 
 class WeddingInfoPage extends StatelessWidget {
   final Wedding wedding;
@@ -61,7 +62,7 @@ class WeddingInfoPage extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Spacer(),
+                            const Spacer(),
                             GestureDetector(
                               onTap: () {
                                 Navigator.push(context, MaterialPageRoute(
@@ -80,12 +81,12 @@ class WeddingInfoPage extends StatelessWidget {
                                         builder: (context) => const MyFavoritePage(),
                                       ));
                                     },
-                                    child: const WeddingInfoCard(title: "Enregistré", value: "", icon: Iconsax.archive_tick),
+                                    child: WeddingInfoCard(title: AppLocalizations.of(context)!.checkedIn, value: "", icon: Iconsax.archive_tick),
                                   ),
                                 ),
                                 const SizedBox(width: 20),
-                                const Expanded(
-                                  child: WeddingInfoCard(title: "Prestations", value: "", icon: Iconsax.briefcase),
+                                Expanded(
+                                  child: WeddingInfoCard(title: AppLocalizations.of(context)!.services, value: "", icon: Iconsax.briefcase),
                                 ),
                               ],
                             ),
@@ -103,7 +104,7 @@ class WeddingInfoPage extends StatelessWidget {
                                         builder: (context) => OrganizerPage(weddingId: wedding.id),
                                       ));
                                     },
-                                    child: const WeddingInfoCard(title: "Organisateurs", value: "", icon: Iconsax.profile_2user),
+                                    child: WeddingInfoCard(title: AppLocalizations.of(context)!.organizers, value: "", icon: Iconsax.profile_2user),
                                   ),
                                 ),
                               ],
@@ -113,10 +114,10 @@ class WeddingInfoPage extends StatelessWidget {
                               Padding(
                                 padding: const EdgeInsets.all(0),
                                 child: Button(
-                                  text: "Modifier",
+                                  text: AppLocalizations.of(context)!.edit,
                                   onPressed: () {
                                     Navigator.push(context, MaterialPageRoute(
-                                      builder: (context) => WeddingFormPage(title: "Modifier", wedding: wedding),
+                                      builder: (context) => WeddingFormPage(title: AppLocalizations.of(context)!.edit, wedding: wedding),
                                     ));
                                   },
                                   isOutlined: true,
