@@ -6,13 +6,23 @@ import 'package:client/shared/widget/input.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class OrganizerBottomModalForm extends StatelessWidget {
+class OrganizerBottomModalForm extends StatefulWidget {
   final int weddingId;
-  OrganizerBottomModalForm({super.key, required this.weddingId});
+  const OrganizerBottomModalForm({super.key, required this.weddingId});
 
+  @override
+  State<OrganizerBottomModalForm> createState() => _OrganizerBottomModalFormState();
+}
+
+class _OrganizerBottomModalFormState extends State<OrganizerBottomModalForm> {
   final formKey = GlobalKey<FormState>();
   final emailController = TextEditingController();
   final nameController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -63,7 +73,7 @@ class OrganizerBottomModalForm extends StatelessWidget {
                             email: emailController.text,
                             firstName: nameController.text,
                           ),
-                          weddingId: weddingId,
+                          weddingId: widget.weddingId,
                         ),
                       ),
                       Navigator.pop(context)
