@@ -138,7 +138,7 @@ class _MyServicesPageState extends State<MyServicesPage> with TickerProviderStat
             }
           },
         ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
+        floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       ),
     );
   }
