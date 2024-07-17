@@ -10,7 +10,7 @@ class RevenueService {
     String? token = await TokenUtils.getToken();
 
     final response = await http.get(
-        Uri.parse('$_baseUrl/monthly_revenue?year=$year'),
+      Uri.parse('$_baseUrl/monthly_revenue?year=$year'),
       headers: {
         'Authorization': 'Bearer $token',
       },
@@ -23,6 +23,8 @@ class RevenueService {
         "month": data['month'],
         "revenue": data['revenue']
       }).toList();
+    } else if (response.statusCode == 404) {
+      return [];
     } else {
       throw Exception('Failed to load monthly revenue by year');
     }
