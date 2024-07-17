@@ -60,9 +60,9 @@ class _FavoriteServiceListViewState extends State<FavoriteServiceListView>  with
   @override
   void initState() {
     super.initState();
-    _favoriteId = widget.favoriteId; // Set the favoriteId from widget
+    _favoriteId = widget.favoriteId;
     _loadImages();
-    _opacityController = AnimationController(duration: const Duration(milliseconds: 300), vsync: this);
+    _opacityController = AnimationController(duration: const Duration(milliseconds: 200), vsync: this);
     _opacityAnimation = Tween<double>(begin: 1.0, end: 0.0).animate(_opacityController);
   }
 
