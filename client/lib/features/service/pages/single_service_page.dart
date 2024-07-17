@@ -69,7 +69,7 @@ class _DetailsPageState extends State<DetailsPage> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final String token = prefs.getString('token')!;
     final Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
-    return decodedToken['sub'] ?? 'unknown';
+    return decodedToken['sub'] ?? 0;
   }
 
   @override
@@ -86,7 +86,6 @@ class _DetailsPageState extends State<DetailsPage> {
           color: Colors.white,
           height: size.height,
           width: size.width,
-
           child: Stack(
             children: [
               buildImageCarousel(size, defaultColor, secondColor),
@@ -106,7 +105,7 @@ class _DetailsPageState extends State<DetailsPage> {
                   child: Container(
                     padding: const EdgeInsets.all(10),
                     decoration: const BoxDecoration(
-                      color: Color.fromARGB(188, 255, 255, 255),                               
+                      color: Color.fromARGB(188, 255, 255, 255),
                       borderRadius: BorderRadius.all(Radius.circular(12)),
                     ),
                     child: const Icon(
@@ -117,15 +116,17 @@ class _DetailsPageState extends State<DetailsPage> {
                   ),
                 ),
               ),
-              FutureBuilder<String>(
-                future: role,
+              FutureBuilder<List<dynamic>>(
+                future: Future.wait([role, userId]),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return Container();
                   }
                   if (snapshot.hasData) {
+                    String userRole = snapshot.data![0] as String;
+                    int currentUserId = snapshot.data![1] as int;
                     List<Widget> actionButtons = [];
-                    if (snapshot.data == "provider") {
+                    if (userRole == "provider" && currentUserId == service.UserID) {
                       actionButtons.add(
                         Positioned(
                           top: MediaQuery.of(context).padding.top + 10,
@@ -135,7 +136,8 @@ class _DetailsPageState extends State<DetailsPage> {
                             child: Container(
                               padding: const EdgeInsets.all(10),
                               decoration: const BoxDecoration(
-                                color: Color.fromARGB(188, 255, 255, 255),                               borderRadius: BorderRadius.all(Radius.circular(12)),
+                                color: Color.fromARGB(188, 255, 255, 255),
+                                borderRadius: BorderRadius.all(Radius.circular(12)),
                               ),
                               child: const Icon(
                                 UniconsLine.edit,
@@ -147,7 +149,7 @@ class _DetailsPageState extends State<DetailsPage> {
                         ),
                       );
                     }
-                    if (snapshot.data == "marry") {
+                    if (userRole == "marry") {
                       actionButtons.add(
                         Positioned(
                           top: MediaQuery.of(context).padding.top + 10,
@@ -171,7 +173,8 @@ class _DetailsPageState extends State<DetailsPage> {
                             child: Container(
                               padding: const EdgeInsets.all(10),
                               decoration: const BoxDecoration(
-                                color: Color.fromARGB(188, 255, 255, 255),                               borderRadius: BorderRadius.all(Radius.circular(12)),
+                                color: Color.fromARGB(188, 255, 255, 255),
+                                borderRadius: BorderRadius.all(Radius.circular(12)),
                               ),
                               child: const Icon(
                                 UniconsLine.message,
