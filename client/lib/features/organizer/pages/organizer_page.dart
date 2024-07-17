@@ -14,20 +14,46 @@ class OrganizerPage extends StatelessWidget {
   Widget build(BuildContext context) {
     context.read<OrganizerBloc>().add(OrganizerLoadEvent(weddingId: weddingId));
 
-    return BlocBuilder<OrganizerBloc, OrganizerState>(
-      builder: (context, state) {
-        if(state.status == OrganizerStatus.loading) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        }
+    return Scaffold(
+      body: BlocListener<OrganizerBloc, OrganizerState>(
+        listener: (context, state) {
+          if (state.status == OrganizerStatus.failure) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.error!),
+                backgroundColor: Colors.red,
+              ),
+            );
+          }
+        },
+        child: BlocBuilder<OrganizerBloc, OrganizerState>(
+          builder: (context, state) {
+            if (state.status == OrganizerStatus.loading) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
 
-        if(state.status == OrganizerStatus.success) {
-          return OrganizerListPage(organizers: state.organizers, weddingId: weddingId);
-        }
+            if (state.status == OrganizerStatus.success) {
+              return OrganizerListPage(
+                organizers: state.organizers,
+                weddingId: weddingId,
+                parentContext: context,
+              );
+            }
 
-        return const SizedBox();
-      }
+            if (state.status == OrganizerStatus.failure) {
+              return OrganizerListPage(
+                organizers: state.organizers,
+                weddingId: weddingId,
+                parentContext: context,
+              );
+            }
+
+            return const SizedBox();
+          },
+        ),
+      ),
     );
   }
 }

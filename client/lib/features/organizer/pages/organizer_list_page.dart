@@ -11,7 +11,8 @@ import 'package:provider/provider.dart';
 class OrganizerListPage extends StatelessWidget {
   final List<User> organizers;
   final int weddingId;
-  const OrganizerListPage({super.key, required this.organizers, required this.weddingId});
+  final BuildContext parentContext; 
+  const OrganizerListPage({super.key, required this.organizers, required this.weddingId, required this.parentContext});
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +52,7 @@ class OrganizerListPage extends StatelessWidget {
             },
           )
         )
-        : null,
+      : null,
     );
   }
 }

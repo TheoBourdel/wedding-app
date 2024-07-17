@@ -28,8 +28,8 @@ class OrganizerBloc extends Bloc<OrganizerEvent, OrganizerState> {
         final updatedOrganizers = [...currentState.organizers, organizer];
         
         emit(state.copyWith(status: OrganizerStatus.success, organizers: updatedOrganizers));
-      } catch (e) {
-        emit(state.copyWith(status: OrganizerStatus.failure, error: "Error while creating organizer"));
+      } catch (error) {
+        emit(state.copyWith(status: OrganizerStatus.failure, error: error.toString()));
       }
     });
 
