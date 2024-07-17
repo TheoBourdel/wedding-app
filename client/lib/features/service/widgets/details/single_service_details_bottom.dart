@@ -205,6 +205,7 @@ class _SingleServiceDetailsBottomState
                     onTap: () {
                       showModalBottomSheet(
                         context: context,
+                        isScrollControlled: true,
                         builder: (BuildContext context) {
                           return SafeArea(
                             child: Wrap(
