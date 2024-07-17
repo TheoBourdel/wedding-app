@@ -206,12 +206,11 @@ class _SingleServiceDetailsBottomState
                       showModalBottomSheet(
                         context: context,
                         builder: (BuildContext context) {
-                          return Container(
-                            width: MediaQuery.of(context).size.width,
-                            padding: const EdgeInsets.all(20),
+                          return SafeArea(
                             child: Wrap(
                               children: [
-                                Center(
+                                Padding(
+                                  padding: EdgeInsets.all(20),
                                   child: Column(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
@@ -312,9 +311,9 @@ class _SingleServiceDetailsBottomState
                                       const SizedBox(height: 20),
                                     ],
                                   ),
-                                ),
+                                )
                               ],
-                            ),
+                            )
                           );
                         },
                       );
