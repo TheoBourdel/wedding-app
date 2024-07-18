@@ -1,3 +1,5 @@
+import 'package:client/features/auth/bloc/auth_bloc.dart';
+import 'package:client/features/auth/bloc/auth_state.dart';
 import 'package:client/features/wedding/bloc/wedding_bloc.dart';
 import 'package:client/features/wedding/pages/wedding_info_page.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +11,10 @@ class WeddingListPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final authState = context.read<AuthBloc>().state;
+    final userId = authState is Authenticated ? authState.userId : null;
+    context.read<WeddingBloc>().add(WeddingDataLoaded(userId: userId!));
+    
     return Scaffold(
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
@@ -32,7 +38,7 @@ class WeddingListPage extends StatelessWidget {
           if (state.wedding.isEmpty) {
             // no wedding page
           } else {
-            return Padding(padding: EdgeInsets.all(20), child: ListView.builder(
+            return Padding(padding: const EdgeInsets.all(20), child: ListView.builder(
               itemCount: state.wedding.length,
               itemBuilder: (context, index) {
                 return InkWell(
@@ -45,7 +51,7 @@ class WeddingListPage extends StatelessWidget {
                     );
                   },
                   child: Container(
-                    padding: EdgeInsets.all(15),
+                    padding: const EdgeInsets.all(15),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(10),
