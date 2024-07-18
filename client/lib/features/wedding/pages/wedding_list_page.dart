@@ -2,6 +2,7 @@ import 'package:client/features/auth/bloc/auth_bloc.dart';
 import 'package:client/features/auth/bloc/auth_state.dart';
 import 'package:client/features/wedding/bloc/wedding_bloc.dart';
 import 'package:client/features/wedding/pages/wedding_info_page.dart';
+import 'package:client/features/wedding/pages/wedding_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconsax/iconsax.dart';
@@ -46,7 +47,7 @@ class WeddingListPage extends StatelessWidget {
                     Navigator.push(
                       context, 
                       MaterialPageRoute(
-                        builder: (context) => WeddingInfoPage(wedding: state.wedding[index])
+                        builder: (context) => const WeddingPage()
                       )
                     );
                   },
