@@ -103,7 +103,7 @@ class _WeddingFormPageState extends State<WeddingFormPage> {
                                 userId: userId!
                               )
                             );
-                          } else if (widget.title == "Modifier") {
+                          } else if (widget.title == "Modifier" || widget.title == "Edit") {
                             context.read<WeddingBloc>().add(
                               WeddingUpdated(
                                 wedding: Wedding(
