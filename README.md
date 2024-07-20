@@ -2,6 +2,8 @@
 - `docker compose build`
 - `docker compose up`
 
+# TOUTES LES FEATURES SONT SUR LA BRANCHE DEV
+
 # Students
 
 - Théo : TheoBourdel
