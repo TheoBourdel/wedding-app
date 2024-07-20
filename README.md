@@ -1,3 +1,7 @@
+# Start Back-end
+`docker compose build`
+`docker compose up`
+
 # Students
 
 - Théo : TheoBourdel
