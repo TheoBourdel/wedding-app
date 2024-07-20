@@ -1,6 +1,6 @@
 # Start Back-end
-`docker compose build`
-`docker compose up`
+- `docker compose build`
+- `docker compose up`
 
 # Students
 
